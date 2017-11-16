@@ -1,0 +1,5 @@
+uthor: Petru Marginean
+Keywords: OCT07   C++  
+Description: Unpublished source code accompanying the article by Petru Marginean, in which 
+he presents a C++ logging framework that is typesafe, thread-safe, and 
+portable. Requires UNZIP/PKUNZIP to extract 
