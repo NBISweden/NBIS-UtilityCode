@@ -266,7 +266,16 @@ bool CMAsciiReadFileStream::Open(const CMString & name)
   m_fileName = name;
   if (IsOpen())
     Close();
-  m_pFile = fopen(m_fileName, "r");
+
+  if (strstr(name, ".gz") != NULL) {
+    cout << "File " << name << " is compressed, uncompressing." << endl;
+    CMString cmd = "zcat ";
+    cmd += name;
+
+    m_pFile = popen(cmd, "r");
+  } else {
+    m_pFile = fopen(m_fileName, "r");
+  }
 
   if (m_pFile != NULL) {
     m_bIsEof = false;
@@ -357,18 +366,18 @@ bool CMAsciiReadFileStream::ReadStringLine(CMString & out)
   size_t n;
   bool exit = false;
   do {
-    text[sizeof(text)-2] = 1;
+    text[sizeof(text)-2] = 0;
     if (fgets(text, sizeof(text), m_pFile) == NULL) {
       m_bIsEof = true;
       break;  
     }
     n = strlen(text);
-    
+ 
     exit = false;
     if (n >=1 && text[n-1] == '\n') {
       text[n-1] = 0;
       exit = true;
-    }
+     }
     
     all += text;
   } while(!exit);
