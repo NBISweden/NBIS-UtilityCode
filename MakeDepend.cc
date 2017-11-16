@@ -961,7 +961,7 @@ void makefile_builder::GenerateMakefileForExecutables( ostream &mf )
       }
     }
     // Horrible hack to get around the audio lib to link... 
-    mf << " -L. $(LINK_LIBS) -l" << libname << " -lasound";
+    mf << " -L. $(LINK_LIBS) -l" << libname;
     if (needs_xerces_lib) mf << " $(XERCES_LIB)";
     mf << "\n\t" << "/bin/rm lib" << libname << ".a\n";
   }
