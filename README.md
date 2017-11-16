@@ -74,21 +74,27 @@ Also, check out the StringParser.
 We will continue to refine the directory structure, but for now, we follow these rules:
 
 2.4.1. If it is of general purpose, e.g. a statistical test, graphing data etc., please put it into the appropriate folder right off of the root. These can be code files as well as main routines.
+
 2.4.2. More application-specific code should go into the applications folder, or in a subfolder therein respectively. 
 
 
 2.5 Use the coding language of your choice, as long as it is one of the following: C++, C, Java, Lua, or Python. Note that perl is not permitted (for R, matlab, and workflow languages, see below) Furthermore:
 
 2.5.1. C++: just follow the guidelines above.
+
 2.5.2. Java: (a) make a separate folder with all your files per executable; (b) make sure to include the .jar file; (c) include information about how to build the executable, especially if you use eclipse, netbeans etc.
+
 2.5.3. Lua: no specific rules.
+
 2.5.4. Python: no specific rules, even though we would like feedback if there should be any.
 
 
 2.6 Workflows and pipelines. We also include those and encourage you to commit them to the 'pipelines' folder. The rules here are:
 
 2.6.1. Document how exactly to run the pipepline or workflow, and what other tools have to be installed. 
+
 2.6.2. State any restrictions or requirements, and that includes the computing environment (e.g. SLURM versys LSF etc.)
+
 2.6.3. If possible, provide scripts to set up all dependencies on external modules, such as aligners, etc.
 
 
