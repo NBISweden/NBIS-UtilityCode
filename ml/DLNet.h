@@ -25,6 +25,9 @@ class DLNeuron
   int GetConnect(int i) const {return m_connect[i];}
   double GetWeight(int i) const {return m_weight[i];}
   double & Weight(int i) {return m_weight[i];}
+
+  double GetSigma() const {return m_steep;}
+  double & Sigma() {return m_steep;}
   
   double GetOutput() const {return m_output;}
   double GetInput() const {return m_input;}
@@ -59,7 +62,8 @@ class DLIOSingle
   
   svec<double> & Out() {return m_out;}
   const svec<double> & Out() const {return m_out;}
- 
+
+  
  private:
   svec<double> m_in;
   svec<double> m_out;
@@ -72,6 +76,8 @@ class DLNet
  public:
   DLNet() {
     m_outStart = 0;
+    m_errInit = -1;
+    m_adjust = 1.;
   }
 
   void AddForwardLayer(int n);
@@ -83,7 +89,12 @@ class DLNet
     m_data.push_back(in);
   }
 
-  void Train(double move);
+  double Train(int iter, double move);
+  
+  double TrainOne(double move);
+
+  double Evaluate(const svec<string> & labels);
+  double Evaluate();
 
   void ResetInputs() {
     for (int i=0; i<m_neurons.isize(); i++)
@@ -96,6 +107,8 @@ class DLNet
   svec<DLNeuron> m_neurons;
   svec<DLIOSingle> m_data;
   int m_outStart;
+  double m_errInit;
+  double m_adjust;
 };
 
 

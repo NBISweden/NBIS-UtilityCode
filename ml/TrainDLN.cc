@@ -50,9 +50,9 @@ int main( int argc, char** argv )
   s.Out()[0] = 0.;
   nn.AddInput(s);
 
-  for (i=0; i<10000; i++) {
-    nn.Train(0.1);
-  }
+  
+  nn.Train(2000, 0.1);
+  
   
   return 0;
 }
