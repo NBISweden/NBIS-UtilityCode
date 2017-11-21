@@ -1,0 +1,323 @@
+###
+### This file is generated automatically.  DO NOT MODIFY BY HAND!
+###
+
+base/ErrorHandling.o: $(SRC)/base/ErrorHandling.cc $(SRC)/base/ErrorHandling.h 
+base/FileParser.o: $(SRC)/base/ErrorHandling.h $(SRC)/base/FileParser.cc $(SRC)/base/FileParser.h $(SRC)/base/SVector.h $(SRC)/util/mutil.h 
+base/StreamParser.o: $(SRC)/base/ErrorHandling.h $(SRC)/base/FileParser.h $(SRC)/base/SVector.h $(SRC)/base/StreamParser.cc $(SRC)/base/StreamParser.h $(SRC)/util/mutil.h 
+base/StringUtil.o: $(SRC)/base/StringUtil.cc $(SRC)/base/StringUtil.h 
+base/ThreadHandler.o: $(SRC)/base/ThreadHandler.cc $(SRC)/base/ThreadHandler.h 
+math/FishersExcactTest.o: $(SRC)/base/CommandLineParser.h $(SRC)/base/ErrorHandling.h $(SRC)/base/FileParser.h $(SRC)/base/SVector.h $(SRC)/base/StringUtil.h $(SRC)/math/FishersExcactTest.cc $(SRC)/util/mutil.h 
+math/PearsonCorr.o: $(SRC)/base/CommandLineParser.h $(SRC)/base/ErrorHandling.h $(SRC)/base/FileParser.h $(SRC)/base/SVector.h $(SRC)/base/StringUtil.h $(SRC)/math/PearsonCorr.cc $(SRC)/math/Spearman.h $(SRC)/util/mutil.h 
+math/SpearmanCorr.o: $(SRC)/base/CommandLineParser.h $(SRC)/base/ErrorHandling.h $(SRC)/base/FileParser.h $(SRC)/base/SVector.h $(SRC)/base/StringUtil.h $(SRC)/math/Spearman.h $(SRC)/math/SpearmanCorr.cc $(SRC)/util/mutil.h 
+math/SquareCorr.o: $(SRC)/base/ErrorHandling.h $(SRC)/base/SVector.h $(SRC)/math/SquareCorr.cc $(SRC)/math/SquareCorr.h 
+ml/DLNet.o: $(SRC)/base/ErrorHandling.h $(SRC)/base/RandomStuff.h $(SRC)/base/SVector.h $(SRC)/ml/DLNet.cc $(SRC)/ml/DLNet.h 
+ml/NNet.o: $(SRC)/base/ErrorHandling.h $(SRC)/base/RandomStuff.h $(SRC)/base/SVector.h $(SRC)/ml/NNet.cc $(SRC)/ml/NNet.h $(SRC)/npc/NPCIO.h $(SRC)/util/mutil.h 
+ml/TestDLN.o: $(SRC)/base/CommandLineParser.h $(SRC)/base/ErrorHandling.h $(SRC)/base/FileParser.h $(SRC)/base/RandomStuff.h $(SRC)/base/SVector.h $(SRC)/base/StringUtil.h $(SRC)/ml/DLNet.h $(SRC)/ml/TestDLN.cc $(SRC)/util/mutil.h 
+ml/TrainDLN.o: $(SRC)/base/CommandLineParser.h $(SRC)/base/ErrorHandling.h $(SRC)/base/FileParser.h $(SRC)/base/RandomStuff.h $(SRC)/base/SVector.h $(SRC)/base/StringUtil.h $(SRC)/ml/DLNet.h $(SRC)/ml/TrainDLN.cc $(SRC)/util/mutil.h 
+src/AlignmentBlock.o: $(SRC)/base/ErrorHandling.h $(SRC)/base/FileParser.h $(SRC)/base/SVector.h $(SRC)/src/AlignmentBlock.cc $(SRC)/src/AlignmentBlock.h $(SRC)/util/mutil.h 
+src/CodonTranslate.o: $(SRC)/base/ErrorHandling.h $(SRC)/base/SVector.h $(SRC)/extern/logger/log.h $(SRC)/src/CodonTranslate.cc $(SRC)/src/CodonTranslate.h $(SRC)/src/DNAVector.h 
+src/Coordinate.o: $(SRC)/base/ErrorHandling.h $(SRC)/base/FileParser.h $(SRC)/base/SVector.h $(SRC)/src/AlignmentBlock.h $(SRC)/src/Coordinate.cc $(SRC)/src/Coordinate.h $(SRC)/util/mutil.h 
+src/DNAVector.o: $(SRC)/base/ErrorHandling.h $(SRC)/base/FileParser.h $(SRC)/base/SVector.h $(SRC)/extern/logger/log.h $(SRC)/src/AlignmentBlock.h $(SRC)/src/Coordinate.h $(SRC)/src/DNAVector.cc $(SRC)/src/DNAVector.h $(SRC)/util/mutil.h 
+src/SlideSearch.o: $(SRC)/base/ErrorHandling.h $(SRC)/base/SVector.h $(SRC)/src/DNAVector.h $(SRC)/src/SlideSearch.cc $(SRC)/src/SlideSearch.h 
+tools/FastaByLength.o: $(SRC)/base/CommandLineParser.h $(SRC)/base/ErrorHandling.h $(SRC)/base/FileParser.h $(SRC)/base/SVector.h $(SRC)/base/StringUtil.h $(SRC)/src/DNAVector.h $(SRC)/tools/FastaByLength.cc $(SRC)/util/mutil.h 
+tools/FastaN50.o: $(SRC)/base/CommandLineParser.h $(SRC)/base/ErrorHandling.h $(SRC)/base/FileParser.h $(SRC)/base/SVector.h $(SRC)/base/StringUtil.h $(SRC)/src/DNAVector.h $(SRC)/tools/FastaN50.cc $(SRC)/util/mutil.h 
+tools/FastaSizes.o: $(SRC)/base/CommandLineParser.h $(SRC)/base/ErrorHandling.h $(SRC)/base/FileParser.h $(SRC)/base/SVector.h $(SRC)/base/StringUtil.h $(SRC)/src/DNAVector.h $(SRC)/tools/FastaSizes.cc $(SRC)/util/mutil.h 
+tools/FastaToProteins.o: $(SRC)/base/CommandLineParser.h $(SRC)/base/ErrorHandling.h $(SRC)/base/FileParser.h $(SRC)/base/SVector.h $(SRC)/base/StringUtil.h $(SRC)/src/DNAVector.h $(SRC)/tools/FastaToProteins.cc $(SRC)/util/mutil.h 
+tools/FindORFs.o: $(SRC)/base/CommandLineParser.h $(SRC)/base/ErrorHandling.h $(SRC)/base/FileParser.h $(SRC)/base/SVector.h $(SRC)/base/StringUtil.h $(SRC)/src/DNAVector.h $(SRC)/tools/FindORFs.cc $(SRC)/util/mutil.h 
+tools/GetColumns.o: $(SRC)/base/CommandLineParser.h $(SRC)/base/ErrorHandling.h $(SRC)/base/FileParser.h $(SRC)/base/SVector.h $(SRC)/base/StringUtil.h $(SRC)/tools/GetColumns.cc $(SRC)/util/mutil.h 
+util/FilterBlat.o: $(SRC)/base/CommandLineParser.h $(SRC)/base/ErrorHandling.h $(SRC)/base/FileParser.h $(SRC)/base/SVector.h $(SRC)/base/StringUtil.h $(SRC)/util/FilterBlat.cc $(SRC)/util/mutil.h 
+util/FindProcess.o: $(SRC)/base/ErrorHandling.h $(SRC)/base/FileParser.h $(SRC)/base/SVector.h $(SRC)/util/FindProcess.cc $(SRC)/util/FindProcess.h $(SRC)/util/mutil.h 
+util/KillProcesses.o: $(SRC)/util/KillProcesses.cc $(SRC)/util/mutil.h 
+util/SComm.o: $(SRC)/util/SComm.cc $(SRC)/util/SComm.h 
+util/SplitFile.o: $(SRC)/base/CommandLineParser.h $(SRC)/base/ErrorHandling.h $(SRC)/base/FileParser.h $(SRC)/base/SVector.h $(SRC)/base/StringUtil.h $(SRC)/util/SplitFile.cc $(SRC)/util/mutil.h 
+util/SplitFileChunk.o: $(SRC)/base/CommandLineParser.h $(SRC)/base/ErrorHandling.h $(SRC)/base/FileParser.h $(SRC)/base/SVector.h $(SRC)/base/StringUtil.h $(SRC)/util/SplitFileChunk.cc $(SRC)/util/mutil.h 
+util/SyncConn.o: $(SRC)/base/ErrorHandling.h $(SRC)/base/FileParser.h $(SRC)/base/SVector.h $(SRC)/util/SComm.h $(SRC)/util/SyncConn.cc $(SRC)/util/SyncConn.h $(SRC)/util/mutil.h 
+util/SysTime.o: $(SRC)/util/SysTime.cc $(SRC)/util/SysTime.h 
+util/Unixify.o: $(SRC)/base/CommandLineParser.h $(SRC)/base/ErrorHandling.h $(SRC)/base/FileParser.h $(SRC)/base/SVector.h $(SRC)/base/StringUtil.h $(SRC)/util/Unixify.cc $(SRC)/util/mutil.h 
+util/mutil.o: $(SRC)/util/mutil.cc $(SRC)/util/mutil.h 
+visual/3DStats.o: $(SRC)/base/CommandLineParser.h $(SRC)/base/ErrorHandling.h $(SRC)/base/FileParser.h $(SRC)/base/SVector.h $(SRC)/base/StringUtil.h $(SRC)/util/mutil.h $(SRC)/visual/3DStats.cc $(SRC)/visual/Axes.h $(SRC)/visual/Color.h $(SRC)/visual/Compounds.h $(SRC)/visual/Eps.h $(SRC)/visual/Geometry.h $(SRC)/visual/TicMarks.h $(SRC)/visual/Whiteboard.h 
+visual/Bounce.o: $(SRC)/base/CommandLineParser.h $(SRC)/base/ErrorHandling.h $(SRC)/base/FileParser.h $(SRC)/base/SVector.h $(SRC)/base/StringUtil.h $(SRC)/util/mutil.h $(SRC)/visual/Axes.h $(SRC)/visual/Bounce.cc $(SRC)/visual/Color.h $(SRC)/visual/Eps.h $(SRC)/visual/TicMarks.h $(SRC)/visual/Whiteboard.h 
+visual/Color.o: $(SRC)/visual/Color.cc $(SRC)/visual/Color.h 
+visual/DrawCompounds.o: $(SRC)/base/CommandLineParser.h $(SRC)/base/ErrorHandling.h $(SRC)/base/FileParser.h $(SRC)/base/SVector.h $(SRC)/base/StringUtil.h $(SRC)/util/mutil.h $(SRC)/visual/Color.h $(SRC)/visual/Compounds.h $(SRC)/visual/DrawCompounds.cc $(SRC)/visual/Eps.h $(SRC)/visual/Whiteboard.h 
+visual/Eps.o: $(SRC)/visual/Eps.cc $(SRC)/visual/Eps.h 
+visual/HeatMaps.o: $(SRC)/base/CommandLineParser.h $(SRC)/base/ErrorHandling.h $(SRC)/base/FileParser.h $(SRC)/base/SVector.h $(SRC)/base/StringUtil.h $(SRC)/util/mutil.h $(SRC)/visual/Axes.h $(SRC)/visual/Color.h $(SRC)/visual/Eps.h $(SRC)/visual/HeatMaps.cc $(SRC)/visual/TicMarks.h $(SRC)/visual/Whiteboard.h 
+visual/MakePieCharts.o: $(SRC)/base/CommandLineParser.h $(SRC)/base/ErrorHandling.h $(SRC)/base/FileParser.h $(SRC)/base/RandomStuff.h $(SRC)/base/SVector.h $(SRC)/base/StringUtil.h $(SRC)/util/mutil.h $(SRC)/visual/Axes.h $(SRC)/visual/Color.h $(SRC)/visual/Eps.h $(SRC)/visual/MakePieCharts.cc $(SRC)/visual/TicMarks.h $(SRC)/visual/Whiteboard.h 
+visual/ScatterPlot.o: $(SRC)/base/CommandLineParser.h $(SRC)/base/ErrorHandling.h $(SRC)/base/FileParser.h $(SRC)/base/SVector.h $(SRC)/base/StringUtil.h $(SRC)/util/mutil.h $(SRC)/visual/Color.h $(SRC)/visual/Compounds.h $(SRC)/visual/Eps.h $(SRC)/visual/ScatterPlot.cc $(SRC)/visual/Whiteboard.h 
+visual/ShowColorScale.o: $(SRC)/base/CommandLineParser.h $(SRC)/base/ErrorHandling.h $(SRC)/base/FileParser.h $(SRC)/base/SVector.h $(SRC)/base/StringUtil.h $(SRC)/util/mutil.h $(SRC)/visual/Axes.h $(SRC)/visual/Color.h $(SRC)/visual/Eps.h $(SRC)/visual/ShowColorScale.cc $(SRC)/visual/TicMarks.h $(SRC)/visual/Whiteboard.h 
+3DStats:  checkLock
+3DStats:  base/ErrorHandling.o base/FileParser.o base/StringUtil.o util/mutil.o visual/3DStats.o visual/Color.o visual/Eps.o
+	/bin/rm -f lib_3DStats_temp.a
+	ar -qc lib_3DStats_temp.a $(OBJ)/base/ErrorHandling.o $(OBJ)/base/FileParser.o $(OBJ)/base/StringUtil.o $(OBJ)/util/mutil.o $(OBJ)/visual/3DStats.o $(OBJ)/visual/Color.o $(OBJ)/visual/Eps.o
+	$(BIN)/checkLock $(BIN)/$@
+	$(CPLUSPLUS) $(LINK_OPTIONS) -o $(BIN)/$@  $(OBJ)/visual/3DStats.o -L. $(LINK_LIBS) -l_3DStats_temp
+	/bin/rm lib_3DStats_temp.a
+Bounce:  checkLock
+Bounce:  base/ErrorHandling.o base/FileParser.o base/StringUtil.o util/mutil.o visual/Bounce.o visual/Color.o visual/Eps.o
+	/bin/rm -f lib_Bounce_temp.a
+	ar -qc lib_Bounce_temp.a $(OBJ)/base/ErrorHandling.o $(OBJ)/base/FileParser.o $(OBJ)/base/StringUtil.o $(OBJ)/util/mutil.o $(OBJ)/visual/Bounce.o $(OBJ)/visual/Color.o $(OBJ)/visual/Eps.o
+	$(BIN)/checkLock $(BIN)/$@
+	$(CPLUSPLUS) $(LINK_OPTIONS) -o $(BIN)/$@  $(OBJ)/visual/Bounce.o -L. $(LINK_LIBS) -l_Bounce_temp
+	/bin/rm lib_Bounce_temp.a
+DrawCompounds:  checkLock
+DrawCompounds:  base/ErrorHandling.o base/FileParser.o base/StringUtil.o util/mutil.o visual/Color.o visual/DrawCompounds.o visual/Eps.o
+	/bin/rm -f lib_DrawCompounds_temp.a
+	ar -qc lib_DrawCompounds_temp.a $(OBJ)/base/ErrorHandling.o $(OBJ)/base/FileParser.o $(OBJ)/base/StringUtil.o $(OBJ)/util/mutil.o $(OBJ)/visual/Color.o $(OBJ)/visual/DrawCompounds.o $(OBJ)/visual/Eps.o
+	$(BIN)/checkLock $(BIN)/$@
+	$(CPLUSPLUS) $(LINK_OPTIONS) -o $(BIN)/$@  $(OBJ)/visual/DrawCompounds.o -L. $(LINK_LIBS) -l_DrawCompounds_temp
+	/bin/rm lib_DrawCompounds_temp.a
+FastaByLength:  checkLock
+FastaByLength:  base/ErrorHandling.o base/FileParser.o base/StringUtil.o src/AlignmentBlock.o src/Coordinate.o src/DNAVector.o tools/FastaByLength.o util/mutil.o
+	/bin/rm -f lib_FastaByLength_temp.a
+	ar -qc lib_FastaByLength_temp.a $(OBJ)/base/ErrorHandling.o $(OBJ)/base/FileParser.o $(OBJ)/base/StringUtil.o $(OBJ)/src/AlignmentBlock.o $(OBJ)/src/Coordinate.o $(OBJ)/src/DNAVector.o $(OBJ)/tools/FastaByLength.o $(OBJ)/util/mutil.o
+	$(BIN)/checkLock $(BIN)/$@
+	$(CPLUSPLUS) $(LINK_OPTIONS) -o $(BIN)/$@  $(OBJ)/tools/FastaByLength.o -L. $(LINK_LIBS) -l_FastaByLength_temp
+	/bin/rm lib_FastaByLength_temp.a
+FastaN50:  checkLock
+FastaN50:  base/ErrorHandling.o base/FileParser.o base/StringUtil.o src/AlignmentBlock.o src/Coordinate.o src/DNAVector.o tools/FastaN50.o util/mutil.o
+	/bin/rm -f lib_FastaN50_temp.a
+	ar -qc lib_FastaN50_temp.a $(OBJ)/base/ErrorHandling.o $(OBJ)/base/FileParser.o $(OBJ)/base/StringUtil.o $(OBJ)/src/AlignmentBlock.o $(OBJ)/src/Coordinate.o $(OBJ)/src/DNAVector.o $(OBJ)/tools/FastaN50.o $(OBJ)/util/mutil.o
+	$(BIN)/checkLock $(BIN)/$@
+	$(CPLUSPLUS) $(LINK_OPTIONS) -o $(BIN)/$@  $(OBJ)/tools/FastaN50.o -L. $(LINK_LIBS) -l_FastaN50_temp
+	/bin/rm lib_FastaN50_temp.a
+FastaSizes:  checkLock
+FastaSizes:  base/ErrorHandling.o base/FileParser.o base/StringUtil.o src/AlignmentBlock.o src/Coordinate.o src/DNAVector.o tools/FastaSizes.o util/mutil.o
+	/bin/rm -f lib_FastaSizes_temp.a
+	ar -qc lib_FastaSizes_temp.a $(OBJ)/base/ErrorHandling.o $(OBJ)/base/FileParser.o $(OBJ)/base/StringUtil.o $(OBJ)/src/AlignmentBlock.o $(OBJ)/src/Coordinate.o $(OBJ)/src/DNAVector.o $(OBJ)/tools/FastaSizes.o $(OBJ)/util/mutil.o
+	$(BIN)/checkLock $(BIN)/$@
+	$(CPLUSPLUS) $(LINK_OPTIONS) -o $(BIN)/$@  $(OBJ)/tools/FastaSizes.o -L. $(LINK_LIBS) -l_FastaSizes_temp
+	/bin/rm lib_FastaSizes_temp.a
+FastaToProteins:  checkLock
+FastaToProteins:  base/ErrorHandling.o base/FileParser.o base/StringUtil.o src/AlignmentBlock.o src/Coordinate.o src/DNAVector.o tools/FastaToProteins.o util/mutil.o
+	/bin/rm -f lib_FastaToProteins_temp.a
+	ar -qc lib_FastaToProteins_temp.a $(OBJ)/base/ErrorHandling.o $(OBJ)/base/FileParser.o $(OBJ)/base/StringUtil.o $(OBJ)/src/AlignmentBlock.o $(OBJ)/src/Coordinate.o $(OBJ)/src/DNAVector.o $(OBJ)/tools/FastaToProteins.o $(OBJ)/util/mutil.o
+	$(BIN)/checkLock $(BIN)/$@
+	$(CPLUSPLUS) $(LINK_OPTIONS) -o $(BIN)/$@  $(OBJ)/tools/FastaToProteins.o -L. $(LINK_LIBS) -l_FastaToProteins_temp
+	/bin/rm lib_FastaToProteins_temp.a
+FilterBlat:  checkLock
+FilterBlat:  base/ErrorHandling.o base/FileParser.o base/StringUtil.o util/FilterBlat.o util/mutil.o
+	/bin/rm -f lib_FilterBlat_temp.a
+	ar -qc lib_FilterBlat_temp.a $(OBJ)/base/ErrorHandling.o $(OBJ)/base/FileParser.o $(OBJ)/base/StringUtil.o $(OBJ)/util/FilterBlat.o $(OBJ)/util/mutil.o
+	$(BIN)/checkLock $(BIN)/$@
+	$(CPLUSPLUS) $(LINK_OPTIONS) -o $(BIN)/$@  $(OBJ)/util/FilterBlat.o -L. $(LINK_LIBS) -l_FilterBlat_temp
+	/bin/rm lib_FilterBlat_temp.a
+FindORFs:  checkLock
+FindORFs:  base/ErrorHandling.o base/FileParser.o base/StringUtil.o src/AlignmentBlock.o src/Coordinate.o src/DNAVector.o tools/FindORFs.o util/mutil.o
+	/bin/rm -f lib_FindORFs_temp.a
+	ar -qc lib_FindORFs_temp.a $(OBJ)/base/ErrorHandling.o $(OBJ)/base/FileParser.o $(OBJ)/base/StringUtil.o $(OBJ)/src/AlignmentBlock.o $(OBJ)/src/Coordinate.o $(OBJ)/src/DNAVector.o $(OBJ)/tools/FindORFs.o $(OBJ)/util/mutil.o
+	$(BIN)/checkLock $(BIN)/$@
+	$(CPLUSPLUS) $(LINK_OPTIONS) -o $(BIN)/$@  $(OBJ)/tools/FindORFs.o -L. $(LINK_LIBS) -l_FindORFs_temp
+	/bin/rm lib_FindORFs_temp.a
+FishersExcactTest:  checkLock
+FishersExcactTest:  base/ErrorHandling.o base/FileParser.o base/StringUtil.o math/FishersExcactTest.o util/mutil.o
+	/bin/rm -f lib_FishersExcactTest_temp.a
+	ar -qc lib_FishersExcactTest_temp.a $(OBJ)/base/ErrorHandling.o $(OBJ)/base/FileParser.o $(OBJ)/base/StringUtil.o $(OBJ)/math/FishersExcactTest.o $(OBJ)/util/mutil.o
+	$(BIN)/checkLock $(BIN)/$@
+	$(CPLUSPLUS) $(LINK_OPTIONS) -o $(BIN)/$@  $(OBJ)/math/FishersExcactTest.o -L. $(LINK_LIBS) -l_FishersExcactTest_temp
+	/bin/rm lib_FishersExcactTest_temp.a
+GetColumns:  checkLock
+GetColumns:  base/ErrorHandling.o base/FileParser.o base/StringUtil.o tools/GetColumns.o util/mutil.o
+	/bin/rm -f lib_GetColumns_temp.a
+	ar -qc lib_GetColumns_temp.a $(OBJ)/base/ErrorHandling.o $(OBJ)/base/FileParser.o $(OBJ)/base/StringUtil.o $(OBJ)/tools/GetColumns.o $(OBJ)/util/mutil.o
+	$(BIN)/checkLock $(BIN)/$@
+	$(CPLUSPLUS) $(LINK_OPTIONS) -o $(BIN)/$@  $(OBJ)/tools/GetColumns.o -L. $(LINK_LIBS) -l_GetColumns_temp
+	/bin/rm lib_GetColumns_temp.a
+HeatMaps:  checkLock
+HeatMaps:  base/ErrorHandling.o base/FileParser.o base/StringUtil.o util/mutil.o visual/Color.o visual/Eps.o visual/HeatMaps.o
+	/bin/rm -f lib_HeatMaps_temp.a
+	ar -qc lib_HeatMaps_temp.a $(OBJ)/base/ErrorHandling.o $(OBJ)/base/FileParser.o $(OBJ)/base/StringUtil.o $(OBJ)/util/mutil.o $(OBJ)/visual/Color.o $(OBJ)/visual/Eps.o $(OBJ)/visual/HeatMaps.o
+	$(BIN)/checkLock $(BIN)/$@
+	$(CPLUSPLUS) $(LINK_OPTIONS) -o $(BIN)/$@  $(OBJ)/visual/HeatMaps.o -L. $(LINK_LIBS) -l_HeatMaps_temp
+	/bin/rm lib_HeatMaps_temp.a
+KillProcesses:  checkLock
+KillProcesses:  util/KillProcesses.o util/mutil.o
+	/bin/rm -f lib_KillProcesses_temp.a
+	ar -qc lib_KillProcesses_temp.a $(OBJ)/util/KillProcesses.o $(OBJ)/util/mutil.o
+	$(BIN)/checkLock $(BIN)/$@
+	$(CPLUSPLUS) $(LINK_OPTIONS) -o $(BIN)/$@  $(OBJ)/util/KillProcesses.o -L. $(LINK_LIBS) -l_KillProcesses_temp
+	/bin/rm lib_KillProcesses_temp.a
+MakePieCharts:  checkLock
+MakePieCharts:  base/ErrorHandling.o base/FileParser.o base/StringUtil.o util/mutil.o visual/Color.o visual/Eps.o visual/MakePieCharts.o
+	/bin/rm -f lib_MakePieCharts_temp.a
+	ar -qc lib_MakePieCharts_temp.a $(OBJ)/base/ErrorHandling.o $(OBJ)/base/FileParser.o $(OBJ)/base/StringUtil.o $(OBJ)/util/mutil.o $(OBJ)/visual/Color.o $(OBJ)/visual/Eps.o $(OBJ)/visual/MakePieCharts.o
+	$(BIN)/checkLock $(BIN)/$@
+	$(CPLUSPLUS) $(LINK_OPTIONS) -o $(BIN)/$@  $(OBJ)/visual/MakePieCharts.o -L. $(LINK_LIBS) -l_MakePieCharts_temp
+	/bin/rm lib_MakePieCharts_temp.a
+PearsonCorr:  checkLock
+PearsonCorr:  base/ErrorHandling.o base/FileParser.o base/StringUtil.o math/PearsonCorr.o util/mutil.o
+	/bin/rm -f lib_PearsonCorr_temp.a
+	ar -qc lib_PearsonCorr_temp.a $(OBJ)/base/ErrorHandling.o $(OBJ)/base/FileParser.o $(OBJ)/base/StringUtil.o $(OBJ)/math/PearsonCorr.o $(OBJ)/util/mutil.o
+	$(BIN)/checkLock $(BIN)/$@
+	$(CPLUSPLUS) $(LINK_OPTIONS) -o $(BIN)/$@  $(OBJ)/math/PearsonCorr.o -L. $(LINK_LIBS) -l_PearsonCorr_temp
+	/bin/rm lib_PearsonCorr_temp.a
+ScatterPlot:  checkLock
+ScatterPlot:  base/ErrorHandling.o base/FileParser.o base/StringUtil.o util/mutil.o visual/Color.o visual/Eps.o visual/ScatterPlot.o
+	/bin/rm -f lib_ScatterPlot_temp.a
+	ar -qc lib_ScatterPlot_temp.a $(OBJ)/base/ErrorHandling.o $(OBJ)/base/FileParser.o $(OBJ)/base/StringUtil.o $(OBJ)/util/mutil.o $(OBJ)/visual/Color.o $(OBJ)/visual/Eps.o $(OBJ)/visual/ScatterPlot.o
+	$(BIN)/checkLock $(BIN)/$@
+	$(CPLUSPLUS) $(LINK_OPTIONS) -o $(BIN)/$@  $(OBJ)/visual/ScatterPlot.o -L. $(LINK_LIBS) -l_ScatterPlot_temp
+	/bin/rm lib_ScatterPlot_temp.a
+ShowColorScale:  checkLock
+ShowColorScale:  base/ErrorHandling.o base/FileParser.o base/StringUtil.o util/mutil.o visual/Color.o visual/Eps.o visual/ShowColorScale.o
+	/bin/rm -f lib_ShowColorScale_temp.a
+	ar -qc lib_ShowColorScale_temp.a $(OBJ)/base/ErrorHandling.o $(OBJ)/base/FileParser.o $(OBJ)/base/StringUtil.o $(OBJ)/util/mutil.o $(OBJ)/visual/Color.o $(OBJ)/visual/Eps.o $(OBJ)/visual/ShowColorScale.o
+	$(BIN)/checkLock $(BIN)/$@
+	$(CPLUSPLUS) $(LINK_OPTIONS) -o $(BIN)/$@  $(OBJ)/visual/ShowColorScale.o -L. $(LINK_LIBS) -l_ShowColorScale_temp
+	/bin/rm lib_ShowColorScale_temp.a
+SpearmanCorr:  checkLock
+SpearmanCorr:  base/ErrorHandling.o base/FileParser.o base/StringUtil.o math/SpearmanCorr.o util/mutil.o
+	/bin/rm -f lib_SpearmanCorr_temp.a
+	ar -qc lib_SpearmanCorr_temp.a $(OBJ)/base/ErrorHandling.o $(OBJ)/base/FileParser.o $(OBJ)/base/StringUtil.o $(OBJ)/math/SpearmanCorr.o $(OBJ)/util/mutil.o
+	$(BIN)/checkLock $(BIN)/$@
+	$(CPLUSPLUS) $(LINK_OPTIONS) -o $(BIN)/$@  $(OBJ)/math/SpearmanCorr.o -L. $(LINK_LIBS) -l_SpearmanCorr_temp
+	/bin/rm lib_SpearmanCorr_temp.a
+SplitFile:  checkLock
+SplitFile:  base/ErrorHandling.o base/FileParser.o base/StringUtil.o util/SplitFile.o util/mutil.o
+	/bin/rm -f lib_SplitFile_temp.a
+	ar -qc lib_SplitFile_temp.a $(OBJ)/base/ErrorHandling.o $(OBJ)/base/FileParser.o $(OBJ)/base/StringUtil.o $(OBJ)/util/SplitFile.o $(OBJ)/util/mutil.o
+	$(BIN)/checkLock $(BIN)/$@
+	$(CPLUSPLUS) $(LINK_OPTIONS) -o $(BIN)/$@  $(OBJ)/util/SplitFile.o -L. $(LINK_LIBS) -l_SplitFile_temp
+	/bin/rm lib_SplitFile_temp.a
+SplitFileChunk:  checkLock
+SplitFileChunk:  base/ErrorHandling.o base/FileParser.o base/StringUtil.o util/SplitFileChunk.o util/mutil.o
+	/bin/rm -f lib_SplitFileChunk_temp.a
+	ar -qc lib_SplitFileChunk_temp.a $(OBJ)/base/ErrorHandling.o $(OBJ)/base/FileParser.o $(OBJ)/base/StringUtil.o $(OBJ)/util/SplitFileChunk.o $(OBJ)/util/mutil.o
+	$(BIN)/checkLock $(BIN)/$@
+	$(CPLUSPLUS) $(LINK_OPTIONS) -o $(BIN)/$@  $(OBJ)/util/SplitFileChunk.o -L. $(LINK_LIBS) -l_SplitFileChunk_temp
+	/bin/rm lib_SplitFileChunk_temp.a
+TestDLN:  checkLock
+TestDLN:  base/ErrorHandling.o base/FileParser.o base/StringUtil.o ml/DLNet.o ml/TestDLN.o util/mutil.o
+	/bin/rm -f lib_TestDLN_temp.a
+	ar -qc lib_TestDLN_temp.a $(OBJ)/base/ErrorHandling.o $(OBJ)/base/FileParser.o $(OBJ)/base/StringUtil.o $(OBJ)/ml/DLNet.o $(OBJ)/ml/TestDLN.o $(OBJ)/util/mutil.o
+	$(BIN)/checkLock $(BIN)/$@
+	$(CPLUSPLUS) $(LINK_OPTIONS) -o $(BIN)/$@  $(OBJ)/ml/TestDLN.o -L. $(LINK_LIBS) -l_TestDLN_temp
+	/bin/rm lib_TestDLN_temp.a
+TrainDLN:  checkLock
+TrainDLN:  base/ErrorHandling.o base/FileParser.o base/StringUtil.o ml/DLNet.o ml/TrainDLN.o util/mutil.o
+	/bin/rm -f lib_TrainDLN_temp.a
+	ar -qc lib_TrainDLN_temp.a $(OBJ)/base/ErrorHandling.o $(OBJ)/base/FileParser.o $(OBJ)/base/StringUtil.o $(OBJ)/ml/DLNet.o $(OBJ)/ml/TrainDLN.o $(OBJ)/util/mutil.o
+	$(BIN)/checkLock $(BIN)/$@
+	$(CPLUSPLUS) $(LINK_OPTIONS) -o $(BIN)/$@  $(OBJ)/ml/TrainDLN.o -L. $(LINK_LIBS) -l_TrainDLN_temp
+	/bin/rm lib_TrainDLN_temp.a
+Unixify:  checkLock
+Unixify:  base/ErrorHandling.o base/FileParser.o base/StringUtil.o util/Unixify.o util/mutil.o
+	/bin/rm -f lib_Unixify_temp.a
+	ar -qc lib_Unixify_temp.a $(OBJ)/base/ErrorHandling.o $(OBJ)/base/FileParser.o $(OBJ)/base/StringUtil.o $(OBJ)/util/Unixify.o $(OBJ)/util/mutil.o
+	$(BIN)/checkLock $(BIN)/$@
+	$(CPLUSPLUS) $(LINK_OPTIONS) -o $(BIN)/$@  $(OBJ)/util/Unixify.o -L. $(LINK_LIBS) -l_Unixify_temp
+	/bin/rm lib_Unixify_temp.a
+
+# Target lists
+
+OBJECTS = \
+  base/ErrorHandling.o\
+  base/FileParser.o\
+  base/StreamParser.o\
+  base/StringUtil.o\
+  base/ThreadHandler.o\
+  math/FishersExcactTest.o\
+  math/PearsonCorr.o\
+  math/SpearmanCorr.o\
+  math/SquareCorr.o\
+  ml/DLNet.o\
+  ml/NNet.o\
+  ml/TestDLN.o\
+  ml/TrainDLN.o\
+  src/AlignmentBlock.o\
+  src/CodonTranslate.o\
+  src/Coordinate.o\
+  src/DNAVector.o\
+  src/SlideSearch.o\
+  tools/FastaByLength.o\
+  tools/FastaN50.o\
+  tools/FastaSizes.o\
+  tools/FastaToProteins.o\
+  tools/FindORFs.o\
+  tools/GetColumns.o\
+  util/FilterBlat.o\
+  util/FindProcess.o\
+  util/KillProcesses.o\
+  util/SComm.o\
+  util/SplitFile.o\
+  util/SplitFileChunk.o\
+  util/SyncConn.o\
+  util/SysTime.o\
+  util/Unixify.o\
+  util/mutil.o\
+  visual/3DStats.o\
+  visual/Bounce.o\
+  visual/Color.o\
+  visual/DrawCompounds.o\
+  visual/Eps.o\
+  visual/HeatMaps.o\
+  visual/MakePieCharts.o\
+  visual/ScatterPlot.o\
+  visual/ShowColorScale.o\
+
+nolink: $(OBJECTS)
+
+EXECUTABLES = \
+  3DStats\
+  Bounce\
+  DrawCompounds\
+  FastaByLength\
+  FastaN50\
+  FastaSizes\
+  FastaToProteins\
+  FilterBlat\
+  FindORFs\
+  FishersExcactTest\
+  GetColumns\
+  HeatMaps\
+  KillProcesses\
+  MakePieCharts\
+  PearsonCorr\
+  ScatterPlot\
+  ShowColorScale\
+  SpearmanCorr\
+  SplitFile\
+  SplitFileChunk\
+  TestDLN\
+  TrainDLN\
+  Unixify\
+
+everything: $(EXECUTABLES)
+
+.PHONY: math
+math: \
+  FishersExcactTest\
+  PearsonCorr\
+  SpearmanCorr\
+
+.PHONY: ml
+ml: \
+  TestDLN\
+  TrainDLN\
+
+.PHONY: tools
+tools: \
+  FastaByLength\
+  FastaN50\
+  FastaSizes\
+  FastaToProteins\
+  FindORFs\
+  GetColumns\
+
+.PHONY: util
+util: \
+  FilterBlat\
+  KillProcesses\
+  SplitFile\
+  SplitFileChunk\
+  Unixify\
+
+.PHONY: visual
+visual: \
+  3DStats\
+  Bounce\
+  DrawCompounds\
+  HeatMaps\
+  MakePieCharts\
+  ScatterPlot\
+  ShowColorScale\
+
