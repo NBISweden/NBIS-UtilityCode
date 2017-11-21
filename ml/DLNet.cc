@@ -202,13 +202,16 @@ double DLNet::Evaluate(const svec<string> & labels, bool bQuiet)
 	idxT = i;
       }
     }
+    string ll = "<nolabel>";
+    if (labels.isize() > 0)
+      ll = labels[l];
     if (idxT == idxG) {
       if (!bQuiet) 
-	cout << "test " << labels[l] <<  " -> correct " << m_data[l].Out()[0] << endl;
+	cout << "test " << ll <<  " -> correct " << m_data[l].Out()[0] << endl;
       bestHit += 1.;
     } else {
       if (!bQuiet) 
-	cout << "test " << labels[l] << " -> false " << m_data[l].Out()[0] << endl;
+	cout << "test " << ll << " -> false " << m_data[l].Out()[0] << endl;
     }
   }
 
