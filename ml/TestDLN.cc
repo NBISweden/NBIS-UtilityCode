@@ -59,11 +59,9 @@ int main( int argc, char** argv )
 
   s.In()[0] = 1.;
   s.In()[1] = 1.;
-  s.Out()[0] = 0.;
+  s.Out()[0] = 0.;  
   nn.AddInput(s);
   
-
-
   
   for (i=0; i<2500; i++) {
     double err = nn.TrainOne(0.5);

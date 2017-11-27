@@ -40,6 +40,7 @@ double DLNet::Train(int iter, double move)
   int i;
   double err = -1;
   for (i=0; i<iter; i++) {
+    //cout << "iter " << i << endl;
     err = TrainOne(move);
   }
   return err;
@@ -136,13 +137,13 @@ double DLNet::TrainOne(double move)
   return err;
 }
 
-double DLNet::Evaluate(bool bQuiet)
+double DLNet::Evaluate()
 {
   svec<string> labels;
-  return Evaluate(labels, bQuiet);
+  return Evaluate(labels);
 }
 
-double DLNet::Evaluate(const svec<string> & labels, bool bQuiet)
+double DLNet::Evaluate(const svec<string> & labels)
 {
   int i, j, l;
   double error = 0.;
@@ -202,16 +203,11 @@ double DLNet::Evaluate(const svec<string> & labels, bool bQuiet)
 	idxT = i;
       }
     }
-    string ll = "<nolabel>";
-    if (labels.isize() > 0)
-      ll = labels[l];
     if (idxT == idxG) {
-      if (!bQuiet) 
-	cout << "test " << ll <<  " -> correct " << m_data[l].Out()[0] << endl;
+      cout << " -> correct" << endl;
       bestHit += 1.;
     } else {
-      if (!bQuiet) 
-	cout << "test " << ll << " -> false " << m_data[l].Out()[0] << endl;
+      cout << " -> false" << endl;
     }
   }
 

@@ -13,6 +13,7 @@ math/SpearmanCorr.o: $(SRC)/base/CommandLineParser.h $(SRC)/base/ErrorHandling.h
 math/SquareCorr.o: $(SRC)/base/ErrorHandling.h $(SRC)/base/SVector.h $(SRC)/math/SquareCorr.cc $(SRC)/math/SquareCorr.h 
 ml/DLNet.o: $(SRC)/base/ErrorHandling.h $(SRC)/base/RandomStuff.h $(SRC)/base/SVector.h $(SRC)/ml/DLNet.cc $(SRC)/ml/DLNet.h 
 ml/NNet.o: $(SRC)/base/ErrorHandling.h $(SRC)/base/RandomStuff.h $(SRC)/base/SVector.h $(SRC)/ml/NNet.cc $(SRC)/ml/NNet.h $(SRC)/npc/NPCIO.h $(SRC)/util/mutil.h 
+ml/RunDLNOneOut.o: $(SRC)/base/CommandLineParser.h $(SRC)/base/ErrorHandling.h $(SRC)/base/FileParser.h $(SRC)/base/RandomStuff.h $(SRC)/base/SVector.h $(SRC)/base/StringUtil.h $(SRC)/ml/DLNet.h $(SRC)/ml/RunDLNOneOut.cc $(SRC)/util/mutil.h 
 ml/TestDLN.o: $(SRC)/base/CommandLineParser.h $(SRC)/base/ErrorHandling.h $(SRC)/base/FileParser.h $(SRC)/base/RandomStuff.h $(SRC)/base/SVector.h $(SRC)/base/StringUtil.h $(SRC)/ml/DLNet.h $(SRC)/ml/TestDLN.cc $(SRC)/util/mutil.h 
 ml/TrainDLN.o: $(SRC)/base/CommandLineParser.h $(SRC)/base/ErrorHandling.h $(SRC)/base/FileParser.h $(SRC)/base/RandomStuff.h $(SRC)/base/SVector.h $(SRC)/base/StringUtil.h $(SRC)/ml/DLNet.h $(SRC)/ml/TrainDLN.cc $(SRC)/util/mutil.h 
 src/AlignmentBlock.o: $(SRC)/base/ErrorHandling.h $(SRC)/base/FileParser.h $(SRC)/base/SVector.h $(SRC)/src/AlignmentBlock.cc $(SRC)/src/AlignmentBlock.h $(SRC)/util/mutil.h 
@@ -20,6 +21,7 @@ src/CodonTranslate.o: $(SRC)/base/ErrorHandling.h $(SRC)/base/SVector.h $(SRC)/e
 src/Coordinate.o: $(SRC)/base/ErrorHandling.h $(SRC)/base/FileParser.h $(SRC)/base/SVector.h $(SRC)/src/AlignmentBlock.h $(SRC)/src/Coordinate.cc $(SRC)/src/Coordinate.h $(SRC)/util/mutil.h 
 src/DNAVector.o: $(SRC)/base/ErrorHandling.h $(SRC)/base/FileParser.h $(SRC)/base/SVector.h $(SRC)/extern/logger/log.h $(SRC)/src/AlignmentBlock.h $(SRC)/src/Coordinate.h $(SRC)/src/DNAVector.cc $(SRC)/src/DNAVector.h $(SRC)/util/mutil.h 
 src/SlideSearch.o: $(SRC)/base/ErrorHandling.h $(SRC)/base/SVector.h $(SRC)/src/DNAVector.h $(SRC)/src/SlideSearch.cc $(SRC)/src/SlideSearch.h 
+test/TestThreading.o: $(SRC)/base/CommandLineParser.h $(SRC)/base/ErrorHandling.h $(SRC)/base/FileParser.h $(SRC)/base/SVector.h $(SRC)/base/StringUtil.h $(SRC)/test/TestThreading.cc $(SRC)/util/mutil.h 
 tools/FastaByLength.o: $(SRC)/base/CommandLineParser.h $(SRC)/base/ErrorHandling.h $(SRC)/base/FileParser.h $(SRC)/base/SVector.h $(SRC)/base/StringUtil.h $(SRC)/src/DNAVector.h $(SRC)/tools/FastaByLength.cc $(SRC)/util/mutil.h 
 tools/FastaN50.o: $(SRC)/base/CommandLineParser.h $(SRC)/base/ErrorHandling.h $(SRC)/base/FileParser.h $(SRC)/base/SVector.h $(SRC)/base/StringUtil.h $(SRC)/src/DNAVector.h $(SRC)/tools/FastaN50.cc $(SRC)/util/mutil.h 
 tools/FastaSizes.o: $(SRC)/base/CommandLineParser.h $(SRC)/base/ErrorHandling.h $(SRC)/base/FileParser.h $(SRC)/base/SVector.h $(SRC)/base/StringUtil.h $(SRC)/src/DNAVector.h $(SRC)/tools/FastaSizes.cc $(SRC)/util/mutil.h 
@@ -150,6 +152,13 @@ PearsonCorr:  base/ErrorHandling.o base/FileParser.o base/StringUtil.o math/Pear
 	$(BIN)/checkLock $(BIN)/$@
 	$(CPLUSPLUS) $(LINK_OPTIONS) -o $(BIN)/$@  $(OBJ)/math/PearsonCorr.o -L. $(LINK_LIBS) -l_PearsonCorr_temp
 	/bin/rm lib_PearsonCorr_temp.a
+RunDLNOneOut:  checkLock
+RunDLNOneOut:  base/ErrorHandling.o base/FileParser.o base/StringUtil.o ml/DLNet.o ml/RunDLNOneOut.o util/mutil.o
+	/bin/rm -f lib_RunDLNOneOut_temp.a
+	ar -qc lib_RunDLNOneOut_temp.a $(OBJ)/base/ErrorHandling.o $(OBJ)/base/FileParser.o $(OBJ)/base/StringUtil.o $(OBJ)/ml/DLNet.o $(OBJ)/ml/RunDLNOneOut.o $(OBJ)/util/mutil.o
+	$(BIN)/checkLock $(BIN)/$@
+	$(CPLUSPLUS) $(LINK_OPTIONS) -o $(BIN)/$@  $(OBJ)/ml/RunDLNOneOut.o -L. $(LINK_LIBS) -l_RunDLNOneOut_temp
+	/bin/rm lib_RunDLNOneOut_temp.a
 ScatterPlot:  checkLock
 ScatterPlot:  base/ErrorHandling.o base/FileParser.o base/StringUtil.o util/mutil.o visual/Color.o visual/Eps.o visual/ScatterPlot.o
 	/bin/rm -f lib_ScatterPlot_temp.a
@@ -192,6 +201,13 @@ TestDLN:  base/ErrorHandling.o base/FileParser.o base/StringUtil.o ml/DLNet.o ml
 	$(BIN)/checkLock $(BIN)/$@
 	$(CPLUSPLUS) $(LINK_OPTIONS) -o $(BIN)/$@  $(OBJ)/ml/TestDLN.o -L. $(LINK_LIBS) -l_TestDLN_temp
 	/bin/rm lib_TestDLN_temp.a
+TestThreading:  checkLock
+TestThreading:  base/ErrorHandling.o base/FileParser.o base/StringUtil.o test/TestThreading.o util/mutil.o
+	/bin/rm -f lib_TestThreading_temp.a
+	ar -qc lib_TestThreading_temp.a $(OBJ)/base/ErrorHandling.o $(OBJ)/base/FileParser.o $(OBJ)/base/StringUtil.o $(OBJ)/test/TestThreading.o $(OBJ)/util/mutil.o
+	$(BIN)/checkLock $(BIN)/$@
+	$(CPLUSPLUS) $(LINK_OPTIONS) -o $(BIN)/$@  $(OBJ)/test/TestThreading.o -L. $(LINK_LIBS) -l_TestThreading_temp
+	/bin/rm lib_TestThreading_temp.a
 TrainDLN:  checkLock
 TrainDLN:  base/ErrorHandling.o base/FileParser.o base/StringUtil.o ml/DLNet.o ml/TrainDLN.o util/mutil.o
 	/bin/rm -f lib_TrainDLN_temp.a
@@ -221,6 +237,7 @@ OBJECTS = \
   math/SquareCorr.o\
   ml/DLNet.o\
   ml/NNet.o\
+  ml/RunDLNOneOut.o\
   ml/TestDLN.o\
   ml/TrainDLN.o\
   src/AlignmentBlock.o\
@@ -228,6 +245,7 @@ OBJECTS = \
   src/Coordinate.o\
   src/DNAVector.o\
   src/SlideSearch.o\
+  test/TestThreading.o\
   tools/FastaByLength.o\
   tools/FastaN50.o\
   tools/FastaSizes.o\
@@ -272,12 +290,14 @@ EXECUTABLES = \
   KillProcesses\
   MakePieCharts\
   PearsonCorr\
+  RunDLNOneOut\
   ScatterPlot\
   ShowColorScale\
   SpearmanCorr\
   SplitFile\
   SplitFileChunk\
   TestDLN\
+  TestThreading\
   TrainDLN\
   Unixify\
 
@@ -291,8 +311,13 @@ math: \
 
 .PHONY: ml
 ml: \
+  RunDLNOneOut\
   TestDLN\
   TrainDLN\
+
+.PHONY: test
+test: \
+  TestThreading\
 
 .PHONY: tools
 tools: \

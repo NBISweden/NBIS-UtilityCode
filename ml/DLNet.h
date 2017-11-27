@@ -63,13 +63,10 @@ class DLIOSingle
   svec<double> & Out() {return m_out;}
   const svec<double> & Out() const {return m_out;}
 
-  const string & Label() const {return m_label;}
-  string & Label() {return m_label;}
   
  private:
   svec<double> m_in;
   svec<double> m_out;
-  string m_label;
 };
 
 
@@ -96,14 +93,17 @@ class DLNet
   
   double TrainOne(double move);
 
-  double Evaluate(const svec<string> & labels, bool bQuiet = false);
-  double Evaluate(bool bQuiet = false);
+  double Evaluate(const svec<string> & labels);
+  double Evaluate();
 
   void ResetInputs() {
     for (int i=0; i<m_neurons.isize(); i++)
       m_neurons[i].ResetInput();
   }
-  
+
+  int GetOutStart() const {return m_outStart;}
+  int Neurons() const {return m_neurons.isize();}
+  const DLNeuron & GetNeuron(int i) const {return m_neurons[i];}
  private:
   double OneRun();
   
