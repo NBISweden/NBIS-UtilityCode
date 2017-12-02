@@ -16,11 +16,14 @@ void DLNet::AddForwardLayer(int n)
   int on = m_outStart;
 
   m_neurons.resize(nn+n);
-  int i, j;
 
- 
+  int i, j;
   
-  
+  for (i=nn; i<nn+n; i++) {
+    m_neurons[i].SetLayer(m_layer);
+  }
+  m_layer++;
+
   for (i=on; i<nn; i++) {
     DLNeuron & from = m_neurons[i];
     for (j=nn; j<nn+n; j++) {
@@ -37,17 +40,23 @@ void DLNet::AddForwardLayer(int n)
 double DLNet::Train(int iter, double move)
 {
   m_errInit = OneRun();
-  int i;
+  int i, j;
   double err = -1;
   for (i=0; i<iter; i++) {
     //cout << "iter " << i << endl;
-    err = TrainOne(move);
+    if (m_byLayer) {
+      for (j=m_layer-1; j>=0; j--) {
+	err = TrainOne(move, j);
+      }
+    } else {
+      err = TrainOne(move);
+    }
   }
   return err;
 }
 
 
-double DLNet::TrainOne(double move)
+double DLNet::TrainOne(double move, int layer)
 {
   double baseErr = OneRun();
 
@@ -69,6 +78,8 @@ double DLNet::TrainOne(double move)
   move = 0.01;
   
   for (i=m_neurons.isize()-1; i>=0; i--) {
+    if (layer >= 0 && m_neurons[i].GetLayer() != layer)
+      continue;
     DLNeuron & n = m_neurons[i];
     for (j=0; j<n.GetConnections(); j++) {
       n.Weight(j) += move*m_adjust;
@@ -89,6 +100,8 @@ double DLNet::TrainOne(double move)
 
 
   for (i=m_neurons.isize()-1; i>=0; i--) {
+    if (layer >= 0 && m_neurons[i].GetLayer() != layer)
+      continue;
     DLNeuron & n = m_neurons[i];
     n.Sigma() += move*m_adjust;
     double de = baseErr-OneRun();    
@@ -103,6 +116,8 @@ double DLNet::TrainOne(double move)
   double m = m_adjust;
   
   for (i=m_neurons.isize()-1; i>=0; i--) {
+    if (layer >= 0 && m_neurons[i].GetLayer() != layer)
+      continue;
     DLNeuron & n = m_neurons[i];
     for (j=0; j<n.GetConnections(); j++) {
       //      if (k == best) {
@@ -120,6 +135,8 @@ double DLNet::TrainOne(double move)
   }
 
   for (i=m_neurons.isize()-1; i>=0; i--) {
+    if (layer >= 0 && m_neurons[i].GetLayer() != layer)
+      continue;
     DLNeuron & n = m_neurons[i];
     n.Sigma() += diff[k]*m;    
     k++;

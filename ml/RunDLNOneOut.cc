@@ -61,6 +61,18 @@ void ReadOutput(svec<DLIOSingle> & data, const string & fileName)
   }
 }
 
+void ReadConf(svec<int> & hidden, const string & fileName)
+{
+  FlatFileParser parser;
+  parser.Open(fileName);
+
+  while (parser.ParseLine()) {
+    if (parser.GetItemCount() == 0)
+      continue;
+    hidden.push_back(parser.AsInt(0));
+  }
+
+}
 
 int main( int argc, char** argv )
 {
@@ -68,27 +80,38 @@ int main( int argc, char** argv )
   commandArg<string> fileCmmd("-i","input file (feed)");
   commandArg<string> outCmmd("-o","output file (truth)");
   commandArg<string> resCmmd("-r","results (guesses)");
+  //commandArg<string> saveCmmd("-s","save the network", "");
   commandArg<int> nCmmd("-n","iterations", 8000);
   commandArg<int> hCmmd("-h","hidden neurons", 2);
+  commandArg<string> hconfCmmd("-hc","hidden neurons config file", "");
+  commandArg<bool> byCmmd("-l","train one layer at a time", false);
   //commandArg<bool> nCmmd("-n","iterations", 8000);
   commandLineParser P(argc,argv);
   P.SetDescription("Run the DLN on matched in/out data and test by leaving one out.");
   P.registerArg(fileCmmd);
   P.registerArg(outCmmd);
   P.registerArg(resCmmd);
-  P.registerArg(nCmmd);
+  //P.registerArg(saveCmmd);
   P.registerArg(hCmmd);
+  P.registerArg(hconfCmmd);
+  P.registerArg(byCmmd);
  
   P.parse();
   
   string fileName = P.GetStringValueFor(fileCmmd);
   string outName = P.GetStringValueFor(outCmmd);
   string resName = P.GetStringValueFor(resCmmd);
+  string confName = P.GetStringValueFor(hconfCmmd);
+  //string saveName = P.GetStringValueFor(saveCmmd);
   int iter = P.GetIntValueFor(nCmmd);
   int hidden = P.GetIntValueFor(hCmmd);
+  bool one = P.GetBoolValueFor(byCmmd);
   
   int i, j;
-  
+
+
+  svec<int> hid;
+  ReadConf(hid, confName);
 
   svec<DLIOSingle> data;
 
@@ -100,6 +123,7 @@ int main( int argc, char** argv )
   for (i=0; i<data.isize(); i++) {
     cout << "Test sample " << i << endl;
     DLNet nn;
+    nn.SetTrainByLayer(one);
     svec<DLIOSingle> train;
     svec<DLIOSingle> test;
 
@@ -111,7 +135,14 @@ int main( int argc, char** argv )
     }
   
     nn.AddForwardLayer(data[0].In().isize());
-    nn.AddForwardLayer(hidden);
+
+    if (hid.isize() > 0) {
+      for (j=0; j<hid.isize(); j++)
+	nn.AddForwardLayer(hid[j]);
+	
+    } else {
+      nn.AddForwardLayer(hidden);
+    }
     nn.AddForwardLayer(data[0].Out().isize());
     
     nn.SupplyInput(train);    

@@ -78,6 +78,12 @@ class DLNet
     m_outStart = 0;
     m_errInit = -1;
     m_adjust = 1.;
+    m_layer = 0;
+    m_byLayer = false;
+  }
+
+  void SetTrainByLayer(bool b) {
+    m_byLayer = b;
   }
 
   void AddForwardLayer(int n);
@@ -91,7 +97,7 @@ class DLNet
 
   double Train(int iter, double move);
   
-  double TrainOne(double move);
+  double TrainOne(double move, int layer = -1);
 
   double Evaluate(const svec<string> & labels);
   double Evaluate();
@@ -112,6 +118,8 @@ class DLNet
   int m_outStart;
   double m_errInit;
   double m_adjust;
+  int m_layer;
+  bool m_byLayer;
 };
 
 
