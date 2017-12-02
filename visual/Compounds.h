@@ -7,9 +7,9 @@
 class Box
 {
  public:
-  Box(double width = 1., const color & color = color(0, 0, 0)) {
+  Box(double width = 1., const color & col = color(0, 0, 0)) {
     m_width = width;
-    m_col = color;
+    m_col = col;
   }
 
   void Draw(ns_whiteboard::whiteboard & board,
@@ -73,9 +73,9 @@ class Arrow
   Arrow(double size_off = 8.,
 	double size_back = 10.,
 	double width = 1., 
-	const color & color = color(0, 0, 0)) {
+	const color & col = color(0, 0, 0)) {
     m_width = width;
-    m_col = color;
+    m_col = col;
     m_size_off = size_off;
     m_size_back = size_back;
   }
