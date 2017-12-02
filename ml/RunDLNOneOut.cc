@@ -113,7 +113,8 @@ int main( int argc, char** argv )
 
 
   svec<int> hid;
-  ReadConf(hid, confName);
+  if (confName != "")
+    ReadConf(hid, confName);
 
   svec<DLIOSingle> data;
 
