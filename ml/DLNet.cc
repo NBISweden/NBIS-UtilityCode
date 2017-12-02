@@ -16,7 +16,8 @@ void DLNet::AddForwardLayer(int n)
   int on = m_outStart;
 
   m_neurons.resize(nn+n);
-
+  m_dropout.resize(nn+n, 0);
+  
   int i, j;
   
   for (i=nn; i<nn+n; i++) {
@@ -44,6 +45,16 @@ double DLNet::Train(int iter, double move)
   double err = -1;
   for (i=0; i<iter; i++) {
     //cout << "iter " << i << endl;
+
+    // Set dropout neurons
+    for (j=0; j<m_dropout.isize(); j++) {
+      m_dropout[j] = 0;
+      if (m_neurons[j].GetLayer() == 0 || m_neurons[j].GetLayer() == m_layer-1)
+	continue;
+      if (RandomFloat(1.) < m_dropRate)
+	m_dropout[j] = 1;
+    }
+
     if (m_byLayer) {
       for (j=m_layer-1; j>=0; j--) {
 	err = TrainOne(move, j);
@@ -79,7 +90,7 @@ double DLNet::TrainOne(double move, int layer)
   
   for (i=m_neurons.isize()-1; i>=0; i--) {
     if (layer >= 0 && m_neurons[i].GetLayer() != layer)
-      continue;
+      continue;    
     DLNeuron & n = m_neurons[i];
     for (j=0; j<n.GetConnections(); j++) {
       n.Weight(j) += move*m_adjust;
@@ -252,6 +263,11 @@ double DLNet::OneRun()
     for (i=0; i<m_neurons.isize(); i++) {
       DLNeuron & from = m_neurons[i];
       from.ComputeOutput();
+
+      // Drop this neuron
+      if (m_dropout[i] == 1)
+	continue;
+      
       //cout << "Out: " << from.GetOutput() << endl;
       for (j=0; j<from.GetConnections(); j++) {
 	DLNeuron & to = m_neurons[from.GetConnect(j)];

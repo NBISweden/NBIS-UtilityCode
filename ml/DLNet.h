@@ -80,6 +80,7 @@ class DLNet
     m_adjust = 1.;
     m_layer = 0;
     m_byLayer = false;
+    m_dropRate = 0.;
   }
 
   void SetTrainByLayer(bool b) {
@@ -107,6 +108,10 @@ class DLNet
       m_neurons[i].ResetInput();
   }
 
+  void SetDropOutRate(double v) {
+    m_dropRate = v;
+  }
+  
   int GetOutStart() const {return m_outStart;}
   int Neurons() const {return m_neurons.isize();}
   const DLNeuron & GetNeuron(int i) const {return m_neurons[i];}
@@ -120,6 +125,8 @@ class DLNet
   double m_adjust;
   int m_layer;
   bool m_byLayer;
+  double m_dropRate;
+  svec<int> m_dropout;
 };
 
 

@@ -85,7 +85,7 @@ int main( int argc, char** argv )
   commandArg<int> hCmmd("-h","hidden neurons", 2);
   commandArg<string> hconfCmmd("-hc","hidden neurons config file", "");
   commandArg<bool> byCmmd("-l","train one layer at a time", false);
-  //commandArg<bool> nCmmd("-n","iterations", 8000);
+  commandArg<double> dropCmmd("-d","dropout rate", 0.);
   commandLineParser P(argc,argv);
   P.SetDescription("Run the DLN on matched in/out data and test by leaving one out.");
   P.registerArg(fileCmmd);
@@ -95,7 +95,8 @@ int main( int argc, char** argv )
   P.registerArg(hCmmd);
   P.registerArg(hconfCmmd);
   P.registerArg(byCmmd);
- 
+  P.registerArg(dropCmmd);
+  
   P.parse();
   
   string fileName = P.GetStringValueFor(fileCmmd);
@@ -106,6 +107,7 @@ int main( int argc, char** argv )
   int iter = P.GetIntValueFor(nCmmd);
   int hidden = P.GetIntValueFor(hCmmd);
   bool one = P.GetBoolValueFor(byCmmd);
+  double drop = P.GetDoubleValueFor(dropCmmd);
   
   int i, j;
 
@@ -124,6 +126,9 @@ int main( int argc, char** argv )
     cout << "Test sample " << i << endl;
     DLNet nn;
     nn.SetTrainByLayer(one);
+    nn.SetDropOutRate(drop);
+
+    
     svec<DLIOSingle> train;
     svec<DLIOSingle> test;
 
