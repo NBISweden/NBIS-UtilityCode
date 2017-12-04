@@ -71,6 +71,7 @@ class FlatFileParser : public StringParser
  private:
   CMAsciiReadFileStream m_file;
   string m_line;
+  bool m_fromRedir;
 };
 
 
