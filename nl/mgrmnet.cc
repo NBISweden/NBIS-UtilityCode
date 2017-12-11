@@ -2,14 +2,11 @@
 //=  Copyright (c) 1999-2001 by Manfred G. Grabherr                =//
 //=  All rights reserved.                                          =//
 //=                                                                =//
-//=  Distribution or use of the source code, data or other 		   =//
-//=  information contained herein wihout the author's              =//
-//=  permission is strictly prohibited.                            =//
 //=                                                                =//
-//=  This file and all its contents are confidential.              =//
 //==================================================================//
 
 
+//#define MLIST_BOUNDSCHECK
 
 #include "nl/mgrmnet.h"
 #include "nl/mgrmtok.h"
@@ -272,10 +269,10 @@ bool CMGrammarNetwork::Build(CMPtrStringList & tokens, CMStringDictionary & dict
 
 	newToken += token;
     
-	if (!bOpen &&  token == NONTERM_OPEN
-				//|| token == TAG_OPEN
-				|| token == QUOTE_OPEN
-				|| token == WEIGHT_OPEN ) {
+	if (!bOpen &&  (token == NONTERM_OPEN
+			//|| token == TAG_OPEN
+			|| token == QUOTE_OPEN
+			|| token == WEIGHT_OPEN) ) {
       bOpen = true;
       newToken = "";
 	}

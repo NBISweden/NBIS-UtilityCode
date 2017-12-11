@@ -35,27 +35,27 @@ bool LocalTokenize(CMPtrStringList & result, const CMString & source, char delim
 
   for (int i=0; i<=len; i++) {
     if (pszBuffer[i] == cTagOpen)
-	  bTagFlag = true;
+      bTagFlag = true;
     if (pszBuffer[i] == cTagClose)
-	  bTagFlag = false;
-
-	if (!bTagFlag && (pszBuffer[i] == delimiter || pszBuffer[i] == '\t' || i == len)) {
-	  k = 0;
-	  if (__mccl_strcmp(szTemp, _TMCL("")) != 0 && __mccl_strcmp(szTemp, _TMCL(" ")) != 0) {
-	  	CMString * pNewString = new CMString;
-		*pNewString = szTemp;
-		result.add(pNewString);
+      bTagFlag = false;
+    
+    if (!bTagFlag && (pszBuffer[i] == delimiter || pszBuffer[i] == '\t' || i == len)) {
+      k = 0;
+      if (__mccl_strcmp(szTemp, _TMCL("")) != 0 && __mccl_strcmp(szTemp, _TMCL(" ")) != 0) {
+	CMString * pNewString = new CMString;
+	*pNewString = szTemp;
+	result.add(pNewString);
         __mccl_strcpy(szTemp, _TMCL(""));
-		if (result.length() >= limit)
-		  break;
-	  }
-	} else {
-	  szTemp[k] = pszBuffer[i];
-	  szTemp[k + 1] = 0;
-	  k++;
-	}
+	if (result.length() >= limit)
+	  break;
+      }
+    } else {
+      szTemp[k] = pszBuffer[i];
+      szTemp[k + 1] = 0;
+      k++;
+    }
   }
-
+  
   return true;
 }
 
@@ -126,20 +126,20 @@ bool CMGrammarTokenizer::CheckForToken(CMPtrStringList & result, const CMString 
   const char * pTextPtr = &((const char*)token)[i];
   if (CheckForFirstToken(pTextPtr, checkToken)) {
     //cout << "#1" << endl;
-	if (strcmp(pTemp, "") != 0) {
+    if (strcmp(pTemp, "") != 0) {
       //cout << "#2" << endl;
       CMString * pNewLastElem = new CMString;
-	  *pNewLastElem = pTemp;
+      *pNewLastElem = pTemp;
       pTemp[0] = 0;
-	  result.add(pNewLastElem);
-	}
-
+      result.add(pNewLastElem);
+    }
+    
     //cout << "#3" << endl;
     CMString * pNewElem = new CMString;
     *pNewElem = checkToken;
     result.add(pNewElem);
     i += strlen(checkToken) - 1;
-	return true;
+    return true;
   }
   return false;
 }
@@ -159,80 +159,80 @@ bool CMGrammarTokenizer::CheckAndSeeIfItsAComment(CMPtrStringList & result, cons
   bool bTagFlag = false;
   for (long i=0; i<len; i++) {
     
-	if (CheckForToken(result, token, TAG_OPEN, i, pTemp)) {
+    if (CheckForToken(result, token, TAG_OPEN, i, pTemp)) {
       copyLen = 0;
-	  bTagFlag = true;
-	  continue;
-	}
+      bTagFlag = true;
+      continue;
+    }
     if (CheckForToken(result, token, TAG_CLOSE, i, pTemp)) {
       copyLen = 0;
-	  bTagFlag = false;
-	  continue;
-	}
-
-	if (!bTagFlag) {
+      bTagFlag = false;
+      continue;
+    }
+    
+    if (!bTagFlag) {
       if (CheckForToken(result, token, RULE_OR, i, pTemp)) {
         copyLen = 0;
-	    continue;
-	  } 
+	continue;
+      } 
       if (CheckForToken(result, token, NONTERM_OPEN, i, pTemp)) {
         copyLen = 0;
-	    continue;
-	  } 
+	continue;
+      } 
       if (CheckForToken(result, token, NONTERM_CLOSE, i, pTemp)) {
         copyLen = 0;
-	    continue;
-	  } 
+	continue;
+      } 
       if (CheckForToken(result, token, OPTIONAL_OPEN, i, pTemp)) {
         copyLen = 0;
-	    continue;
-	  } 
+	continue;
+      } 
       if (CheckForToken(result, token, OPTIONAL_CLOSE, i, pTemp)) {
         copyLen = 0;
-	    continue;
-	  } 
+	continue;
+      } 
       if (CheckForToken(result, token, EQUAL, i, pTemp)) {
         copyLen = 0;
-	    continue;
-	  } 
+	continue;
+      } 
       if (CheckForToken(result, token, QUOTE_OPEN, i, pTemp)) {
         copyLen = 0;
-	    continue;
-	  } 
+	continue;
+      } 
       if (CheckForToken(result, token, QUOTE_CLOSE, i, pTemp)) {
         copyLen = 0;
-	    continue;
-	  } 
+	continue;
+      } 
       if (CheckForToken(result, token, RULE_END, i, pTemp)) {
         copyLen = 0;
-	    continue;
-	  } 
+	continue;
+      } 
       if (CheckForToken(result, token, ONE_OR_MORE, i, pTemp)) {
         copyLen = 0;
-	    continue;
-	  } 
+	continue;
+      } 
       if (CheckForToken(result, token, ZERO_OR_MORE, i, pTemp)) {
         copyLen = 0;
-	    continue;
-	  } 
+	continue;
+      } 
       if (CheckForToken(result, token, WEIGHT_OPEN, i, pTemp)) {
         copyLen = 0;
-	    continue;
-	  } 
+	continue;
+      } 
       if (CheckForToken(result, token, WEIGHT_CLOSE, i, pTemp)) {
         copyLen = 0;
-	    continue;
-	  } 
-	  //It's a comment!
+	continue;
+      } 
+      //It's a comment!
       if (CheckForToken(result, token, COMMENT_EOL, i, pTemp)) {
         copyLen = 0;
-	    break;
-	  } 
-	}
-
-	pTemp[copyLen] = ((const char*)token)[i];
-	pTemp[copyLen+1] = 0;
-	copyLen++;
+	break;
+      } 
+    }
+    
+    pTemp[copyLen] = ((const char*)token)[i];
+    pTemp[copyLen+1] = 0;
+    copyLen++;
   }
 
   if (copyLen > 0) {
@@ -253,41 +253,41 @@ bool CMGrammarTokenizer::CheckForImport(CMPtrStringList & imports, const CMStrin
 
 
   if (CheckForFirstToken(line, IMPORT_GRAMMAR)) {
-	long len = strlen(line);
-	long start = strlen(IMPORT_GRAMMAR);
-	CMString theImport;
-	const char * pText = (const char *)line;
-
-	CMString key;
-	CMString temp;
-	bool bFlag = false;
+    long len = strlen(line);
+    long start = strlen(IMPORT_GRAMMAR);
+    CMString theImport;
+    const char * pText = (const char *)line;
+    
+    CMString key;
+    CMString temp;
+    bool bFlag = false;
     for (int i=start; i<len; i++) {
-	  if (pText[i] == INCLUDE_OPEN) {
-	    bFlag = true;
-		continue;
-	  }
-	  if (pText[i] == INCLUDE_CLOSE) {
-		for (i++; i<len; i++) {
-		  if (!(pText[i] == ' ' || pText[i] == ';'))
-			return false;
-		} 
-		break;
-	  }
-	  if (bFlag) {
-		if (pText[i] != ' ') {
-	      theImport += pText[i];
-		  if (pText[i] != '.')
-		    temp += pText[i];
-		}
-		if (pText[i] == '.') {
-		  key = temp;
-		  temp = "";
-		}
-	  } else {
-		if (pText[i] != ' ')
-		  return false;
-	  }
+      if (pText[i] == INCLUDE_OPEN) {
+	bFlag = true;
+	continue;
+      }
+      if (pText[i] == INCLUDE_CLOSE) {
+	for (i++; i<len; i++) {
+	  if (!(pText[i] == ' ' || pText[i] == ';'))
+	    return false;
+	} 
+	break;
+      }
+      if (bFlag) {
+	if (pText[i] != ' ') {
+	  theImport += pText[i];
+	  if (pText[i] != '.')
+	    temp += pText[i];
 	}
+	if (pText[i] == '.') {
+	  key = temp;
+	  temp = "";
+	}
+      } else {
+	if (pText[i] != ' ')
+	  return false;
+      }
+    }
     imports.add(new CMString(theImport));
     imports.add(new CMString(key));
     return true;
@@ -324,58 +324,58 @@ bool CMGrammarTokenizer::Tokenize(CMPtrStringList & result, CMPtrStringList & im
 
   while (!stream.IsEnd()) {
     CMString line;
-	stream.ReadLine(line);
+    stream.ReadLine(line);
     if (CheckForImport(imports, line)) {
-	  continue;
-	}
+      continue;
+    }
     //CheckForName(grmName, line);
-	if (!bFormatFlag) {
-	  bool bIsFormat = IsGrammarFormatTag(format, line);
-	  if (bIsFormat) {
-		bFormatFlag = true;
-		continue;
-	  }
-	}
-
+    if (!bFormatFlag) {
+      bool bIsFormat = IsGrammarFormatTag(format, line);
+      if (bIsFormat) {
+	bFormatFlag = true;
+	continue;
+      }
+    }
+    
     CMPtrStringList preTokens;
     ::LocalTokenize(preTokens, line);
-	//Brutal....
-	if (preTokens.length() == 2) {
-	  if (*preTokens(0) == "grammar") {
-		grmName = *preTokens(1);
-		grmName[(long)(strlen(grmName)-1)] = 0;
-	    continue;
-	  }
-	}
-	
-	if (bSuppressPublicRules) {
-	  if (preTokens.length() > 0) {
-		if (*preTokens(0) == PUBLIC_RULE) {
+    //Brutal....
+    if (preTokens.length() == 2) {
+      if (*preTokens(0) == "grammar") {
+	grmName = *preTokens(1);
+	grmName[(long)(strlen(grmName)-1)] = 0;
+	continue;
+      }
+    }
+    
+    if (bSuppressPublicRules) {
+      if (preTokens.length() > 0) {
+	if (*preTokens(0) == PUBLIC_RULE) {
           if (!bFormatFlag)
             ThrowException("Grammar Tokenizer: Missing Format Tag!");
-		  preTokens.remove((long)0);
-		}
-	  }
+	  preTokens.remove((long)0);
 	}
-	for (int i=0; i<preTokens.length(); i++) {
-	  if (IsCPPStyleComment(*preTokens(i))) {
-		while (preTokens.length() > i)
-		  preTokens.remove(preTokens.length()-1);
-		break;
-	  }
-
-	  if (bCommentFlag) {
-		if (IsEndOfComment(*preTokens(i)))
-		  bCommentFlag = false;
-	  }	else {
-		if (CheckAndSeeIfItsAComment(result, *preTokens(i))) {
-	      bCommentFlag = true;
-		} else {
+      }
+    }
+    for (int i=0; i<preTokens.length(); i++) {
+      if (IsCPPStyleComment(*preTokens(i))) {
+	while (preTokens.length() > i)
+	  preTokens.remove(preTokens.length()-1);
+	break;
+      }
+      
+      if (bCommentFlag) {
+	if (IsEndOfComment(*preTokens(i)))
+	  bCommentFlag = false;
+      }	else {
+	if (CheckAndSeeIfItsAComment(result, *preTokens(i))) {
+	  bCommentFlag = true;
+	} else {
           if (!bFormatFlag)
             ThrowException("Grammar Tokenizer: Missing Format Tag!");		
-		}
-	  }
 	}
+      }
+    }
   }
   return true;
 }

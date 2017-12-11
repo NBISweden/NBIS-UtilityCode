@@ -78,42 +78,42 @@ bool CMGrammar::ReadTextFormat(IMReadStream & stream)
   CMString dummyName;
   //while (imports.length()) 
   for (int i=0; i<imports.length(); i+=2) {
-	CMString grammarName = *imports(i+1);
-	grammarName += ".gram";
+    CMString grammarName = *imports(i+1);
+    grammarName += ".gram";
     IMReadStream * pClonedStream = stream.CloneAndOpen(grammarName);
-	if (pClonedStream == NULL) {
-	  ThrowException("GRAMMAR ERROR: Could not resolve import: ", *imports(i));
-	}
-	//if (m_bDebugFlag) 
-	  MLog("WARNING: Importing Grammar:", grammarName);
+    if (pClonedStream == NULL) {
+      ThrowException("GRAMMAR ERROR: Could not resolve import: ", *imports(i));
+    }
+    //if (m_bDebugFlag) 
+    MLog("WARNING: Importing Grammar:", grammarName);
     tokenizer.Tokenize(tokenList, imports, *pClonedStream, dummyName, true);
-	pClonedStream->Close();
-	delete pClonedStream;
+    pClonedStream->Close();
+    delete pClonedStream;
   } 
-
+  
   //cout << "Number of raw tokens: " << tokenList.length() << endl;
   //for (int i=0; i<tokenList.length(); i++) {
-    //const CMString &theToken = *tokenList(i);
-	//cout << (const char*)theToken << endl;
+  //const CMString &theToken = *tokenList(i);
+  //cout << (const char*)theToken << endl;
   //}
-
+  
   if (m_pGrammar != NULL)
-	delete m_pGrammar;
-
+    delete m_pGrammar;
+  
   if (m_pParser != NULL)
-	delete m_pParser;
-
+    delete m_pParser;
+  
   m_bDontUseDict = false;
   m_pGrammar = new CMGrammarNetwork;
-
+  
   bool bHasWildCards = false;
   m_pGrammar->Build(tokenList, m_dict, bHasWildCards);
   if (bHasWildCards)
-	m_bDontUseDict = true;
-
+    m_bDontUseDict = true;
+  
   m_pParser = new CMGrammarParser;
   //if (m_bDebugFlag)
-    MLog("Grammar loaded:", m_name);
+  MLog("Grammar loaded:", m_name);
   
   return true;
 }
@@ -163,7 +163,8 @@ bool CMGrammar::ParseEx(CMTagList & tags,
 	return false;
 
   CMString text = preText;
-  text.toLower();
+  // WARNING: remove lower casing of input!!
+  //text.toLower();
 
   CMParseStack stack;
 

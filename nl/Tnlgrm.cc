@@ -106,7 +106,7 @@ void SortAndDumpOut(CMGrammarBigramExtract & bigrams, CMPtrStringList & dict)
   fprintf(pOut, "#ifndef _DICTDATA_H_\n");
 
   fprintf(pOut, "#define _DICTDATA_H_\n");
-  fprintf(pOut, "static long gNWords = %d;\n", dictOut.length()-1); //Minus silence
+  fprintf(pOut, "static long gNWords = %ld;\n", dictOut.length()-1); //Minus silence
   fprintf(pOut, "#define WORDID_MULT 0x10000\n\n");
 
 
@@ -115,7 +115,7 @@ void SortAndDumpOut(CMGrammarBigramExtract & bigrams, CMPtrStringList & dict)
   CMInt32List unigrams;
   unigrams.reshape(dictOut.length()+1);
   for (i=0; i<dictOut.length(); i++) {
-	fprintf(pOut, "  \"%s\",\n", (const char*)dictOut(i), i);
+    fprintf(pOut, "  \"%s\",\n", (const char*)dictOut(i) /*, i*/);
     unigrams(i) = 900;
   }
 
@@ -220,14 +220,14 @@ void SortAndDumpOut(CMGrammarBigramExtract & bigrams, CMPtrStringList & dict)
 
 
   for (j=0; j<realBigramCount; j++) {
-    fprintf(pOut, "%d * WORDID_MULT + %d,\n", realBigrams1(j), realBigrams2(j));
+    fprintf(pOut, "%ld * WORDID_MULT + %ld,\n", realBigrams1(j), realBigrams2(j));
   }
 
-  fprintf(pOut, "};\n\nstatic long gNBigrams = %d;\n\n", realBigramCount);
+  fprintf(pOut, "};\n\nstatic long gNBigrams = %ld;\n\n", realBigramCount);
 
   fprintf(pOut, "const long gDictUnigrams[] = {\n");
   for (i=0; i<unigrams.length(); i++) {
-	fprintf(pOut, "  %d,\n", unigrams(i));  
+	fprintf(pOut, "  %ld,\n", unigrams(i));  
   }
   fprintf(pOut, "};\n\n");
 
@@ -275,7 +275,7 @@ int main( int argc, char** argv )
   }
 
   //Expand.....
-
+  /*
   FILE * pWords = fopen("words.txt", "w");
   CMPtrStringList words;
   grmStack.GetWordList(words);
@@ -306,9 +306,16 @@ int main( int argc, char** argv )
   CRecognizerSetup  recogSetup;
   recogSetup.AddBackupDict("..\\data\\vst.backup");
   recogSetup.DumpOutFiles(extract, words);
+  */
+  int i;
 
 
-
+  CMPtrStringList words;
+  grmStack.GetWordList(words);
+ 
+  for (i=0; i<words.length(); i++) {
+    // cout << *words(i) << endl;
+  }
 
   cout << "Useful hints:" << endl;
   cout << "    To exit, type 'exit'" << endl;
@@ -319,59 +326,58 @@ int main( int argc, char** argv )
 
 
   char szText[512];
-  int i;
 
   do {
     cout << "Test Multiple Grammars: ";
-	cin.getline(szText, 512);
-	if (strcmp(szText, "exit") == 0)
-	  break;
-
-	CMPtrStringList result;
+    cin.getline(szText, 512);
+    if (strcmp(szText, "exit") == 0)
+      break;
+    
+    CMPtrStringList result;
     GRAMMAR_HANDLE h = grmStack.ParseAndEvaluate(result, szText);
-
-	if (h != -1) {
-	  cout << "Parsed w/ handle " << h << endl;
-	  for (int j=0; j<result.length(); j++) {
-	    cout << ((const char*)*result(j)) << endl;
-	  }	
-	} else {
-	  cout << "Nope, didn't parse... " << endl;
-	}
+    
+    if (h != -1) {
+      cout << "Parsed w/ handle " << h << endl;
+      for (int j=0; j<result.length(); j++) {
+	cout << ((const char*)*result(j)) << endl;
+      }	
+    } else {
+      cout << "Nope, didn't parse... " << endl;
+    }
     //ParseAndPrint(parser, szText);
   } while (1 == 1);
+  
 
-
-
+  
   do {
     cout << "Test Grammar: ";
-	cin.getline(szText, 512);
-	if (strcmp(szText, "exit") == 0)
-	  break;
-	tags.removeAll();
-	tokens.removeAll();
+    cin.getline(szText, 512);
+    if (strcmp(szText, "exit") == 0)
+      break;
+    tags.removeAll();
+    tokens.removeAll();
     if (grmStack.Parse(tags, tokens, szText) != -1) {
-	  //tokens.
-	  cout << "REWRITE RESULT:" << endl;
-	  for (i=0; i<tags.length(); i+=2) {
-		const char * pTag = (const char*)*tags(i);
-	    if (pTag[0] != '$' || (*tags(i)) == "$value")
-		  cout << *tags(i) << " = " << *tags(i+1) << endl;
-	  }
-
-	  cout << endl;
-	  cout << "DEBUG INFO: Internal (all) variables..." << endl;
-	  for (i=0; i<tags.length(); i+=2) {
-  	    cout << *tags(i) << " = " << *tags(i+1) << endl;
-	  }
-	  cout << endl;
-	  
-	} else {
-	  cout << "Nope, didn't parse... " << endl;
-	}
+      //tokens.
+      cout << "REWRITE RESULT:" << endl;
+      for (i=0; i<tags.length(); i+=2) {
+	const char * pTag = (const char*)*tags(i);
+	if (pTag[0] != '$' || (*tags(i)) == "$value")
+	  cout << *tags(i) << " = " << *tags(i+1) << endl;
+      }
+      
+      cout << endl;
+      cout << "DEBUG INFO: Internal (all) variables..." << endl;
+      for (i=0; i<tags.length(); i+=2) {
+	cout << *tags(i) << " = " << *tags(i+1) << endl;
+      }
+      cout << endl;
+      
+    } else {
+      cout << "Nope, didn't parse... " << endl;
+    }
     //ParseAndPrint(parser, szText);
   } while (1 == 1);
-
+  
 
   
   

@@ -106,7 +106,8 @@ public:
 	void SetToken(const CMString & token)	
 	{
 		m_token = token;
-		m_token.toLower();
+		// WARNING!!!!!!!!!!!
+		// m_token.toLower();
 		long len = m_token.length();
 		for (int i=0; i<len; i++) {
 		  if (((const char*)m_token)[i] == GRMNODE_WILDCARD)
@@ -165,7 +166,8 @@ public:
 	void SetName(const CMString & s) 
 	{
 		m_ruleName = s;
-		m_ruleName.toLower();
+		// WARNING!!!!!!!!!!!
+		// m_ruleName.toLower();
 	}
 
 	bool IsActive() const {return m_bIsActive;}
