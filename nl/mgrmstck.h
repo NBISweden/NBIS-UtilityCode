@@ -2,12 +2,8 @@
 //=  Copyright (c) 1999-2001 by Manfred G. Grabherr                =//
 //=  All rights reserved.                                          =//
 //=                                                                =//
-//=  Distribution or use of the source code, data or other 		   =//
-//=  information contained herein wihout the author's              =//
-//=  permission is strictly prohibited.                            =//
-//=                                                                =//
-//=  This file and all its contents are confidential.              =//
 //==================================================================//
+
 
 
 
@@ -57,18 +53,20 @@ public:
 	MDLLEXPORT GRAMMAR_HANDLE AddGrammaAndReadTextFormat(IMReadStream & stream);
 
 	//Parse and get the details
-    MDLLEXPORT GRAMMAR_HANDLE Parse(CMTagList & tags, 
-			                        CMTokenList & tokens,
-			                        const CMString & text);
-
+	MDLLEXPORT GRAMMAR_HANDLE Parse(CMTagList & tags, 
+					CMTokenList & tokens,
+					const CMString & text);
+	
 	//Parse and get the result as action tags
-    MDLLEXPORT GRAMMAR_HANDLE ParseAndEvaluate(CMPtrStringList & result,
-			                                   const CMString & text);
-
+	MDLLEXPORT GRAMMAR_HANDLE ParseAndEvaluate(CMPtrStringList & result,
+						   const CMString & text,
+						   bool bFuzzy = false);
+	
 	//Parse and get the result in one single string separated by ';'
-    virtual MDLLEXPORT GRAMMAR_HANDLE ParseAndEvaluate(char * result,
-			                                           const char * text, 
-													   long maxLen);
+	virtual MDLLEXPORT GRAMMAR_HANDLE ParseAndEvaluate(char * result,
+							   const char * text, 
+							   long maxLen,
+							   bool bFuzzy = false);
 
 	virtual GRAMMAR_ERROR GetLastError();
 	virtual const char * GetLastErrorMessage();

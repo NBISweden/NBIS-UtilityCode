@@ -110,7 +110,7 @@ MDLLEXPORT bool CMGrammarGenerator::WriteGrammarToFile(const char * filePathAndN
   CMString line = "grammar ";
   line += grammarNamePrefix;
 
-  if (grammarNamePrefix != "" && ((const char*)grammarNamePrefix)[strlen(grammarNamePrefix)-1] != '.')
+  if (strcmp(grammarNamePrefix, "") != 0 && ((const char*)grammarNamePrefix)[strlen(grammarNamePrefix)-1] != '.')
     line += ".";
 
   line += grammarName;
@@ -289,7 +289,7 @@ bool CMGrammarGenerator::AddExample(const IMGrammarGeneratorExample & example)
 		  for (int l=0; l<example.GetSlotValuePairCount(); l++) {
 			if (subSet == example.GetValue(l) || dollarValue == example.GetValue(l)) {
 
-			  if (example.GetGrammar(l) != "") {
+			  if (strcmp(example.GetGrammar(l), "") != 0) {
                 m_lastAmbiguities.removeAll();
 	            h = ParseAll(tags, tokens, subSet, example.GetGrammar(l));
 				if (h == -1) {

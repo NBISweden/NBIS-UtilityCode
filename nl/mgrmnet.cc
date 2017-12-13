@@ -14,33 +14,35 @@
 #include "nl/mgrprs.h"
 #include "nl/mxtract.h"
 #include "util/mutil.h"
-//#include <mstrdct.h>
+#include <iostream>
+
+using namespace std;
 
 bool CMGrammarNode::WildCardParse(const CMString & test)
 {
   if (!m_bIsWildCard)
-	return false;
+    return false;
   long len = m_token.length();
   long testLen = test.length();
-
+  
   int i=0, j=0;
   int cnt = 0;
   const char * pToken = (const char*)m_token;
   const char * pTest =  (const char*)test;
   while (i<len && j<testLen) {
-	if (pToken[i] == pTest[j] || pToken[i] == GRMNODE_WILDCARD) {
-	  i++;
-	  cnt++;
-	  j++;
-	  continue;
-	}
-	if (i > 0 && pToken[i-1] == GRMNODE_WILDCARD) {
-	  //i--;
-	  j++;
-	  cnt++;
-	} else {
-	  return false;
-	}
+    if (pToken[i] == pTest[j] || pToken[i] == GRMNODE_WILDCARD) {
+      i++;
+      cnt++;
+      j++;
+      continue;
+    }
+    if (i > 0 && pToken[i-1] == GRMNODE_WILDCARD) {
+      //i--;
+      j++;
+      cnt++;
+    } else {
+      return false;
+    }
   } 
 
   return true;
@@ -113,89 +115,90 @@ void CMGrammarNode::Expand(CMGrammarExtract & extract, CMParseStack * pStack)
 bool CMGrammarNode::DoesParse(CMParseStack * pStack)
 {
 
+
   const CMString & token = pStack->GetCurrentToken();
 
   if (IsEnd()) { 
-	if (pStack->IsEndOfTokens()) {
+    if (pStack->IsEndOfTokens()) {
       CMGrammarNode * pStackNode = pStack->PopReturnNode();
-	  if (pStackNode != NULL) {
+      if (pStackNode != NULL) {
         bool bSuccess = pStackNode->DoesParse(pStack);
         pStack->PushReturnNode(pStackNode);
         return bSuccess;
-	  } else {
+      } else {
         pStack->Freeze();
-	    return true;
-	  }
-	} else {
+	return true;
+      }
+    } else {
       CMGrammarNode * pStackNode = pStack->PopReturnNode();
-	  if (pStackNode == NULL) {
-	    return false;
-	  } else {
+      if (pStackNode == NULL) {
+	return false;
+      } else {
         bool bSuccess = pStackNode->DoesParse(pStack);
         pStack->PushReturnNode(pStackNode);
         return bSuccess;
-	  }
-	}
+      }
+    }
   }
-
+  
   if (IsTerminal()) {
     if (pStack->IsEndOfTokens())
-	  return false;
-
-	if (IsDummy() || GetToken() == token || WildCardParse(token)) {
-	//OPTIONAL HACK
-	//if (IsDummy() || GetToken() == token || IsOptional() || IsOptionalContd()) {
-	  //bool bPush = false;
-	  //if (!IsOptionalContd() && (GetToken() == token || IsDummy())) {
-	    pStack->Push(this);
-		//bPush = true;
-	 // }
-
-	  if (m_pNextNode != NULL)
-	    pStack->PushReturnNode(m_pNextNode);
-
-	  for (int i=0; i<GetReferenceCount(); i++) {
-	    CMGrammarNode * pNode = GetNode(i);
-
-
-		if (pNode->DoesParse(pStack)) {
-	      pStack->Pop();
-		  if (m_pNextNode != NULL)
-		    pStack->PopReturnNode();
-		  return true;
-		}
-	  }
-	  //Nope....
-	  //if (bPush)
-        pStack->Pop();
-
+      return false;
+    
+    if (IsDummy() || GetToken() == token || WildCardParse(token)) {
+      //OPTIONAL HACK
+      //if (IsDummy() || GetToken() == token || IsOptional() || IsOptionalContd()) {
+      //bool bPush = false;
+      //if (!IsOptionalContd() && (GetToken() == token || IsDummy())) {
+      pStack->Push(this);
+      //bPush = true;
+      // }
+      
+      if (m_pNextNode != NULL)
+	pStack->PushReturnNode(m_pNextNode);
+      
+      for (int i=0; i<GetReferenceCount(); i++) {
+	CMGrammarNode * pNode = GetNode(i);
+	
+	
+	if (pNode->DoesParse(pStack)) {
+	  pStack->Pop();
 	  if (m_pNextNode != NULL)
 	    pStack->PopReturnNode();
-
-	  return false;
+	  return true;
 	}
-
-	return false;
+      }
+      //Nope....
+      //if (bPush)
+      pStack->Pop();
+      
+      if (m_pNextNode != NULL)
+	pStack->PopReturnNode();
+      
+      return false;
+    }
+    
+    return false;
   } else {
     //Not a terminal...
     pStack->Push(this, false);
-
-	if (m_pNextNode != NULL)
-	  pStack->PushReturnNode(m_pNextNode);
-
-	for (int i=0; i<GetReferenceCount(); i++) {
-	  CMGrammarNode * pNode = GetNode(i);
-	  if (pNode->DoesParse(pStack)) {
-	    pStack->Pop(false);
-	    return true;
-	  }
-	}
-
-	if (m_pNextNode != NULL)
-	  pStack->PopReturnNode();
-
+    
+    if (m_pNextNode != NULL)
+      pStack->PushReturnNode(m_pNextNode);
+    
+    for (int i=0; i<GetReferenceCount(); i++) {
+      CMGrammarNode * pNode = GetNode(i);
+      if (pNode->DoesParse(pStack)) {
 	pStack->Pop(false);
-  
+	return true;
+      }
+    }
+    
+    if (m_pNextNode != NULL)
+      pStack->PopReturnNode();
+    
+    pStack->Pop(false);
+    
   }
 
   return false;
@@ -594,11 +597,12 @@ void CMGrammarNetwork::SetPointers()
 
 bool CMGrammarNetwork::DoesParse(CMParseStack * pStack)
 {
+
   for (int i=0; i<m_publicRules.length(); i++) {
-	if (m_publicRules(i)->DoesParse(pStack)) {
-	  pStack->SetPublicRuleName(m_publicRules(i)->GetName());  
-	  return true;
-	}
+    if (m_publicRules(i)->DoesParse(pStack)) {
+      pStack->SetPublicRuleName(m_publicRules(i)->GetName());  
+      return true;
+    }
   }
 
   return false;
@@ -712,8 +716,8 @@ bool CMGrammarRule::DoesParse(CMParseStack * pStack)
 {
   for (int i=0; i<m_ruleList.length(); i++) {
     CMGrammarNodeList & list = *m_ruleList(i);
-	if (list(0)->DoesParse(pStack))
-	  return true;
+    if (list(0)->DoesParse(pStack))
+      return true;
   }
   
   return false;

@@ -73,8 +73,9 @@ public:
 
 	//Parse and get the result in one single string separated by ';'
     virtual GRAMMAR_HANDLE ParseAndEvaluate(char * result,
-			                                const char * text,
-											long maxLen) = 0;
+					    const char * text,
+					    long maxLen,
+					    bool bFuzzy = false) = 0;
 
 
 	virtual GRAMMAR_ERROR GetLastError() = 0;

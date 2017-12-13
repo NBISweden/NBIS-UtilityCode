@@ -1,8 +1,10 @@
 // Utilities based on an open source library...
 
 
+
 #ifndef _MUTIL_H_
 #define _MUTIL_H_
+
 
 
 #ifdef WIN32 
@@ -33,6 +35,7 @@
 #include <tchar.h>
 //WIN 32
 
+//typedef TCHAR MCL_TCHAR;
 typedef TCHAR MCL_TCHAR;
 
 /////////////////////////////////////////////////////////////////////
@@ -362,6 +365,9 @@ MDLLEXPORT CMLog & mlog();
 #endif
 #endif /*  DEBUG */
 
+
+//#define MLIST_BOUNDSCHECK
+ 
 #ifdef DEBUG
 #ifndef MLIST_BOUNDSCHECK
 // #define MLIST_BOUNDSCHECK
@@ -458,10 +464,11 @@ template <class Item, long size>
 inline void TMFixedValueVector<Item, size>::BoundsCheck(const long index) const
 {
 #ifdef MLIST_BOUNDSCHECK
-  if (index < size)
-	return;
+  if (index < size && index >= 0)
+    return;
 
-  ThrowException(_TMCL("TMValueVector<Item>::BoundsCheck"));
+  throw;
+  //ThrowException(_TMCL("TMValueVector<Item>::BoundsCheck"));
 
 #endif
 }
@@ -639,10 +646,14 @@ template <class Item>
 inline void TMValueVector<Item>::BoundsCheck(const long index) const
 {
 #ifdef MLIST_BOUNDSCHECK
-  if (index < m_length)
-	return;
+  if (index < m_length && index >= 0)
+    return;
 
-  ThrowException(_TMCL("TMValueVector<Item>::BoundsCheck"));
+  printf("ERROR: size = %ld index = %ld\n", m_length, index);
+  //flush();
+  
+  throw;
+  //ThrowException(_TMCL("TMValueVector<Item>::BoundsCheck"));
 
 #endif
 }

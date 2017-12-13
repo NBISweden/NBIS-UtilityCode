@@ -241,21 +241,22 @@ bool CMGrammarStack::FormatResult(CMTagList & tags,
 }
 
 GRAMMAR_HANDLE CMGrammarStack::ParseAndEvaluate(char * resultChar,
-			                                    const char * text,
-												long maxLen)
+						const char * text,
+						long maxLen,
+						bool bFuzzy)
 {
   CMString result;
   CMPtrStringList list;  
-  GRAMMAR_HANDLE h = ParseAndEvaluate(list, text);
+  GRAMMAR_HANDLE h = ParseAndEvaluate(list, text, bFuzzy);
 
   if (h != -1) {
-	for (int i=0; i<list.length(); i++) {
-	  result += *list(i);
-	  result += ";";
-	}
+    for (int i=0; i<list.length(); i++) {
+      result += *list(i);
+      result += ";";
+    }
   }
   if (result.length() < maxLen)
-	strcpy(resultChar, result);
+    strcpy(resultChar, result);
   return h;
 }
 
@@ -286,7 +287,8 @@ void CMGrammarStack::Expand(CMGrammarExtract & extract)
 }
 
 GRAMMAR_HANDLE CMGrammarStack::ParseAndEvaluate(CMPtrStringList & result,
-			                                    const CMString & text)
+						const CMString & text,
+						bool bFuzzy)
 {
   CMTagList tags;
   CMTokenList tokens;
@@ -295,9 +297,12 @@ GRAMMAR_HANDLE CMGrammarStack::ParseAndEvaluate(CMPtrStringList & result,
   //Do exact match...
   GRAMMAR_HANDLE h = Parse(tags, tokens, text);
   if (h != -1) {
-	FormatResult(tags, tokens, result);
-	return h;
+    FormatResult(tags, tokens, result);
+    return h;
   }
+
+  if (!bFuzzy)
+    return -1;
   
   CMPtrStringList theWords;
   Tokenize(theWords, text);
@@ -308,44 +313,44 @@ GRAMMAR_HANDLE CMGrammarStack::ParseAndEvaluate(CMPtrStringList & result,
 
   //ATTN: This is SLOW!!
   for (i=0; i<theWords.length(); i++) {
-	for (k=theWords.length(); k>i; k--) {
+    for (k=theWords.length(); k>i; k--) {
       subSet = "";
       for (j=i; j<k; j++) {
         subSet += *(theWords(j));
         if (j < k-1)
-		  subSet += " ";
-	  }
-	  tags.removeAll();
-	  tokens.removeAll();
+	  subSet += " ";
+      }
+      tags.removeAll();
+      tokens.removeAll();
       //Now parse against all we have...
-	  h = Parse(tags, tokens, subSet);
-	  if (h != -1) {
-		globalHandle = h; 
-		CMPtrStringList subResult;
+      h = Parse(tags, tokens, subSet);
+      if (h != -1) {
+	globalHandle = h; 
+	CMPtrStringList subResult;
         if (FormatResult(tags, tokens, subResult)) {
-		  for (int l=0; l<subResult.length(); l++) {
-		    result.add(new CMString(*subResult(l)));
-		  }
-		  i = k-1;
-		  break;
-		}
+	  for (int l=0; l<subResult.length(); l++) {
+	    result.add(new CMString(*subResult(l)));
 	  }
+	  i = k-1;
+	  break;
 	}
+      }
+    }
   }
 
   return globalHandle;
 }
 
 GRAMMAR_HANDLE CMGrammarStack::Parse(CMTagList & tags, 
-			                         CMTokenList & tokens,
-			                         const CMString & text)
+				     CMTokenList & tokens,
+				     const CMString & text)
 {
   CMString ruleName;
   for (int i=0; i<m_grammarList.length(); i++) {
-	if (m_grammarList(i)->ParseEx(tags, tokens, ruleName, text)) {
-	  m_ruleName = ruleName;
+    if (m_grammarList(i)->ParseEx(tags, tokens, ruleName, text)) {
+      m_ruleName = ruleName;
       return m_grammarList(i)->GetHandle();
-	}
+    }
   }
   return -1;
 }

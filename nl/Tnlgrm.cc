@@ -259,24 +259,24 @@ int main( int argc, char** argv )
   //CMGrammar grm;
   
   try {
-	for (int j=1; j<argc; j++) {
+    for (int j=1; j<argc; j++) {
       cout << "Loading grammar: " << argv[j] << endl;
       GRAMMAR_HANDLE h = grmStack.AddGrammaAndReadFromFile(argv[j]);
-	  //grmStack.FindGrammar(h)->SetDebugFlag();
-	}
+      //grmStack.FindGrammar(h)->SetDebugFlag();
+    }
     cout << "Complete!" << endl;
   }
-
+  
   catch(CMException & ex) {
-
+    
     cout << "Exception cought during load!!" << endl;
-	ex.Print();
+    ex.Print();
     return 0;
   }
-
+  
   //Expand.....
   /*
-  FILE * pWords = fopen("words.txt", "w");
+    FILE * pWords = fopen("words.txt", "w");
   CMPtrStringList words;
   grmStack.GetWordList(words);
   int kk;
@@ -334,6 +334,7 @@ int main( int argc, char** argv )
       break;
     
     CMPtrStringList result;
+    //GRAMMAR_HANDLE h = grmStack.ParseAndEvaluate(result, szText);
     GRAMMAR_HANDLE h = grmStack.ParseAndEvaluate(result, szText);
     
     if (h != -1) {
