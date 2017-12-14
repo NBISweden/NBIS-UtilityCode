@@ -54,6 +54,8 @@ int ScriptParser::Read(const string & fileName)
 	  cout << "Setting variable" << parser.AsString(0) << " to " << parser.AsString(2) << endl;
 	  int idx = AddVariable(parser.AsString(0));
 	  m_vars[idx].Value() = parser.AsString(2);
+	  tmp.Raw() = "# REMOVED " + tmp.Raw();
+
 	} 
 	
       }
