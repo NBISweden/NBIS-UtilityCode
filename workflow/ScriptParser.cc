@@ -99,7 +99,13 @@ int ScriptParser::Read(const string & fileName)
 	  cout << "Exception cought during load!!" << endl;
 	  ex.Print();
 	  return -1;
-	}	
+	}
+	CMPtrStringList words;
+	m_grmStack.GetWordList(words);
+	for (int z=0; z<words.length(); z++)
+	  m_dict.push_back((const char *)*words(z));
+	UniqueSort(m_dict);
+
       }
     }
 
@@ -126,7 +132,7 @@ int ScriptParser::Read(const string & fileName)
 	      if (s1 == "&") {
 		tmp.SetBG(true);
 	      } else {
-		cout << "ERROR line " << i << ": " << " unrecognized token " << s1 << endl;
+		cout << "ERROR line " << m_commands.isize() << ": " << " unrecognized token " << s1 << endl;
 		return -1;
 	      }
 	    }
@@ -145,6 +151,27 @@ int ScriptParser::Read(const string & fileName)
 
   return 0;
 }
+ 
+bool ScriptParser::CheckForErrors(const string & in)
+{
+  int i;
+  StringParser p;
+  p.SetLine(in, " ");
+  int n = 0;
+  int m = 0;
+  for (i=0; i<p.GetItemCount(); i++) {
+    if (BinSearch(m_dict, p.AsString(i)) >= 0)
+      n++;
+    if (p.AsString(i)[0] == '@')
+      m++;
+  }
+  cout << "n=" << n << " m=" << m << endl;
+  if (n > 3 || m > 0)
+    return true;
+  return false;
+}
+
+
 
 void ScriptParser::AddTableVars(int index)
 {
@@ -234,8 +261,16 @@ bool ScriptParser::Process(int index)
       }
       
     } else {
-      cout << "No result, routing command through:" << c.Raw() << endl;
+      bool bErr = CheckForErrors(line);
       c.Processed() = c.Raw();
+      if (bErr) {
+ 	cout << "WARNING line: " << i << " Possible syntax error in command!" << endl;
+	c.Processed() =    "##>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n## WARNING!!! This line looks like a command, but wasn't understood:\n";
+	c.Processed() += c.Raw();
+	c.Processed() += "\n##<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<";
+     } else {
+	cout << "No result, routing command through:" << c.Raw() << endl;
+      }
     }
   }
   

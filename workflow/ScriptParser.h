@@ -9,7 +9,6 @@
 #include "nl/mxtract.h"
 
 
-
 class Command
 {
  public:
@@ -144,6 +143,8 @@ class ScriptParser
     return -1;
   }
 
+  bool CheckForErrors(const string & in);
+  
   void AddTableVars(int index);
   
   svec<Variable> m_vars;
@@ -151,6 +152,7 @@ class ScriptParser
   CMGrammarStack m_grmStack;
   int m_curr;
   Table m_table;
+  svec<string> m_dict;
 };
 
 
