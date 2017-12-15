@@ -13,7 +13,7 @@
 class Command
 {
  public:
-  Command() {}
+  Command() {m_bg = false;}
 
   const string & Raw() const {return m_raw;}
   string & Raw() {return m_raw;}
@@ -26,12 +26,16 @@ class Command
 
   const svec<string> & Out() const {return m_out;}
   svec<string> & Out() {return m_out;}
+
+  bool IsBG() const {return m_bg;}
+  void SetBG(bool b) {m_bg = b;}
   
  private:
   string m_raw;
   svec<string> m_valid;
   string m_processed;
   svec<string> m_out;
+  bool m_bg;
 };
 
 
@@ -65,8 +69,8 @@ class TableColumn
   const string & Label() const {return m_label;}
   string & Label() {return m_label;}
 
- private:
   
+ private:
   string m_label;
   svec<string> m_values;
 
@@ -84,9 +88,15 @@ class Table
   void resize(int n) {m_columns.resize(n);}
 
   void Read(const string & fileName);
-  
+
+  const string & Name() const {return m_name;}
+  string & Name() {return m_name;}
+
+  bool Get(string &ret, const string & label, int index) const;
+
  private:
   svec<TableColumn> m_columns;
+  string m_name;
 };
 
 
@@ -94,7 +104,9 @@ class Table
 class ScriptParser
 {
  public:
-  ScriptParser() {}
+  ScriptParser() {
+    m_curr = 0;
+  }
 
   int Read(const string & fileName);
 
@@ -127,14 +139,17 @@ class ScriptParser
     for (i=0; i<m_vars.isize(); i++) {
       if (m_vars[i].Name() == s)
 	return i;
-    }
-    return -1;;
+    }    
+    
+    return -1;
   }
+
+  void AddTableVars(int index);
   
   svec<Variable> m_vars;
   svec<Command> m_commands;
   CMGrammarStack m_grmStack;
-
+  int m_curr;
   Table m_table;
 };
 

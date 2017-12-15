@@ -24,6 +24,29 @@ void Table::Read(const string & fileName)
 
 }
 
+bool Table::Get(string &ret, const string & label, int index) const
+{
+  int i;
+
+  StringParser s;
+  s.SetLine(label, ".");
+
+  if (s.GetItemCount() != 2) {
+    cout << "ERROR: invalid syntax: " << label << endl;
+    return false;
+  }
+  
+  for (i=0; i<m_columns.isize(); i++) {
+    if (m_columns[i].Label() == s.AsString(1)) {
+      if (index >= 0 && index <m_columns[i].isize()) {
+	ret = (m_columns[i])[index];
+	return true;
+      }
+    }
+  }
+  cout << "ERROR: table entry not found: " << label << endl; 
+  return false;
+}
 
 int ScriptParser::Read(const string & fileName)
 {
@@ -48,6 +71,7 @@ int ScriptParser::Read(const string & fileName)
 	bPre = true;
 	cout << "Reading table from " << parser.AsString(2) << endl; 
 	m_table.Read(parser.AsString(2));
+	m_table.Name() = parser.AsString(0);
       } else {
 	// TODO: dynamic variable assignment!!!!
 	if (parser.AsString(0)[0] == '@') {
@@ -84,15 +108,28 @@ int ScriptParser::Read(const string & fileName)
 	const string & s = parser.AsString(i);
 	if (s[0] == '#' || (s.length() > 1 && s[0] == '/' && s[1] == '/'))	
 	  break;     
-
+	if (i == parser.GetItemCount() -1 && s == "&") {
+	  tmp.SetBG(true);
+	  break;
+	}
+	
 	if (s == ">") {
 	  i++;
 	  for (; i<parser.GetItemCount(); i++) {
 	    const string & s1 = parser.AsString(i);
 	    if (s1[0] == '#' || (s1.length() > 1 && s1[0] == '/' && s1[1] == '/'))	
-	      break;     
-	    tmp.Out().push_back(s1);
-	    AddVariable(s1);
+	      break;
+	    if (s1[0] == '@') {
+	      tmp.Out().push_back(s1);
+	      AddVariable(s1);
+	    } else {
+	      if (s1 == "&") {
+		tmp.SetBG(true);
+	      } else {
+		cout << "ERROR line " << i << ": " << " unrecognized token " << s1 << endl;
+		return -1;
+	      }
+	    }
 	  }
 	  break;
 	}
@@ -109,10 +146,26 @@ int ScriptParser::Read(const string & fileName)
   return 0;
 }
 
+void ScriptParser::AddTableVars(int index)
+{
+  int i;
+  for (i=0; i<m_table.isize(); i++) {
+    string v = m_table.Name() + "." + m_table[i].Label();
+    int idx = AddVariable(v);
+    if (index >=0 && index < m_table[i].isize())
+      m_vars[idx].Value() = (m_table[i])[index];
+    else
+      cout << "ERROR: index " << index << " exceeds table size " << m_table[i].isize() << endl;
+  }
+}
+ 
 bool ScriptParser::Process(int index)
 {
   int i, j;
 
+  AddTableVars(index);
+  
+  m_curr = index;
   cout << "Processing # " << index << endl;
 
   for (i=0; i<m_commands.isize(); i++) {
@@ -163,6 +216,8 @@ bool ScriptParser::Process(int index)
 	    line += " ";
 	  }
 	  cout << "--> Command: " << line << endl;
+	  if (c.IsBG())
+	    line += " &";
 	  c.Processed() = line;
 	  //continue;
 	}
