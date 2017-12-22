@@ -128,6 +128,7 @@ int main( int argc, char** argv )
   P.registerArg(outCmmd);
   P.registerArg(resCmmd);
   //P.registerArg(saveCmmd);
+  P.registerArg(nCmmd);
   P.registerArg(hCmmd);
   P.registerArg(hconfCmmd);
   P.registerArg(byCmmd);
