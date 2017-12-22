@@ -5,39 +5,6 @@
 #include "base/FileParser.h"
 
 
-void Normalize(svec<DLIOSingle> & data)
-{
-  int i, j;
-  for (j=0; j<data[0].In().isize(); j++) {
-    double max = 0.;
-    for (i=0; i<data.isize(); i++) {
-      const DLIOSingle & d = data[i];
-      if (d.In()[j] > max)
-	max = d.In()[j];
-    }
-  
-    for (i=0; i<data.isize(); i++) {
-      DLIOSingle & d = data[i];
-      d.In()[j] /= max;
-      //cout << d.In()[j] << " " << i << " " << j << endl;
-    }
-  }
-  for (j=0; j<data[0].Out().isize(); j++) {
-    double max = 0.;
-    for (i=0; i<data.isize(); i++) {
-      const DLIOSingle & d = data[i];
-      if (d.Out()[j] > max)
-	max = d.Out()[j];
-    }
-  
-    for (i=0; i<data.isize(); i++) {
-      DLIOSingle & d = data[i];
-      d.Out()[j] /= max;
-      //cout << "Divide " << d.Out()[j] << " by " << max << " " << j << " " << i << endl;
-    }
-  }
-
-}
 
 void ReadInput(svec<DLIOSingle> & data, const string & fileName)
 {

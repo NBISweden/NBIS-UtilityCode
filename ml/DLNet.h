@@ -69,7 +69,9 @@ class DLIOSingle
   svec<double> m_out;
 };
 
+void Normalize(svec<DLIOSingle> & data, svec<double> & fac, svec<double> & floor);
 
+void Normalize(svec<DLIOSingle> & data);
 
 class DLNet
 {

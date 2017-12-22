@@ -287,3 +287,52 @@ double DLNet::OneRun()
   
   return error/(double)m_data.isize();
 }
+
+void Normalize(svec<DLIOSingle> & data)
+{
+  svec<double> fac, floor;
+  Normalize(data, fac, floor);
+}
+
+void Normalize(svec<DLIOSingle> & data, svec<double> & fac, svec<double> & floor)
+{
+  int i, j;
+  for (j=0; j<data[0].In().isize(); j++) {
+    double max = 0.;
+    double min = 999999999.;
+    for (i=0; i<data.isize(); i++) {
+      const DLIOSingle & d = data[i];
+      if (d.In()[j] > max)
+	max = d.In()[j];
+      if (d.In()[j] < min)
+	min = d.In()[j];
+    }
+  
+    fac.push_back(1./(max-min));
+    floor.push_back(min/(max-min));
+    for (i=0; i<data.isize(); i++) {
+      DLIOSingle & d = data[i];
+      d.In()[j] -= min;
+      d.In()[j] /= (max-min);
+      //cout << d.In()[j] << " " << i << " " << j << endl;
+    }
+  }
+  for (j=0; j<data[0].Out().isize(); j++) {
+    double max = 0.;
+    double min = 999999999.;
+    for (i=0; i<data.isize(); i++) {
+      const DLIOSingle & d = data[i];
+      if (d.Out()[j] > max)
+	max = d.Out()[j];
+      if (d.Out()[j] < min)
+	min = d.Out()[j];
+    }
+    for (i=0; i<data.isize(); i++) {
+      DLIOSingle & d = data[i];
+      d.Out()[j] -= min;
+      d.Out()[j] /= (max - min);
+      //cout << "Divide " << d.Out()[j] << " by " << max << " " << j << " " << i << endl;
+    }
+  }
+
+}
