@@ -4,6 +4,41 @@
 #include "base/CommandLineParser.h"
 #include "base/FileParser.h"
 
+
+void Normalize(svec<DLIOSingle> & data)
+{
+  int i, j;
+  for (j=0; j<data[0].In().isize(); j++) {
+    double max = 0.;
+    for (i=0; i<data.isize(); i++) {
+      const DLIOSingle & d = data[i];
+      if (d.In()[j] > max)
+	max = d.In()[j];
+    }
+  
+    for (i=0; i<data.isize(); i++) {
+      DLIOSingle & d = data[i];
+      d.In()[j] /= max;
+      //cout << d.In()[j] << " " << i << " " << j << endl;
+    }
+  }
+  for (j=0; j<data[0].Out().isize(); j++) {
+    double max = 0.;
+    for (i=0; i<data.isize(); i++) {
+      const DLIOSingle & d = data[i];
+      if (d.Out()[j] > max)
+	max = d.Out()[j];
+    }
+  
+    for (i=0; i<data.isize(); i++) {
+      DLIOSingle & d = data[i];
+      d.Out()[j] /= max;
+      //cout << "Divide " << d.Out()[j] << " by " << max << " " << j << " " << i << endl;
+    }
+  }
+
+}
+
 void ReadInput(svec<DLIOSingle> & data, const string & fileName)
 {
   FlatFileParser parser;
@@ -86,6 +121,7 @@ int main( int argc, char** argv )
   commandArg<string> hconfCmmd("-hc","hidden neurons config file", "");
   commandArg<bool> byCmmd("-l","train one layer at a time", false);
   commandArg<double> dropCmmd("-d","dropout rate", 0.);
+  commandArg<bool> normCmmd("-norm","normalize data to 1", false);
   commandLineParser P(argc,argv);
   P.SetDescription("Run the DLN on matched in/out data and test by leaving one out.");
   P.registerArg(fileCmmd);
@@ -96,6 +132,7 @@ int main( int argc, char** argv )
   P.registerArg(hconfCmmd);
   P.registerArg(byCmmd);
   P.registerArg(dropCmmd);
+  P.registerArg(normCmmd);
   
   P.parse();
   
@@ -108,7 +145,8 @@ int main( int argc, char** argv )
   int hidden = P.GetIntValueFor(hCmmd);
   bool one = P.GetBoolValueFor(byCmmd);
   double drop = P.GetDoubleValueFor(dropCmmd);
-  
+  bool bNorm = P.GetBoolValueFor(normCmmd);
+ 
   int i, j;
 
 
@@ -120,6 +158,10 @@ int main( int argc, char** argv )
 
   ReadInput(data, fileName);
   ReadOutput(data, outName);
+
+  if (bNorm) {
+    Normalize(data);
+  }
 
   FILE * pOut = fopen(resName.c_str(), "w");
   
