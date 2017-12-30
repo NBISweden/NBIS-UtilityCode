@@ -98,9 +98,9 @@ class DLNet
     m_data.push_back(in);
   }
 
-  double Train(int iter, double move);
+  double Train(int iter, double move = 0.01);
   
-  double TrainOne(double move, int layer = -1);
+  double TrainOne(double move = 0.01, int layer = -1);
 
   double Evaluate(const svec<string> & labels);
   double Evaluate();

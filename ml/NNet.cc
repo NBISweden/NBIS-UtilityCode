@@ -48,14 +48,6 @@ void NeuralNetwork::ReSetup(int dim, double minus, double plus)
 
 }
  
-void NeuralNetwork::MatchAndSort(svec<NPCIO_WithCoords> & n)
-{
-  for (int i=0; i<n.isize(); i++) {
-    int index = Best(n[i]);
-    n[i].SetIndex(index);
-  }
-  Sort(n);
-}
 
 void NeuralNetwork::Print() const
 {
@@ -84,6 +76,8 @@ void NeuralNetwork::Print() const
 
 }
 
+
+
 double NeuralNetwork::BestDist(const Neuron & n) const
 {
   int i;
@@ -106,6 +100,31 @@ void NeuralNetwork::GetDistSorted(svec<NeuronDist> & all)
     all[i].Distance() = m_allDist[i];
   }
   Sort(all);
+}
+
+int NeuralNetwork::BestWeighted(const NPCIO & n)
+{
+  int index = 0;
+  int i;
+  double dist = -1.;
+
+  for (i=0; i<m_neurons.isize(); i++) {
+    const Neuron & a = m_neurons[i];
+    double d = 0.;
+    double hits = a.GetHit();
+    double cc = exp(-hits * 10);
+    for (int j=0; j<a.isize(); j++) {
+      if (n.IsValid(j))
+	d += (a[j]-n[j])*(a[j]-n[j]);
+    }
+    d *= cc;
+    
+    if (d < dist || dist < 0) {
+      index = i;
+      dist = d;
+    }
+  }
+  return index;
 }
 
 int NeuralNetwork::Best(const NPCIO & n)
@@ -164,6 +183,24 @@ int NeuralNetwork::BestNeuronForCoords(double x, double y, double z) const
     }
   }
   return ret;
+}
+
+
+int NeuralNetwork::RetrieveWeighted(NPCIO & n)
+{
+  double s;
+  return RetrieveWeighted(n, s);
+}
+
+int NeuralNetwork::RetrieveWeighted(NPCIO & n, double & score)
+{
+  int index = BestWeighted(n);
+  n = m_neurons[index].Data();
+  n.SetNeuron(index);
+ 
+  score = n.Distance(m_neurons[index].Data());
+  return index;
+
 }
 
 int NeuralNetwork::Retrieve(NPCIO & n, double & score)

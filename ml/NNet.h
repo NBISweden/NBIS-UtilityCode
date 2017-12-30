@@ -1,7 +1,7 @@
 #ifndef NNET_H
 #define NNET_H
 
-#include "npc/NPCIO.h"
+#include "ml/NPCIO.h"
 #include "util/mutil.h"
 
 
@@ -189,15 +189,17 @@ class NeuralNetwork
   void ReSetup(int dim, double minus, double plus);
   void ReSetup(double minus, double plus);
  
-  void MatchAndSort(svec<NPCIO_WithCoords> & n);
 
   double BestDist(const Neuron & n) const;
+  int BestWeighted(const NPCIO & n);
   int Best(const NPCIO & n);
   int BestCoords(double & x, double & y, double & z, const NPCIO & n);
   int BestNeuronForCoords(double x, double y, double z) const;
 
   int Retrieve(NPCIO & n); // Returns the layer
   int Retrieve(NPCIO & n, double & score); // Returns the index
+  int RetrieveWeighted(NPCIO & n); // Returns the layer
+  int RetrieveWeighted(NPCIO & n, double & score); // Returns the index
   void Learn(const NPCIO & n, double weight = 1., bool bUpHit = true);
   void LearnAvoid(const NPCIO & n, double weight = 1.);
 

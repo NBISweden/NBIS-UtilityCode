@@ -30,9 +30,9 @@ void DLNet::AddForwardLayer(int n)
     for (j=nn; j<nn+n; j++) {
       DLNeuron & to = m_neurons[j];
       if (nn > 0 && j-i == nn-on)
-	from.AddConnect(j, RandomFloat(0.2));
+	from.AddConnect(j, RandomFloat(0.2)-0.1);
       else
-	from.AddConnect(j, RandomFloat(0.2));
+	from.AddConnect(j, RandomFloat(0.2)-0.1);
     }
   }
   m_outStart = nn;
@@ -159,7 +159,7 @@ double DLNet::TrainOne(double move, int layer)
 
   
   if (err > baseErr)
-    m_adjust /= 2;
+    m_adjust *= 0.9;
   
   
   return err;
@@ -221,7 +221,7 @@ double DLNet::Evaluate(const svec<string> & labels)
     for (i=m_outStart; i<m_neurons.isize(); i++) {
       double dist = m_neurons[i].GetOutput()-m_data[l].Out()[i-m_outStart];
       error += (dist*dist);
-      cout << l << "\t" << m_neurons[i].GetOutput() << "\t" << m_data[l].Out()[i-m_outStart] << endl;
+      cout << "Compare " << l << "\t" << m_neurons[i].GetOutput() << "\t" << m_data[l].Out()[i-m_outStart] << endl;
       if (m_neurons[i].GetOutput() > hiG) {
 	idxG = i;
 	hiG = m_neurons[i].GetOutput();
