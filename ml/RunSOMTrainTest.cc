@@ -151,9 +151,9 @@ int main( int argc, char** argv )
   
   
   NeuralNetwork nn;
-  int neurons = 20;
+  int neurons = 40;
   cout << "Neurons: " << train[0].isize() << " times " << neurons << endl;
-  nn.Setup(neurons, train[0].isize(), 4);
+  nn.Setup(neurons, train[0].isize(), 1);
   nn.ReSetup(-1, 1);
 
   svec<double> tx, ty;

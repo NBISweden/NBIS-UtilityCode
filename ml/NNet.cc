@@ -112,6 +112,8 @@ int NeuralNetwork::BestWeighted(const NPCIO & n)
     const Neuron & a = m_neurons[i];
     double d = 0.;
     double hits = a.GetHit();
+    if (hits < 0.00001)
+      continue;
     double cc = exp(-hits * 10);
     for (int j=0; j<a.isize(); j++) {
       if (n.IsValid(j))
@@ -195,10 +197,55 @@ int NeuralNetwork::RetrieveWeighted(NPCIO & n)
 int NeuralNetwork::RetrieveWeighted(NPCIO & n, double & score)
 {
   int index = BestWeighted(n);
-  n = m_neurons[index].Data();
+  //n = m_neurons[index].Data();
   n.SetNeuron(index);
- 
+
   score = n.Distance(m_neurons[index].Data());
+
+  
+  int i, j;
+  
+  NPCIO keep;
+  keep = n;
+
+  /*
+  for (i=0; i<n.isize(); j++) {
+    n[i] = 0.;
+    }*/
+  n = m_neurons[index].Data();
+  //return index;
+
+  double div = 1.;
+  
+  for (i=0; i<m_neurons.isize(); i++) {
+    const Neuron & a = m_neurons[i];
+    double localdist = keep.Distance(m_neurons[i].Data());
+    double hits = a.GetHit();
+    if (hits < 0.0001)
+      continue;
+    /*
+    double cc = exp(-hits * 10);
+    for (j=0; j<a.isize(); j++) {
+      if (keep.IsValid(j))
+	localdist += (a[j]-keep[j])*(a[j]-keep[j]);
+    }
+    localdist *= cc;*/
+    
+    double w = exp(4 * log(0.00001 + score/(localdist+0.00001)));
+    //cout << score << " " << localdist << " " << w << " " << cc << " log " << log(0.00001 + score/(localdist+0.00001)) << endl;
+    div += w;
+    for (j=0; j<n.isize(); j++) {
+      n[j] += a[j] * w;
+    }
+
+    //cout << "Weight " << w << " " << i << endl;
+  }
+  for (j=0; j<n.isize(); j++) {
+    n[j] /= div;
+  }
+  //cout << "Before " << keep[1] << " after " << n[1] << endl;
+  
+  
   return index;
 
 }
