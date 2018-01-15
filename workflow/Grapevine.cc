@@ -29,6 +29,8 @@ int main( int argc, char** argv )
   ScriptParser p;
   p.Read(fileName);
 
+  //p.Prepend("folder", "sample", "/");
+  
   for (j=0; j<p.GetCount(); j++) {
     p.Process(j);
 
@@ -49,12 +51,15 @@ int main( int argc, char** argv )
     }
     
     fclose(pOut);
+
+    string me = "chmod +x " + name;
+    int r = system(me.c_str());
+    
+
     cout << "***************** DONE " << endl;
     cout << "*****************************************************" << endl;
   }
   
-  string me = "chmod +x " + outName;
-  int r = system(me.c_str());
-  
+   
   return 0;
 }
