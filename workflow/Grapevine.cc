@@ -10,17 +10,20 @@ int main( int argc, char** argv )
 {
 
   commandArg<string> fileCmmd("-i","script file");
+  commandArg<string> headCmmd("-head","header file", "");
   commandArg<string> outCmmd("-o","output script file");
   //commandArg<bool> helpCmmd("-h","help", false);
   commandLineParser P(argc,argv);
   P.SetDescription("Natural language-like workflow manager.");
   P.registerArg(fileCmmd);
+  P.registerArg(headCmmd);
   P.registerArg(outCmmd);
   // P.registerArg(helpCmmd);
  
   P.parse();
   
   string fileName = P.GetStringValueFor(fileCmmd);
+  string headName = P.GetStringValueFor(headCmmd);
   string outName = P.GetStringValueFor(outCmmd);
   // bool bHelp = P.GetBoolValueFor(helpCmmd);
 
@@ -28,6 +31,8 @@ int main( int argc, char** argv )
   
   ScriptParser p;
   p.Read(fileName);
+  if (headName != "")
+    p.Read(headName);
 
   //p.Prepend("folder", "sample", "/");
   
