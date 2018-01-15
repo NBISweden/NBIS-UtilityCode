@@ -47,6 +47,10 @@ int main( int argc, char** argv )
     }
     
     FILE * pOut = fopen(name.c_str(), "w");
+    if (pOut == NULL) {
+      cout << "ERROR: can't write to " << name << endl;
+      return -1;
+    }
 
     cout << "*****************************************************" << endl;
     cout << "***************** Generating script " << j << endl;
