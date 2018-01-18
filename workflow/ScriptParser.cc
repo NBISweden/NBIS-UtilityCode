@@ -1,5 +1,30 @@
 #include "workflow/ScriptParser.h"
 
+
+void Table::Prepend(const string & what, const string & to, const string & sep)
+{
+
+  int root = -1;
+  int leaf = -1;
+
+  int i;
+  for (i=0; i<m_columns.isize(); i++) {
+    if (m_columns[i].Label() == what) {
+      root = i;
+    }
+    if (m_columns[i].Label() == to) {
+      leaf = i;
+    }
+  }
+
+  for (i=0; i<m_columns[0].isize(); i++) {
+    string a = (m_columns[root])[i];
+    a += sep;
+    a += (m_columns[leaf])[i];
+    (m_columns[leaf])[i] = a;
+  }
+}
+
 void Table::Read(const string & fileName)
 {
   FlatFileParser parser;

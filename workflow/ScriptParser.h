@@ -92,6 +92,7 @@ class Table
   string & Name() {return m_name;}
 
   bool Get(string &ret, const string & label, int index) const;
+  void Prepend(const string & what, const string & to, const string & sep = "");
 
  private:
   svec<TableColumn> m_columns;
@@ -99,7 +100,7 @@ class Table
 };
 
 
-
+//===========================================
 class ScriptParser
 {
  public:
@@ -115,10 +116,14 @@ class ScriptParser
     return 1;
   }
 
-  bool Process(int i=0);
+  bool Process(int i);
 
   int isize() const {return m_commands.isize();}
   const string & operator [] (int i) const {return m_commands[i].Processed();}
+
+  void Prepend(const string & what, const string & to, const string & sep = "") {
+    m_table.Prepend(what, to, sep);
+  }
   
  private:
   int AddVariable(const string & s) {
