@@ -1,0 +1,28 @@
+#JSGF V1.0 ISO8859-1 en;
+
+
+
+grammar com.test.mapping;
+
+
+
+import <com.test.digits.*>
+
+
+public <top> = <map> {this.cores = " -p 16 "} [<options>] <in1> <in2>  {this.command = "bowtie2 " + this.cores + this.ref + this.file1 + this.file2 + " --fast > output/mm9.bowtie.log | samtools view -bS -F 4 - | samtools sort -o "}
+     	    ;
+
+<map> =  map [reads] to <wildcard> {this.ref = " -x " + this.wc + " -q "} 
+	  ;
+
+<options> = cores <wildcard> {this.cores = " -p " + this.wc}
+        ;
+
+<in1> = in1 <wildcard> {this.file1 = " -1 " + this.wc}
+        ;
+	
+<in2> = in2 <wildcard> {this.file2 = " -2 " + this.wc}
+	;
+
+<wildcard> = % {this.wc = $}
+	   ;

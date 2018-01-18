@@ -1,0 +1,28 @@
+#!/bin/bash -l
+
+#SBATCH -A b2017079
+#SBATCH -p core
+#SBATCH -n 16
+#SBATCH -t 6:00:00
+
+module load bioinfo-tools
+module load bowtie2
+module load samtools
+module load IGVtools
+module load FastQC
+module load picard
+
+
+# @table = sample_data/table.txt
+>grammar = sample_data/test.gram
+
+
+
+##############################################
+
+do XYZZ that AAAA > @cool @works
+
+do @cool that @works
+
+
+

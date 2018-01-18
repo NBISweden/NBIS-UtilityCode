@@ -1,0 +1,34 @@
+#JSGF V1.0 ISO8859-1 en;
+
+
+
+grammar com.test.blah;
+
+
+
+import <com.test.spellex.*>
+
+
+
+public <top> =  <tools> {this.proc = " -p 16 "} <in> <out> <ref>  {this.result = this.command + " -i " + this.in + " -o " + this.out + " -r " + this.ref + this.proc + " > " + this.in + ".log"};
+
+
+<tools> =  map [reads] {this.command = " bowtie2 "}
+	  |align [reads] {this.command = " bowtie2 "}
+	  ;
+
+
+<ref> = to [reference] <spell>  {this.ref = this.result; this.result = ""}
+       |reference  <spell>  {this.result = this.result + " -r " + $}
+       ;
+
+<in> = in <spell>  {this.in = this.result; this.result = ""}
+       |input <spell> {this.result = this.result + " -i " + $}
+       ;
+
+<out> = out <spell>  {this.out = this.result; this.result = ""}
+       |output <spell>  {this.result = this.result + " -o " + $}
+       ;
+
+
+

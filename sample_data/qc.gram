@@ -1,0 +1,25 @@
+#JSGF V1.0 ISO8859-1 en;
+
+
+
+grammar com.test.qc;
+
+
+
+import <com.test.digits.*>
+
+
+
+public <top> = <qc> <in> {this.command = "fastqc -o /fastqc -i " + this.file}
+     	    ;
+
+
+<qc> = qc | quality [check]
+	  ;
+	   
+
+<in> = in <wildcard> {this.file = this.wc}
+	;
+
+<wildcard> = % {this.wc = $}
+	   ;

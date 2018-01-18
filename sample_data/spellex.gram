@@ -1,0 +1,144 @@
+#JSGF V1.0 ISO8859-1 en;
+
+
+
+grammar com.test.spell;
+
+
+
+
+
+public <spell> = <spell_symbol> <spell>
+
+		|<spell_symbol><spell_symbol>;
+
+
+
+<spell_symbol> = <spell_letter> | <spell_special>;
+
+
+
+<spell_letter> =       a  {this.result = this.result + $}
+		|b  {this.result = this.result + $}
+		|c  {this.result = this.result + $}
+		|d  {this.result = this.result + $}
+		|e  {this.result = this.result + $}
+		|f  {this.result = this.result + $}
+		|g  {this.result = this.result + $}
+		|h  {this.result = this.result + $}
+		|i  {this.result = this.result + $}
+		|j  {this.result = this.result + $}
+		|k  {this.result = this.result + $}
+		|l  {this.result = this.result + $}
+		|m  {this.result = this.result + $}
+		|n  {this.result = this.result + $}
+		|o  {this.result = this.result + $}
+		|p  {this.result = this.result + $}
+		|q  {this.result = this.result + $}
+		|r  {this.result = this.result + $}
+		|s  {this.result = this.result + $}
+		|t  {this.result = this.result + $}
+		|u  {this.result = this.result + $}
+		|v  {this.result = this.result + $}
+		|w  {this.result = this.result + $}
+		|x  {this.result = this.result + $}
+		|y  {this.result = this.result + $}
+		|z  {this.result = this.result + $}
+
+ 		|A  {this.result = this.result + $}
+		|B  {this.result = this.result + $}
+		|C  {this.result = this.result + $}
+		|D  {this.result = this.result + $}
+		|E  {this.result = this.result + $}
+		|F  {this.result = this.result + $}
+		|G  {this.result = this.result + $}
+		|H  {this.result = this.result + $}
+		|I  {this.result = this.result + $}
+		|J  {this.result = this.result + $}
+		|K  {this.result = this.result + $}
+		|L  {this.result = this.result + $}
+		|M  {this.result = this.result + $}
+		|N  {this.result = this.result + $}
+		|O  {this.result = this.result + $}
+		|P  {this.result = this.result + $}
+		|Q  {this.result = this.result + $}
+		|R  {this.result = this.result + $}
+		|S  {this.result = this.result + $}
+		|T  {this.result = this.result + $}
+		|U  {this.result = this.result + $}
+		|V  {this.result = this.result + $}
+		|W  {this.result = this.result + $}
+		|X  {this.result = this.result + $}
+		|Y  {this.result = this.result + $}
+		|Z  {this.result = this.result + $}
+
+
+		|0  {this.result = this.result + $}
+		|1  {this.result = this.result + $}
+		|2  {this.result = this.result + $}
+		|3  {this.result = this.result + $}
+		|4  {this.result = this.result + $}
+		|5  {this.result = this.result + $}
+		|6  {this.result = this.result + $}
+		|7  {this.result = this.result + $}
+		|8  {this.result = this.result + $}
+		|9  {this.result = this.result + $}
+		
+		|.  {this.result = this.result + $}
+		|-  {this.result = this.result + $}
+		|_  {this.result = this.result + $}
+
+		;
+
+<spell_number> =
+
+		oh   	  {this.result = this.result + "0"}
+
+		|zero     {this.result = this.result + "0"}
+
+		|one      {this.result = this.result + "1"}
+
+		|two 	  {this.result = this.result + "2"}
+
+		|three 	  {this.result = this.result + "3"}
+
+		|four 	  {this.result = this.result + "4"}
+
+		|five 	  {this.result = this.result + "5"}
+
+		|six 	  {this.result = this.result + "6"}
+
+		|seven 	  {this.result = this.result + "7"}
+
+		|eight 	  {this.result = this.result + "8"}
+
+		|nine 	  {this.result = this.result + "9"}
+
+		|comma 	  {this.result = this.result + ","}
+
+		|ten          {this.result = this.result + "10"}
+
+		|eleven          {this.result = this.result + "11"}
+
+		|twelve         {this.result = this.result + "12"}
+
+		|thirteen          {this.result = this.result + "13"}
+
+		;
+
+
+
+<spell_special> = dash 	  {this.result = this.result + "-"}
+
+		|@ 	  {this.result = this.result + "@"}
+		|% 	  {this.result = this.result + "%"}
+		|at 	  {this.result = this.result + "@"}
+		|dot 	  {this.result = this.result + "."}
+		|dot com  {this.result = this.result + ".com"}
+		|comma    {this.result = this.result + ","}
+		|underscore  {this.result = this.result + "_"}
+
+		;
+
+
+

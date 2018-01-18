@@ -1,0 +1,29 @@
+#JSGF V1.0 ISO8859-1 en;
+
+
+
+grammar com.test.demux;
+
+
+
+import <com.test.spellex.*>
+import <com.test.digits.*>
+
+
+
+public <top> =  <demux> <sample> too {this.success = "true"}
+     	    ;
+
+
+<demux> =  demux {this.hit = "hit_demux"}
+	  ;
+
+
+	   
+<sample> =  % {this.filebase = $}
+	;
+
+
+
+
+

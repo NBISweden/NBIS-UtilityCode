@@ -1,0 +1,59 @@
+#!/bin/bash -l
+
+#SBATCH -A b2017079
+#SBATCH -p core
+#SBATCH -n 16
+#SBATCH -t 6:00:00
+
+module load bioinfo-tools
+module load bowtie2
+module load samtools
+module load IGVtools
+module load FastQC
+module load picard
+export PATH=/home/manfredg/Software/minute-chip/bin/:$PATH
+
+@table   = sample_data/table.txt
+>grammar = sample_data/demux.gram
+>grammar = sample_data/dedup.gram
+>grammar = sample_data/qc.gram
+>grammar = sample_data/mapping.gram
+
+@ref = mm10
+
+
+##############################################
+# Match the bar code and extract reads from the fastq file
+
+demultiplex file base @table.file barcode @table.barcode sample @table.sample  > @out1 @out2
+
+
+##############################################
+# Remove duplicate templates
+
+remove duplicates file base @table.file in1 @out1 in2 @out2 sample @table.sample > @out1 @out2
+
+
+##############################################
+# Check if files are valid
+# @ret1 = check file @out1
+# @ret2 = check file @out2
+
+
+
+##############################################
+# Run QC
+
+qc in @out1 &
+qc in @out2 &
+
+wait
+
+##############################################
+# map reads
+
+map to @ref in1 @out1 in2 @out2
+
+
+
+

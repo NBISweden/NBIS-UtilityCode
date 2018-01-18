@@ -1,0 +1,44 @@
+#JSGF V1.0 ISO8859-1 en;
+
+
+
+grammar com.test.demux;
+
+
+
+import <com.test.spellex.*>
+import <com.test.digits.*>
+
+
+
+public <top> =  <demux> <sample> [<demuxopt>]
+
+       | <dedup> {this.mispair = "4"} <name> <sample> {this.out1 =this.filebase + "_" + this.R1base; this.out2 = this.filebase + "_" + this.R2base; this.execute = this.command + " -i1 " + this.filebase + "_" + this.sample + this.R1ex + " -i2 " + this.filebase + "_" + this.sample + this.R2ex + " -o1 " + this.filebase + "_" + this.R1base + " -o2 " + this.filebase + "_" + this.R2base + " -d2 " + this.mispair}
+     	    ;
+
+
+<demux> =  demux {this.command = " DeMuxFastq "; this.R1ex = "_R1.fastq.gz"; this.R2ex = "_R2.fastq.gz"; this.mis = "1"; this.umisize = "6"}
+	  | demultiplex {this.command = "  DeMuxFastq "; this.R1ex = "_R1.fastq.gz"; this.R2ex = "_R2.fastq.gz"; this.mis = 1; this.umisize = 6}
+	  ;
+
+<dedup> = remove duplicates {this.command = " RemoveDuplicates "; this.R1ex = "_R1.demux.fastq"; this.R2ex = "_R2.demux.fastq"}
+	  ;
+
+<demuxopt> = mismatches <t_digit> {this.mis = this.result; this.result = ""}
+	   | umi size <t_digit> {this.umisize = this.result; this.result = ""}
+	   | partner <t_digit> {this.mispair = this.result; this.result = ""}
+ 	   | bar code % {this.barcode = $}
+	   | barcode %  {this.barcode = $}
+	   ;
+	   
+<sample> = sample % {this.sample = $; this.R1base = this.sample + "_R1.demux.fastq"; this.R2base = this.sample + "_R2.demux.fastq"}
+	  ;
+
+<name> = fastq % {this.filebase = $}
+       | fastq base % {this.filebase = $}
+       | file base % {this.filebase = $}
+         ;
+
+
+
+

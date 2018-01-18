@@ -1,0 +1,23 @@
+#JSGF V1.0 ISO8859-1 en;
+
+
+
+grammar com.test.demux;
+
+
+
+import <com.test.spellex.*>
+import <com.test.digits.*>
+
+
+
+public <top> =  do % {this.mis = $; this.works = "AGCAATTC"; this.umisize = "6"} 
+       	     	that  <some> {this.command = "true that it works"; this.command = this.command  + " " + this.cool}
+     	    ;
+
+<some> = % {this.cool = $};
+
+
+
+
+

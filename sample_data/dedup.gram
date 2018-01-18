@@ -1,0 +1,44 @@
+#JSGF V1.0 ISO8859-1 en;
+
+
+
+grammar com.test.dedup;
+
+
+
+import <com.test.digits.*>
+
+
+
+public <top> = <dedup> {this.mispair = "4"} <name> <sample> {this.out1 = this.filebase + "_" + this.R1base; this.out2 = this.filebase + "_" + this.R2base; this.command = this.command + " -i1 " + this.filebase + "_" + this.sample + this.R1ex + " -i2 " + this.filebase + "_" + this.sample + this.R2ex + " -o1 " + this.filebase + "_" + this.R1base + " -o2 " + this.filebase + "_" + this.R2base + " -d2 " + this.mispair; this.out1 = this.filebase + "_" + this.R1base; this.out2 = this.filebase + "_" + this.R2base;}
+
+       | <dedup> {this.mispair = "4"} <name> <file1> <file2> <sample> {this.out1 = this.filebase + "_" + this.R1base; this.out2 = this.filebase + "_" + this.R2base; this.command = this.command + " -i1 " + this.R1 + " -i2 " + this.R2 + " -o1 " + this.filebase + "_" + this.R1base + " -o2 " + this.filebase + "_" + this.R2base + " -d2 " + this.mispair; this.out1 = this.filebase + "_" + this.R1base; this.out2 = this.filebase + "_" + this.R2base;}
+     
+     	    ;
+
+
+<dedup> = remove duplicates {this.command = "RemoveDuplicates "; this.R1ex = "_R1.dedup.fastq"; this.R2ex = "_R2.dedup.fastq"}
+	  ;
+
+<demuxopt> = mismatches <t_digit> {this.mis = this.result; this.result = ""}
+	   | umi size <t_digit> {this.umisize = this.result; this.result = ""}
+	   | partner <t_digit> {this.mispair = this.result; this.result = ""}
+ 	   ;
+	   
+<sample> = sample <wildcard> {this.sample = this.wc; this.R1base = this.sample + "_R1.dedup.fastq"; this.R2base = this.sample + "_R2.dedup.fastq"}
+	  ;
+
+<name> = fastq <wildcard> {this.filebase = this.wc}
+       | fastq base <wildcard> {this.filebase = this.wc}
+       | file base <wildcard> {this.filebase = this.wc}
+         ;
+
+
+<file1> = in1 <wildcard> {this.R1 = this.wc}
+	;
+
+<file2> = in2 <wildcard> {this.R2 = this.wc}
+	;
+
+<wildcard> = % {this.wc = $}
+	   ;
