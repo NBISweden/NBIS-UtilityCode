@@ -10,10 +10,12 @@ import <com.test.digits.*>
 
 
 
-public <top> = <qc> <in> {this.command = "fastqc -o /fastqc -i " + this.file}
+public <top> = <qc> <folder> <in> {this.command = "fastqc -o " + this.folder + "fastqc " + this.file}
      	    ;
 
-
+<folder> = folder <wildcard> {this.folder = this.wc; this.folder = this.folder + "/"}
+	 ;
+	 
 <qc> = qc | quality [check]
 	  ;
 	   

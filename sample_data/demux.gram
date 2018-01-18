@@ -10,9 +10,11 @@ import <com.test.digits.*>
 
 
 
-public <top> =  <demux> {this.mis = "1"; this.barcode = "AGCAATTC"; this.umisize = "6"} <name> [<demuxopt>] [<demuxopt>] [<demuxopt>] <sample> {this.out1 = this.filebase + "_" + this.R1base; this.out2 = this.filebase + "_" + this.R2base; this.command = this.command + " -i1 " + this.filebase + this.R1ex + " -i2 " + this.filebase + this.R2ex + " -o1 " + this.filebase + "_" + this.R1base + " -o2 " + this.filebase + "_" + this.R2base + " -b " + this.barcode + " -mis " + this.mis + " -off " + this.umisize}
+public <top> =  <demux> {this.mis = "1"; this.barcode = "AGCAATTC"; this.umisize = "6"} <folder> <name> [<demuxopt>] [<demuxopt>] [<demuxopt>] <sample> {this.out1 = this.folder + this.filebase + "_" + this.R1base; this.out2 = this.folder + this.filebase + "_" + this.R2base; this.command = this.command + " -i1 " + this.filebase + this.R1ex + " -i2 " + this.filebase + this.R2ex + " -o1 " + this.folder + this.filebase + "_" + this.R1base + " -o2 " + this.folder + this.filebase + "_" + this.R2base + " -b " + this.barcode + " -mis " + this.mis + " -off " + this.umisize}
      	    ;
 
+<folder> = folder <wildcard> {this.folder = this.wc; this.folder = this.folder + "/"}
+	 ;
 
 <demux> =  demux {this.command = "DeMuxFastq "; this.R1ex = "_R1.fastq.gz"; this.R2ex = "_R2.fastq.gz"; this.mis = "1"; this.umisize = "6"}
 	  | demultiplex {this.command = "  DeMuxFastq "; this.R1ex = "_R1.fastq.gz"; this.R2ex = "_R2.fastq.gz"; this.mis = 1; this.umisize = 6}
