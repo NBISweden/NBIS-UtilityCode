@@ -1,0 +1,24 @@
+#JSGF V1.0 ISO8859-1 en;
+
+
+
+grammar com.test.digits;
+
+
+
+public <t_digit>  =   0 	{this.result = "0"}
+			  | 1   {this.result = "1"}
+			  | 2   {this.result = "2"}
+			  | 3 	{this.result = "3"}
+			  | 4 	{this.result = "4"}
+			  | 5 	{this.result = "5"}
+			  | 6   {this.result = "6"}
+			  | 7	{this.result = "7"}
+			  | 8	{this.result = "8"}
+			  | 9	{this.result = "9"}
+			  ;
+
+
+
+
+

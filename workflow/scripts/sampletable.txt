@@ -1,0 +1,3 @@
+left right folder
+BLAH_11_R1_fastq BLAH_11_R2_fastq BLAH11
+BLAH_12_R1_fastq BLAH_12_R2_fastq BLAH12

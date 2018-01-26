@@ -1,0 +1,25 @@
+
+
+#!/bin/bash -l
+
+#SBATCH -A <yourproject>
+#SBATCH -p core
+#SBATCH -n 16
+#SBATCH -t 6:00:00
+
+module load bioinfo-tools
+export PATH=/home/manfredg/Software/NBIS-UtilityCode/:$PATH
+export PATH=/home/manfredg/Software/Masurca/MaSuRCA-3.2.2/bin/:$PATH
+
+@table   = workflow/scripts/sampletable.txt
+
+>grammar = workflow/grammars/assembleDNA.gram
+
+
+# One sample at a time
+
+assemble dna left @table.left right @table.right output @table.folder
+
+
+
+# Done, that's it!!

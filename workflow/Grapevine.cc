@@ -12,12 +12,14 @@ int main( int argc, char** argv )
   commandArg<string> fileCmmd("-i","script file");
   commandArg<string> headCmmd("-head","header file", "");
   commandArg<string> outCmmd("-o","output script file");
+  commandArg<string> subCmmd("-s","submit script prefix", "submit");
   //commandArg<bool> helpCmmd("-h","help", false);
   commandLineParser P(argc,argv);
   P.SetDescription("Natural language-like workflow manager.");
   P.registerArg(fileCmmd);
   P.registerArg(headCmmd);
   P.registerArg(outCmmd);
+  P.registerArg(subCmmd);
   // P.registerArg(helpCmmd);
  
   P.parse();
@@ -25,6 +27,7 @@ int main( int argc, char** argv )
   string fileName = P.GetStringValueFor(fileCmmd);
   string headName = P.GetStringValueFor(headCmmd);
   string outName = P.GetStringValueFor(outCmmd);
+  string subName = P.GetStringValueFor(subCmmd);
   // bool bHelp = P.GetBoolValueFor(helpCmmd);
 
   int i, j;
@@ -35,6 +38,8 @@ int main( int argc, char** argv )
     p.Read(headName);
 
   //p.Prepend("folder", "sample", "/");
+
+  svec<string> script;
   
   for (j=0; j<p.GetCount(); j++) {
     p.Process(j);
@@ -45,7 +50,8 @@ int main( int argc, char** argv )
       name += ".";
       name += Stringify(j);
     }
-    
+
+    script.push_back(name);
     FILE * pOut = fopen(name.c_str(), "w");
     if (pOut == NULL) {
       cout << "ERROR: can't write to " << name << endl;
@@ -69,6 +75,37 @@ int main( int argc, char** argv )
     cout << "*****************************************************" << endl;
   }
   
-   
+
+  cout << "Writing submit scripts..." << endl;
+
+
+  string s = subName + ".sbatch";
+  string b = subName + ".bsub";
+  string q = subName + ".qsub";
+  FILE * pS = fopen(s.c_str(), "w"); 
+  FILE * pB = fopen(b.c_str(), "w"); 
+  FILE * pQ = fopen(q.c_str(), "w"); 
+
+  for (i=0; i<script.isize(); i++) {
+    fprintf(pS, "sbatch %s\n", script[i].c_str());
+    fprintf(pB, "bsub %s\n", script[i].c_str());
+    fprintf(pQ, "qsub %s\n", script[i].c_str());
+  }
+  
+
+  fclose(pS);
+  fclose(pB);
+  fclose(pQ);
+
+  string sx = "chmod +x " + s;
+  string bx = "chmod +x " + b;
+  string qx = "chmod +x " + q;
+  //cout << "Run " << 
+  int rrr = system(sx.c_str());
+  rrr = system(bx.c_str());
+  rrr = system(qx.c_str());
+  
+  cout << "Done" << endl;
+  
   return 0;
 }
