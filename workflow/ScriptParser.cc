@@ -1,6 +1,19 @@
 #include "workflow/ScriptParser.h"
 
 
+void NewLines(string &s)
+{
+  int i;
+
+  for (i=0; i<(int)s.size()-1; i++) {
+    if (s[i] == '\\' && s[i+1] == 'n') {
+      s[i] = ' ';
+      s[i+1] = '\n';
+    }
+  }
+
+}
+
 void Table::Prepend(const string & what, const string & to, const string & sep)
 {
 
@@ -210,7 +223,8 @@ void ScriptParser::AddTableVars(int index)
       cout << "ERROR: index " << index << " exceeds table size " << m_table[i].isize() << endl;
   }
 }
- 
+
+
 bool ScriptParser::Process(int index)
 {
   int i, j;
@@ -270,6 +284,7 @@ bool ScriptParser::Process(int index)
 	  cout << "--> Command: " << line << endl;
 	  if (c.IsBG())
 	    line += " &";
+	  NewLines(line);
 	  c.Processed() = line;
 	  //continue;
 	}
