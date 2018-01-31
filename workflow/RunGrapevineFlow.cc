@@ -53,7 +53,7 @@ bool CheckExit(string & ret, string & succ, const string & id)
 int main( int argc, char** argv )
 {
 
-  if (argc < 3 || strcmp(argv[2], "-help") == 0 ||  strcmp(argv[2], "--help") == 0) {
+  if (argc < 2 || strcmp(argv[1], "-help") == 0 ||  strcmp(argv[1], "--help") == 0) {
     cout << "Usage: RunGrapevineFlow script1 script2 script3..." << endl;
     return 0;    
   }
@@ -63,7 +63,7 @@ int main( int argc, char** argv )
   
   int i, j;
 
-  for (i=2; i<argc; i++)
+  for (i=1; i<argc; i++)
     scripts.push_back(argv[i]);
 
 
