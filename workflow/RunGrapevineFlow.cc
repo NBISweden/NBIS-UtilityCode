@@ -8,6 +8,7 @@
 
 
 string exec(const char* cmd) {
+  cout << "EXECUTING: " << cmd << endl;
   char buffer[2048];
   string result = "";
   FILE* pipe = popen(cmd, "r");
