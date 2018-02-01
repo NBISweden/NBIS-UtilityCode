@@ -9,8 +9,12 @@ git clone https://github.com/NBISweden/NBIS-UtilityCode.git
 
 2. Compile it (we recommend gcc 5.4 and up, but it will also work with earlier versions):
 
-cd NBIS-UtilityCode
-make
+On Uppmax, do:  
+module load cmake  
+module load gcc/5.4.0  
+
+cd NBIS-UtilityCode  
+make -j 4
 
 3. Done! Run each executable and it will show you its options and a one line description og what it does.
 
