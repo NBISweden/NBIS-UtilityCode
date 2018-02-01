@@ -9,7 +9,7 @@ git clone https://github.com/NBISweden/NBIS-UtilityCode.git
 
 2. Compile it (we recommend gcc 5.4 and up, but it will also work with earlier versions):
 
-On Uppmax, do:
+On Uppmax, do:  
 module load cmake  
 module load gcc/5.4.0  
 
