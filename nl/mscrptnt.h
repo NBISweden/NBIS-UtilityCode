@@ -112,6 +112,7 @@ class CMScriptVariable
 	  return *this;
 	}
 	int i, j;
+	//cout << "Subtract " << val.StringVal() << " from " << m_stringVal << endl;
 	for (j=0; j<=m_stringVal.len()-val.StringVal().len(); j++) {
 	  bool good = true;
 	  for (i=m_stringVal.len()-val.StringVal().len()-j; i<m_stringVal.len()-j; i++) {
@@ -121,8 +122,9 @@ class CMScriptVariable
 	    }
 	  }
 	  if (good) {
-	    for (i=m_stringVal.len()-val.StringVal().len()-j; i<=m_stringVal.len()-j; i++) {
-	      m_stringVal[i] =  m_stringVal[i+val.StringVal().len()];
+	    for (i=m_stringVal.len()-val.StringVal().len()-j; i<=m_stringVal.len()-val.StringVal().len(); i++) {
+	      //cout << " -> copy " << m_stringVal[i+val.StringVal().len()] << " to " << 
+	      m_stringVal[i] = m_stringVal[i+val.StringVal().len()];
 	    }
 	    CMString tmp = (const char*) m_stringVal;
 	    m_stringVal = tmp;
