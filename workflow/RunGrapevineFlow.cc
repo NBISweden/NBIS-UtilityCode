@@ -28,6 +28,7 @@ string exec(const char* cmd) {
 
 string SubmitOne(const string & cmd)
 {
+  cout << "Submitting: " << cmd << endl;
   string ret = exec(cmd.c_str());
   StringParser p;
   p.SetLine(ret);
@@ -38,7 +39,7 @@ string SubmitOne(const string & cmd)
   string procID = p.AsString(3);
   if (procID[procID.size()-1] == '\n')
     procID[procID.size()-1] = 0;
-  cout << "Submitted " << cmd << "Process ID: " << procID << endl;
+  cout << "Submitted " << cmd << " - process ID: " << procID << endl;
   return procID;
 }
 
@@ -91,6 +92,12 @@ int main( int argc, char** argv )
     
       string id = "11794110";
       id = SubmitOne(parser.Line());
+      if (id == "-1") {
+	cout << "*****************************************" << endl;
+	cout << "ERROR during submission!!!" << endl;
+	cout << "Check your permissions and accounts!" << endl;
+	return -1;
+      }
       ids.push_back(id);
       status.push_back("");
     }
