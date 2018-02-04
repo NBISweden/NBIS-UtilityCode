@@ -27,13 +27,15 @@ class Neuron
     }
     for (i=0; i<m_data.isize(); i++) {
       
-      int index = (i+rot) % m_data.isize();
+      //int index = (i+rot) % m_data.isize(); // Enable for rotating data
+      int index = i+rot;
       
       //cout << "Index " << index << " " << m_data.isize() << " " << i+rot << endl;
       
       //if (index >= m_data.isize())
       //index -= m_data.isize();
-      m_data[i] = m_data[i]*(1.-weight) + weight*n[index];
+      if (index >= 0 && index < m_data.isize())  
+	m_data[i] = m_data[i]*(1.-weight) + weight*n[index];
     }
   }
 
