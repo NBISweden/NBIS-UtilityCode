@@ -324,14 +324,14 @@ bool CMScriptInterpreter::ResolveFunctionAndArguments(CMString & function, CMPtr
 bool CMScriptInterpreter::ExecuteStatement(const CMString & statement, const CMString & ntVarName)
 {
   if (statement == "") {
-	if (ntVarName != "") {
+    if (ntVarName != "") {
       CMScriptVariable & toSave = FindVariable(SCRPT_THIS_VAR, ntVarName);
       CMScriptVariable & toCopy = FindVariable(SCRPT_THIS_VAR, "$value");
       toSave = toCopy;
-	}
-	return true;
+    }
+    return true;
   }
-
+  
   CMPtrStringList tokens;
   TokenizeStatement(tokens, statement);
   long i=0; 
@@ -340,79 +340,79 @@ bool CMScriptInterpreter::ExecuteStatement(const CMString & statement, const CMS
   i++;
   const CMString & member = *tokens(i);
   i++;
-
+  
   CMScriptVariable & dest = FindVariable(var, member);
-
+  
   //const CMString & assignment = *tokens(i);
   i++;
   //Assume it's always '='...
-
+  
   //Build list of local variables...
   CMVariableList locals;
   CMPtrStringList ops;
   int j;
   for (j=i; j<tokens.length(); j++) {
-	const CMString & workToken = *tokens(j);
-	if (workToken == "+" || workToken == "-" || workToken == "*" || workToken == "/") {
-	  ops.add(new CMString(workToken));
+    const CMString & workToken = *tokens(j);
+    if (workToken == "+" || workToken == "-" || workToken == "*" || workToken == "/") {
+      ops.add(new CMString(workToken));
+    } else {
+      CMScriptVariable * pVar = new CMScriptVariable;
+      if (AssignTemp(pVar, workToken)) {
+      } else {
+	if (j < tokens.length() - 2 && *tokens(j+1) == ".") {
+	  *pVar = FindVariable(*tokens(j), *tokens(j+2));
+	  j += 2;
 	} else {
-	  CMScriptVariable * pVar = new CMScriptVariable;
-	  if (AssignTemp(pVar, workToken)) {
-	  } else {
-		if (j < tokens.length() - 2 && *tokens(j+1) == ".") {
-	      *pVar = FindVariable(*tokens(j), *tokens(j+2));
-		  j += 2;
-		} else {
-	      *pVar = FindVariable("", *tokens(j));
-		}
-	  }
-
-	  locals.add(pVar);
+	  *pVar = FindVariable("", *tokens(j));
 	}
+      }
+      
+      locals.add(pVar);
+    }
   }
-
+  
   //Multiplications/divisions first
   int k = 0;
   for (j=0; j<ops.length(); j++) {
-	if (*ops(j) == "*") {
-	  *locals(k) *= *locals(k+1);
-	  locals.remove(k+1);
-	  ops.remove(j);
-	  j--;
-	  continue;
-	}
-	if (*ops(j) == "/") {
-	  *locals(k) /= *locals(k+1);
-	  locals.remove(k+1);
-	  ops.remove(j);
-	  j--;
-	  continue;
-	}
-
+    if (*ops(j) == "*") {
+      *locals(k) *= *locals(k+1);
+      locals.remove(k+1);
+      ops.remove(j);
+      j--;
+      continue;
+    }
+    if (*ops(j) == "/") {
+      *locals(k) /= *locals(k+1);
+      locals.remove(k+1);
+      ops.remove(j);
+      j--;
+      continue;
+    }
+    
     k++;
   }
-
+  
   //plus and minus
   k = 0;
   for (j=0; j<ops.length(); j++) {
-	if (*ops(j) == "+") {
-	  *locals(k) += *locals(k+1);
-	  locals.remove(k+1);
-	  ops.remove(j);
-	  j--;
-	  continue;
-	}
-	if (*ops(j) == "-") {
-	  *locals(k) -= *locals(k+1);
-	  locals.remove(k+1);
-	  ops.remove(j);
-	  j--;
-	  continue;
-	}
-
+    if (*ops(j) == "+") {
+      *locals(k) += *locals(k+1);
+      locals.remove(k+1);
+      ops.remove(j);
+      j--;
+      continue;
+    }
+    if (*ops(j) == "-") {
+      *locals(k) -= *locals(k+1);
+      locals.remove(k+1);
+      ops.remove(j);
+      j--;
+      continue;
+    }
+    
     k++;
   }
-
+  
   //Done!
   dest = *locals(0);
 
@@ -435,15 +435,15 @@ bool CMScriptInterpreter::AssignTemp(CMScriptVariable * pVar, const CMString & t
   //Check for NUMERICALS and quoted STRINGS here...
   if (token(0) == '"' && token(strlen(token)-1) == '"') {
     char szTemp[1024];
-	strcpy(szTemp, &((const char*)token)[1]);
-	szTemp[strlen(token)-2] = 0;
-	pVar->StringVal() = szTemp;
-	return true;
+    strcpy(szTemp, &((const char*)token)[1]);
+    szTemp[strlen(token)-2] = 0;
+    pVar->StringVal() = szTemp;
+    return true;
   }
-
+  
   for (int i=0; i<(int)strlen(token); i++) {
     if (token(i) > '9' || token(i) < '0')
-	  return false;
+      return false;
   }
   
   pVar->IntVal() = atoi(token);
@@ -459,22 +459,22 @@ void CMScriptInterpreter::PreParse(CMPtrStringList & statements, const CMPtrStri
 {
   for (int i=0; i<script.length(); i++) {
     CMPtrStringList tokens;
-	CMString s = *script(i);
-	s += ";";
-	Tokenize(tokens, s, ';');
-	for (int j=0; j<tokens.length(); j++) {
-	  if (*tokens(j) != ";") {
-	    statements.add(new CMString(*tokens(j)));
-		if (j == 0)
-		  postTokens.add(new CMString(*preTokens(i)));
-		else
-		  postTokens.add("");
-	  }
-	}
-	if (tokens.length() == 0) {
-	  statements.add(new CMString);
+    CMString s = *script(i);
+    s += ";";
+    Tokenize(tokens, s, ';');
+    for (int j=0; j<tokens.length(); j++) {
+      if (*tokens(j) != ";") {
+	statements.add(new CMString(*tokens(j)));
+	if (j == 0)
 	  postTokens.add(new CMString(*preTokens(i)));
-	}
+	else
+	  postTokens.add("");
+      }
+    }
+    if (tokens.length() == 0) {
+      statements.add(new CMString);
+      postTokens.add(new CMString(*preTokens(i)));
+    }
 	  
   }
 }
@@ -487,56 +487,56 @@ bool CMScriptInterpreter::TokenizeStatement(CMPtrStringList & result, const CMSt
   //Clear out any previous results in the tokenizer
   result.removeAll();
   __mccl_strcpy(szTemp, _TMCL(""));
-
+  
   int k = 0;
-
+  
   long len = (long)__mccl_strlen(pszBuffer);
-
+  
   bool bQuoteFlag = false;
-
+  
   //Hack to preserve tags
   char cQuoteOpen = '"';
   char cQuoteClose = '"';
-
+  
   for (int i=0; i<=len; i++) {
-	if (!bQuoteFlag && pszBuffer[i] == cQuoteOpen) {
-	  bQuoteFlag = true;
+    if (!bQuoteFlag && pszBuffer[i] == cQuoteOpen) {
+      bQuoteFlag = true;
 	} else {
       if (bQuoteFlag && pszBuffer[i] == cQuoteClose)
-	    bQuoteFlag = false;
-	}
-
-	if (!bQuoteFlag && (pszBuffer[i] == ' ' 
-		|| pszBuffer[i] == '.'
-		|| pszBuffer[i] == '='
-		|| pszBuffer[i] == '+'
-		|| pszBuffer[i] == '-'
-		|| pszBuffer[i] == '*'
-		|| pszBuffer[i] == '/'
-		|| i == len)) {
-	  k = 0;
-	  if (__mccl_strcmp(szTemp, _TMCL("")) != 0 && __mccl_strcmp(szTemp, _TMCL(" ")) != 0) {
-	  	CMString * pNewString = new CMString;
-	    *pNewString = szTemp;
-		result.add(pNewString);
+	bQuoteFlag = false;
+    }
+    
+    if (!bQuoteFlag && (pszBuffer[i] == ' ' 
+			|| pszBuffer[i] == '.'
+			|| pszBuffer[i] == '='
+			|| pszBuffer[i] == '+'
+			|| pszBuffer[i] == '-'
+			|| pszBuffer[i] == '*'
+			|| pszBuffer[i] == '/'
+			|| i == len)) {
+      k = 0;
+      if (__mccl_strcmp(szTemp, _TMCL("")) != 0 && __mccl_strcmp(szTemp, _TMCL(" ")) != 0) {
+	CMString * pNewString = new CMString;
+	*pNewString = szTemp;
+	result.add(pNewString);
         __mccl_strcpy(szTemp, _TMCL(""));
       }
-	  if (i < len && pszBuffer[i] != ' ') {
-	    CMString * pNewString = new CMString;
-	    szTemp[0] = pszBuffer[i];
-	    szTemp[1] = 0;
-	    *pNewString = szTemp;
-	    result.add(pNewString);
+      if (i < len && pszBuffer[i] != ' ') {
+	CMString * pNewString = new CMString;
+	szTemp[0] = pszBuffer[i];
+	szTemp[1] = 0;
+	*pNewString = szTemp;
+	result.add(pNewString);
         __mccl_strcpy(szTemp, _TMCL(""));
-	  
-		//if (result.length() >= limit)
-		  //break;
-	  }
-	} else {
-	  szTemp[k] = pszBuffer[i];
-	  szTemp[k + 1] = 0;
-	  k++;
-	}
+	
+	//if (result.length() >= limit)
+	//break;
+      }
+    } else {
+      szTemp[k] = pszBuffer[i];
+      szTemp[k + 1] = 0;
+      k++;
+    }
   }
 
   return true;
@@ -558,22 +558,22 @@ CMScriptVariable & CMScriptInterpreter::FindVariable(const CMString & var, const
 {
   if (var == "systemcall" || var == "externcall") {
     CMScriptVariable & fnVar = AddVariable(var, member);
-	CMString result;
+    CMString result;
     if (var == "systemcall")
       HandleSystemCall(fnVar, result, member);
     if (var == "externcall") {
-	  HandleExternalCall(result, member);
-	  fnVar.StringVal() = result;
-	}
+      HandleExternalCall(result, member);
+      fnVar.StringVal() = result;
+    }
     return fnVar;
-
+    
   } else {
     for (int i=0; i<m_variables.length(); i++) {
       if (m_variables(i)->VarName() == var && m_variables(i)->MemberName() == member)
-	    return *m_variables(i);
-	}
+	return *m_variables(i);
+    }
   } 
-
+  
   CMScriptVariable & retVar = AddVariable(var, member); 
   return retVar;
 }

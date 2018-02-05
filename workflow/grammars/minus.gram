@@ -1,0 +1,25 @@
+#JSGF V1.0 ISO8859-1 en;
+
+
+
+grammar com.test.assembleDNA;
+
+
+
+import <com.test.digits.*>
+
+
+public <top> = test <in1> <in2>  {this.c = "blah"; this.command = this.a - this.c; this.command = this.command - this.b}
+    	    ;
+
+
+
+
+<in1> = this <wildcard> {this.a = this.wc}
+        ;
+	
+<in2> = minus <wildcard> {this.b = this.wc}
+	;
+
+<wildcard> = % {this.wc = $}
+	   ;

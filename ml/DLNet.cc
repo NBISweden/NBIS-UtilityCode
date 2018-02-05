@@ -178,6 +178,7 @@ double DLNet::Evaluate(const svec<string> & labels)
 
   double bestHit = 0.;
 
+  /*
   cout << "+++++++++ PRINT ++++++++++++++++" << endl;
   for (i=0; i<m_neurons.isize(); i++) {
     DLNeuron & from = m_neurons[i];
@@ -185,7 +186,7 @@ double DLNet::Evaluate(const svec<string> & labels)
     for (j=0; j<from.GetConnections(); j++) {
       cout << " -> " << from.GetConnect(j) << " weight: " <<  from.GetWeight(j) << endl;
     }
-  }
+    }*/
      
 
 
