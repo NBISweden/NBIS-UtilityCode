@@ -125,10 +125,13 @@ int ScriptParser::Read(const string & fileName)
       if (parser.AsString(0) == ">grammar") {
 	bPre = true;
 	cout << "Reading grammar from " << parser.AsString(2) << endl;
-
+	string grmName = parser.AsString(2);
+	if (strstr(grmName.c_str(), "/") == NULL) {
+	  grmName = m_gramPath + grmName;
+	}
 	try {
-	  cout << "Loading grammar: " << parser.AsString(2) << endl;
-	  GRAMMAR_HANDLE h = m_grmStack.AddGrammaAndReadFromFile(parser.AsString(2).c_str());	 
+	  cout << "Loading grammar: " << grmName << endl;
+	  GRAMMAR_HANDLE h = m_grmStack.AddGrammaAndReadFromFile(grmName.c_str());	 
 	  cout << "Success!" << endl;
 	}
 

@@ -124,6 +124,10 @@ class ScriptParser
   void Prepend(const string & what, const string & to, const string & sep = "") {
     m_table.Prepend(what, to, sep);
   }
+
+  void SetGrammarPath(const string & g) {
+    m_gramPath = g;
+  }
   
  private:
   int AddVariable(const string & s) {
@@ -158,6 +162,7 @@ class ScriptParser
   int m_curr;
   Table m_table;
   svec<string> m_dict;
+  string m_gramPath;
 };
 
 

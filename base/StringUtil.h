@@ -21,6 +21,21 @@ bool ContainsAt(string &s, string &t, int at);
 
 int PositionAfter(string &in, string& s, int startSearchAt);
 
+inline string ExecPath(const string & a)
+{
+  string b = a;
+  for (int i=(int)b.length()-1; i>=0; i--) {
+    if (b[i] == '/') {
+      b[i+1] = 0;
+      break;
+    }
+  }
+  if (b == a)
+    b = "";
+  
+  return b;
+}
+
 inline string Stringify(int x)
 {
   ostringstream out;
