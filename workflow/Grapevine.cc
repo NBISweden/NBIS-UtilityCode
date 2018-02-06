@@ -40,13 +40,18 @@ int main( int argc, char** argv )
     grName = ExecPath(argv[0]);
   
   ScriptParser p;
+
+  p.SetGrammarPath(grName);
+
+  cout << "Using grammar path " << grName << endl;
+  
+  
   p.Read(fileName);
   if (headName != "")
     p.Read(headName);
 
   //p.Prepend("folder", "sample", "/");
 
-  p.SetGrammarPath(grName);
   
   svec<string> script;
   

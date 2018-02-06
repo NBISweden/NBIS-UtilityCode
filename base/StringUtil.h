@@ -6,6 +6,8 @@
 #include <iostream>
 #include <sstream>
 #include <vector>
+#include <stdio.h>
+#include <string.h>
 
 using namespace std;
 
@@ -23,17 +25,21 @@ int PositionAfter(string &in, string& s, int startSearchAt);
 
 inline string ExecPath(const string & a)
 {
-  string b = a;
-  for (int i=(int)b.length()-1; i>=0; i--) {
+  char b[512];
+  strcpy(b, a.c_str());
+  bool bF = false;
+  for (int i=(int)a.length()-1; i>=0; i--) {
     if (b[i] == '/') {
       b[i+1] = 0;
+      bF = true;
       break;
     }
   }
-  if (b == a)
-    b = "";
-  
-  return b;
+  if (!bF)
+    strcpy(b, "");
+
+  string bb = b;
+  return bb;
 }
 
 inline string Stringify(int x)
