@@ -3,7 +3,7 @@
 #include "base/FileParser.h"
 
 #include "workflow/ScriptParser.h"
-
+#include "base/StringUtil.h"
 
 
 int main( int argc, char** argv )
@@ -13,6 +13,7 @@ int main( int argc, char** argv )
   commandArg<string> headCmmd("-head","header file", "");
   commandArg<string> outCmmd("-o","output script file");
   commandArg<string> subCmmd("-s","submit script prefix", "submit");
+  commandArg<string> grCmmd("-g","grammar directory", "");
   //commandArg<bool> helpCmmd("-h","help", false);
   commandLineParser P(argc,argv);
   P.SetDescription("Natural language-like workflow manager.");
@@ -20,6 +21,7 @@ int main( int argc, char** argv )
   P.registerArg(headCmmd);
   P.registerArg(outCmmd);
   P.registerArg(subCmmd);
+  P.registerArg(grCmmd);
   // P.registerArg(helpCmmd);
  
   P.parse();
@@ -28,9 +30,14 @@ int main( int argc, char** argv )
   string headName = P.GetStringValueFor(headCmmd);
   string outName = P.GetStringValueFor(outCmmd);
   string subName = P.GetStringValueFor(subCmmd);
+  string grName = P.GetStringValueFor(grCmmd);
   // bool bHelp = P.GetBoolValueFor(helpCmmd);
 
   int i, j;
+
+
+  if (grName == "")
+    grName = ExecPath(argv[0]);
   
   ScriptParser p;
   p.Read(fileName);
@@ -39,6 +46,8 @@ int main( int argc, char** argv )
 
   //p.Prepend("folder", "sample", "/");
 
+  p.SetGrammarPath(grName);
+  
   svec<string> script;
   
   for (j=0; j<p.GetCount(); j++) {
