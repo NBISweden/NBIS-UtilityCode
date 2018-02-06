@@ -93,7 +93,8 @@ class Table
 
   bool Get(string &ret, const string & label, int index) const;
   void Prepend(const string & what, const string & to, const string & sep = "");
-
+  void Collapse(const string & key);
+  void Print() const;
  private:
   svec<TableColumn> m_columns;
   string m_name;
@@ -130,6 +131,11 @@ class ScriptParser
   }
   
  private:
+
+  void CollapseTable(const string & key) {
+    m_table.Collapse(key);
+  }
+  
   int AddVariable(const string & s) {
     int i;
     for (i=0; i<m_vars.isize(); i++) {

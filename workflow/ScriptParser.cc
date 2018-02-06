@@ -62,6 +62,67 @@ void Table::Read(const string & fileName)
 
 }
 
+void Table::Collapse(const string & key)
+{
+  int i, j;
+  int index = -1;
+  Table t2;
+  t2.resize(isize());
+  t2.Name() = Name();
+  for (i=0; i<m_columns.isize(); i++) {
+    if (m_columns[i].Label() == key) {
+      index = i;
+    }
+    t2[i].Label() = (*this)[i].Label();
+    //t2[i].push_back("");
+  }
+  if (index == -1) {
+    cout << "ERROR Collapse(): column not found in table: " << key << endl;
+    return;
+  }
+  
+  Print();
+
+  cout << "Collapsing table" << endl;
+
+  string last;
+  int k = -1;
+  for (j=0; j<(*this)[index].isize(); j++) {
+    bool push = false;
+    if (((*this)[index])[j] != last) {
+      last = ((*this)[index])[j];
+      push = true;
+      for (i=0; i<t2.isize(); i++) {
+	t2[i].push_back("");
+      }
+      k++;
+    }
+    for (i=0; i<t2.isize(); i++) {
+      if ((t2[i])[k] != ((*this)[i])[j]) {
+	if ((t2[i])[k] == "")
+	  (t2[i])[k] = ((*this)[i])[j];
+	else
+	  (t2[i])[k] += " " + ((*this)[i])[j];
+      }
+    }
+  }
+
+  *this = t2;
+  Print();
+}
+
+void Table::Print() const
+{
+  int i, j;
+  for (i=0; i<m_columns.isize(); i++) {
+    cout << m_columns[i].Label();
+    for (j=0; j<m_columns[i].isize(); j++) {
+      cout << " " << (m_columns[i])[j];
+    }
+    cout << endl;
+  }
+}
+
 bool Table::Get(string &ret, const string & label, int index) const
 {
   int i;
@@ -110,10 +171,14 @@ int ScriptParser::Read(const string & fileName)
 	cout << "Reading table from " << parser.AsString(2) << endl; 
 	m_table.Read(parser.AsString(2));
 	m_table.Name() = parser.AsString(0);
+	if (parser.GetItemCount() == 5) {
+	  if (parser.AsString(3) == "collapse")
+	    m_table.Collapse(parser.AsString(4));
+	} 
       } else {
 	// TODO: dynamic variable assignment!!!!
 	if (parser.AsString(0)[0] == '@') {
-	  cout << "Setting variable" << parser.AsString(0) << " to " << parser.AsString(2) << endl;
+	  cout << "Setting variable " << parser.AsString(0) << " to " << parser.AsString(2) << endl;
 	  int idx = AddVariable(parser.AsString(0));
 	  m_vars[idx].Value() = parser.AsString(2);
 	  tmp.Raw() = "# REMOVED " + tmp.Raw();
