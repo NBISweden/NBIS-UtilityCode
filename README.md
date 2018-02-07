@@ -23,11 +23,11 @@ To contribute to the code base:
 
 1. To add a new executable, simple create a file with the extension .cc, and make sure that the main entry point is written exactly as follows:
 
-int main( int argc, char** argv )
+int main( int argc, char** argv )  
 
-Add in some code, then simply do
+Add in some code, then simply do  
 
-make
+make  
 
 and it will be added to the makefile systen and compile. Good old "Arachne magic" ;)
 Any file that you #include is regarded a dependency, and if there is a .cc file with the same name in the same directory, it will automatically be compiled and linked by the executable.
@@ -36,38 +36,38 @@ Any file that you #include is regarded a dependency, and if there is a .cc file 
 
 2.1 Use the commandLineParser for parameter processing. A simple example is this:
 
-int main( int argc, char** argv )
-{
+int main( int argc, char** argv )  
+{  
 
-  commandArg<string> fileCmmd("-i","input file"); //Need to know what file to process
-  commandArg<int> fromCmmd("-from","from where to begin"); //Need to know where to start
-  commandArg<double> valCmmd("-scale","scaling factor", 1.); //If not specified otherwise, we assume it's 1
-
-  commandLineParser P(argc,argv);
+  commandArg<string> fileCmmd("-i","input file"); //Need to know what file to process  
+  commandArg<int> fromCmmd("-from","from where to begin"); //Need to know where to start  
+  commandArg<double> valCmmd("-scale","scaling factor", 1.); //If not specified otherwise, we assume it's 1  
   
-  P.SetDescription("This module performs magic.");
-  P.registerArg(fileCmmd);
-  P.registerArg(fromCmmd);
-  P.registerArg(valCmmd);
- 
-  P.parse();
+  commandLineParser P(argc,argv);  
+    
+  P.SetDescription("This module performs magic."); 
+  P.registerArg(fileCmmd);  
+  P.registerArg(fromCmmd);  
+  P.registerArg(valCmmd);  
+   
+  P.parse();  
   
-  string fileName = P.GetStringValueFor(fileCmmd);
-  int from = P.GetIntValueFor(fromCmmd);
-  double val = P.GetDoubleValueFor(valCmmd);
+  string fileName = P.GetStringValueFor(fileCmmd);  
+  int from = P.GetIntValueFor(fromCmmd);  
+  double val = P.GetDoubleValueFor(valCmmd);  
  
 2.2 For file reading, use the FlatFileParser. Simply do something like this:
 
-  FlatFileParser parser;
-  parser.Open(fileName);
+  FlatFileParser parser;  
+  parser.Open(fileName);  
 
-  while (parser.ParseLine()) {
-    if (parser.GetItemCount() < 3)
-      continue;
-    int a = parser.AsInt(0);
-    string b = parser.AsString(1);
-    double v = parser.AsFloat(2);
-  }
+  while (parser.ParseLine()) {  
+    if (parser.GetItemCount() < 3)  
+      continue;  
+    int a = parser.AsInt(0);  
+    string b = parser.AsString(1);  
+    double v = parser.AsFloat(2);  
+  }  
 
 Also, check out the StringParser.
 
