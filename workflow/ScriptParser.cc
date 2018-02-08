@@ -168,13 +168,21 @@ int ScriptParser::Read(const string & fileName)
     if (parser.GetItemCount() >= 3) {
       if (parser.AsString(0) == "@table") {
 	bPre = true;
-	cout << "Reading table from " << parser.AsString(2) << endl; 
-	m_table.Read(parser.AsString(2));
-	m_table.Name() = parser.AsString(0);
-	if (parser.GetItemCount() == 5) {
-	  if (parser.AsString(3) == "collapse")
-	    m_table.Collapse(parser.AsString(4));
-	} 
+	if (m_table.isize() > 0) {
+	  cout << "Table loaded already, ignoring request." << endl;
+	} else {
+	  cout << "Reading table from " << parser.AsString(2) << endl; 
+	  m_table.Read(parser.AsString(2));
+	  m_table.Name() = parser.AsString(0);
+	  if (parser.GetItemCount() == 5) {
+	    if (parser.AsString(3) == "collapse")
+	      m_table.Collapse(parser.AsString(4));
+	  }
+	  if (m_collapse != "") {
+	    cout << "Collapsing table using " << m_collapse << endl;
+	    m_table.Collapse(m_collapse);
+	  }
+	}
       } else {
 	// TODO: dynamic variable assignment!!!!
 	if (parser.AsString(0)[0] == '@') {
@@ -185,6 +193,12 @@ int ScriptParser::Read(const string & fileName)
 
 	} 
 	
+      }
+      
+      if (parser.AsString(0) == ">collapse") {
+	if (parser.AsString(1) == "table" || parser.AsString(1) == "@table")
+	  m_collapse = parser.AsString(2);
+	tmp.Raw() = "# REMOVED " + tmp.Raw();
       }
       
       if (parser.AsString(0) == ">grammar") {

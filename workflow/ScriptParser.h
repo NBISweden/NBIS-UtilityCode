@@ -169,6 +169,7 @@ class ScriptParser
   Table m_table;
   svec<string> m_dict;
   string m_gramPath;
+  string m_collapse;
 };
 
 
