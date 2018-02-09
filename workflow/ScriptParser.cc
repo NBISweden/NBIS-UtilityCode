@@ -264,6 +264,9 @@ int ScriptParser::Read(const string & fileName)
 	  cout << "Table loaded already, ignoring request." << endl;
 	} else {
 	  cout << "Reading table from " << parser.AsString(2) << endl; 
+	  int idx = AddVariable("@table");
+	  m_vars[idx].Value() = parser.AsString(2);
+	  
 	  m_table.Read(parser.AsString(2));
 	  m_table.Name() = parser.AsString(0);
 	  if (parser.GetItemCount() == 5) {

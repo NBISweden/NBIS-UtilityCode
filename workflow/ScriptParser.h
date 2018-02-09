@@ -105,6 +105,8 @@ class Table
       return 0;
     return m_index[i];
   }
+
+  const string & FileName() const {return m_fileName;}
   
  private:
   int ColIndex(const string & s) const {
@@ -119,6 +121,7 @@ class Table
   svec<TableColumn> m_columns;
   string m_name;
   svec<int> m_index;
+  string m_fileName;
 };
 
 
