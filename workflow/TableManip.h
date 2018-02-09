@@ -4,7 +4,7 @@
 #define FORCE_DEBUG
 
 #include "base/SVector.h"
-#include "workflow/ScriptManager.h"
+#include "workflow/ScriptParser.h"
 
 class TableManipulator
 {
@@ -27,7 +27,7 @@ class TableManipulator
   
   string m_name;
   string m_lock;
-}
+};
 
 
 

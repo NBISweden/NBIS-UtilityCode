@@ -1,7 +1,7 @@
 #include "workflow/TableManip.h"
 #include "base/FileParser.h"
 #include <unistd.h>
-
+#include <stdlib.h>
 
 void TableManipulator::AddColumn(const string & label)
 {
@@ -38,7 +38,7 @@ void TableManipulator::SetInColumn(const string & label, int i, const string & v
   AddLock();
   Table t;
   t.Read(m_name);
-  t.SetInColumn(label, v);
+  t.SetInColumn(label, i, v);
   t.Write(m_name);
   RemoveLock();
 }
@@ -63,7 +63,7 @@ void TableManipulator::Wait()
   int n = 0;
   while (p != NULL) {
     fclose(p);
-    useleep(1000000);
+    usleep(1000000);
     p = fopen(m_lock.c_str(), "r");
     n++;
     if (n > 60) {

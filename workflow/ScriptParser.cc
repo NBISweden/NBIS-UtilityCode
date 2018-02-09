@@ -52,7 +52,9 @@ void Table::Write(const string & fileName)
   fprintf(p, "\n");
 
   for (j=0; j<m_columns[0].isize(); j++) {
+    //cout << "j=" << j << endl;
     for (i=0; i<m_columns.isize(); i++) {
+      //cout << i << " " << m_columns[i].isize() << endl;
       fprintf(p, "%s\t", (m_columns[i])[j].c_str());
     }
     fprintf(p, "\n");
@@ -76,8 +78,12 @@ void Table::AddColumn(const string & label)
   tmp.Label() = label;
   m_columns.push_back(tmp);
   TableColumn & t = m_columns[m_columns.isize()-1];
-  for (i=0; i<t.isize(); i++)
+  TableColumn & one = m_columns[0];
+  //cout << "Size col 0: " << m_columns[0].isize() << endl;
+  for (i=0; i<one.isize(); i++) {
+    //cout << "pushing" << endl;
     t.push_back(".n/a");
+  }
 }
 
 void Table::RemoveColumn(const string & label)
