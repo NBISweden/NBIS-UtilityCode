@@ -193,7 +193,7 @@ void Table::Collapse(const string & key)
 	t2[i].push_back("");
       }
       k++;
-      m_index.push_back(k);
+      m_index.push_back(j);
     }
     for (i=0; i<t2.isize(); i++) {
       if ((t2[i])[k] != ((*this)[i])[j]) {
