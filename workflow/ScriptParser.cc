@@ -1,4 +1,6 @@
 #include "workflow/ScriptParser.h"
+#include "base/StringUtil.h"
+
 
 
 void NewLines(string &s)
@@ -38,6 +40,88 @@ void Table::Prepend(const string & what, const string & to, const string & sep)
   }
 }
 
+void Table::Write(const string & fileName)
+{
+  FILE * p = fopen(fileName.c_str(), "w");
+
+  int i, j;
+
+  for (i=0; i<m_columns.isize(); i++) {
+    fprintf(p, "%s\t", m_columns[i].Label().c_str());
+  }
+  fprintf(p, "\n");
+
+  for (j=0; j<m_columns[0].isize(); j++) {
+    for (i=0; i<m_columns.isize(); i++) {
+      fprintf(p, "%s\t", (m_columns[i])[j].c_str());
+    }
+    fprintf(p, "\n");
+  }
+  
+  fclose(p);
+}
+
+void Table::AddColumn(const string & label)
+{
+  int i;
+
+  int index = ColIndex(label);
+  if (index >= 0) {
+    cout << "WARNING: column " << label << " already exists!!" << endl;
+    return;
+  }
+
+
+  TableColumn tmp;
+  tmp.Label() = label;
+  m_columns.push_back(tmp);
+  TableColumn & t = m_columns[m_columns.isize()-1];
+  for (i=0; i<t.isize(); i++)
+    t.push_back(".n/a");
+}
+
+void Table::RemoveColumn(const string & label)
+{
+  int index = ColIndex(label);
+  if (index < 0) {
+    cout << "WARNING: column " << label << " not found!!" << endl;
+    return;
+  }
+  for (int i=index+1; i<m_columns.isize(); i++)
+    m_columns[i-1] = m_columns[i];
+  m_columns.resize(m_columns.isize()-1);
+}
+
+void Table::FillColumn(const string & label, const svec<string> & c, int from)
+{
+  int index = ColIndex(label);
+  if (index < 0) {
+    cout << "WARNING: column " << label << " not found (FillColumn)!!" << endl;
+    return;
+  }
+  int i;
+  TableColumn & t = m_columns[index];
+  for (i=0; i<c.isize(); i++) {
+    t[i+from] = c[i];
+  }
+}
+
+void Table::SetInColumn(const string & label, int i, const string & v)
+{
+  int index = ColIndex(label);
+  if (index < 0) {
+    cout << "WARNING: column " << label << " not found (SetInColumn)!!" << endl;
+    return;
+  }
+ 
+  TableColumn & t = m_columns[index];
+  
+  t[i] = v;
+  
+}
+
+
+
 void Table::Read(const string & fileName)
 {
   FlatFileParser parser;
@@ -49,13 +133,17 @@ void Table::Read(const string & fileName)
   resize(parser.GetItemCount());
 
   int i;
-
+  m_index.clear();
+  
   for (i=0; i<parser.GetItemCount(); i++)
     m_columns[i].Label() = parser.AsString(i);
-  
+
+  int k = 0;
   while (parser.ParseLine()) {
     if (parser.GetItemCount() == 0)
       continue;
+    m_index.push_back(k);
+    k++;
     for (i=0; i<parser.GetItemCount(); i++)
       m_columns[i].push_back(parser.AsString(i));
   }
@@ -87,6 +175,9 @@ void Table::Collapse(const string & key)
 
   string last;
   int k = -1;
+  
+  m_index.clear();
+
   for (j=0; j<(*this)[index].isize(); j++) {
     bool push = false;
     if (((*this)[index])[j] != last) {
@@ -96,6 +187,7 @@ void Table::Collapse(const string & key)
 	t2[i].push_back("");
       }
       k++;
+      m_index.push_back(k);
     }
     for (i=0; i<t2.isize(); i++) {
       if ((t2[i])[k] != ((*this)[i])[j]) {
@@ -315,6 +407,9 @@ bool ScriptParser::Process(int index)
   
   m_curr = index;
   cout << "Processing # " << index << endl;
+
+  int idx = AddVariable("@index");
+  m_vars[idx].Value() = Stringify(m_table.Index(index));
 
   for (i=0; i<m_commands.isize(); i++) {
     Command & c = m_commands[i];
