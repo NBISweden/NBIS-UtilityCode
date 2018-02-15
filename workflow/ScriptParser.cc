@@ -1,6 +1,8 @@
 #include "workflow/ScriptParser.h"
 
 
+#define VAR_TOKEN '@'
+
 void NewLines(string &s)
 {
   int i;
@@ -306,6 +308,48 @@ void ScriptParser::AddTableVars(int index)
   }
 }
 
+bool ScriptParser::VariableAssign(const Command & c)
+{
+  
+  if (c.Valid().isize() < 3)
+    return false;
+  if ((c.Valid()[0])[0] != '@')
+    return false;
+  if (c.Valid()[1] != "=")
+    return false;
+ 
+  int left = GetVariable(c.Valid()[0]);
+  if (left < 0) {
+    cout << "ERROR: variable " << c.Valid()[0] << " is undefined!!" << endl;
+    return false;
+  }
+
+  int i;
+
+  int k = 0;
+  for (i=2; i<c.Valid().isize(); i++) {
+    if ((c.Valid()[i])[0] == '%')
+      break;
+
+    if (c.Valid()[i] == "+")
+      continue;
+    int right = GetVariable(c.Valid()[i]);
+    string val = c.Valid()[i];
+    if (right >= 0)
+      val = m_vars[right].Value();
+
+    if (k == 0) {
+      m_vars[left].Value() = val;
+    } else {
+      m_vars[left].Value() += val;
+    }
+    k++;
+  }
+    
+  return true;
+
+
+}
 
 bool ScriptParser::Process(int index)
 {
@@ -383,9 +427,10 @@ bool ScriptParser::Process(int index)
       }
       
     } else {
+      bool bVar = VariableAssign(c);
       bool bErr = CheckForErrors(line);
       c.Processed() = c.Raw();
-      if (bErr) {
+      if (bErr && !bVar) {
  	cout << "WARNING line: " << i << " Possible syntax error in command!" << endl;
 	c.Processed() =    "##>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n## WARNING!!! This line looks like a command, but wasn't understood:\n";
 	c.Processed() += c.Raw();

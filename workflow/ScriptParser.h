@@ -161,6 +161,9 @@ class ScriptParser
   bool CheckForErrors(const string & in);
   
   void AddTableVars(int index);
+
+  bool VariableAssign(const Command & c);
+
   
   svec<Variable> m_vars;
   svec<Command> m_commands;

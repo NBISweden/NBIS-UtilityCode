@@ -18,6 +18,8 @@ export PATH=/home/manfredg/Software/minute-chip/bin/:$PATH
 >grammar = sample_data/dedup.gram
 >grammar = sample_data/qc.gram
 >grammar = sample_data/mapping.gram
+>grammar = sample_data/qc.gram
+
 
 @ref = mm10
 
@@ -43,9 +45,10 @@ remove duplicates file base @table.file in1 @out1 in2 @out2 sample @table.sample
 
 ##############################################
 # Run QC
+@f = something
 
-qc in @out1 &
-qc in @out2 &
+qc folder @f in @out1 
+qc folder @f in @out2 
 
 wait
 
