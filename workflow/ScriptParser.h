@@ -87,6 +87,7 @@ class Table
   void resize(int n) {m_columns.resize(n);}
 
   void Read(const string & fileName);
+  void Write(const string & fileName);
 
   const string & Name() const {return m_name;}
   string & Name() {return m_name;}
@@ -95,9 +96,32 @@ class Table
   void Prepend(const string & what, const string & to, const string & sep = "");
   void Collapse(const string & key);
   void Print() const;
+  void AddColumn(const string & label);
+  void RemoveColumn(const string & label);
+  void FillColumn(const string & label, const svec<string> & c, int from);
+  void SetInColumn(const string & label, int i, const string & v);
+  int Index(int i) const {
+    if (m_index.isize() == 0)
+      return 0;
+    return m_index[i];
+  }
+
+  const string & FileName() const {return m_fileName;}
+  
  private:
+  int ColIndex(const string & s) const {
+    int i;
+    for (i=0; i<m_columns.isize(); i++) {
+      if (m_columns[i].Label() == s)
+	return i;
+    }
+    return -1;
+  }
+  
   svec<TableColumn> m_columns;
   string m_name;
+  svec<int> m_index;
+  string m_fileName;
 };
 
 
