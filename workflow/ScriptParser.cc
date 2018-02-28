@@ -382,9 +382,11 @@ void ScriptParser::UnwrapLoops()
   int i, j;
 
   svec<Command> forloop;
-
+  svec<Command> extra;
+  
   bool bLoop = false;
   int n = 0;
+  int start = 0;
   for (i=0; i<m_commands.isize(); i++) {
     StringParser pp;
     if (bLoop) {
@@ -394,14 +396,45 @@ void ScriptParser::UnwrapLoops()
     if (pp.GetItemCount() == 0)
       continue;
     if (pp.GetItemCount() > 1 && pp.AsString(0) == ">loop") {
+      start = i;
       m_commands[i].Raw() = "# REMOVED " + m_commands[i].Raw();
-      n = pp.AsInt(1)-1;
+      if (pp.GetItemCount() == 2) {
+	n = pp.AsInt(1)-1;
+      } else {
+	if (pp.AsString(1)[0] != '@') {
+	  cout << "ERROR: wrong loop syntax in " << m_commands[i].Raw()<< endl;
+	} else {
+	  n = pp.GetItemCount() - 4;
+	  extra.clear();
+	  AddVariable(pp.AsString(1));
+	  for (int y=3; y<pp.GetItemCount(); y++) {
+	    Command tmp;
+	    tmp.Raw() = "# REMOVED " + pp.AsString(1) + " = " + pp.AsString(y);
+
+	    //######################################
+	    tmp.Valid().push_back(pp.AsString(1));
+	    tmp.Valid().push_back("=");
+	    tmp.Valid().push_back(pp.AsString(y));
+
+	    extra.push_back(tmp);
+	  } 
+	}
+
+      }
       bLoop = true;
     }
     if (pp.AsString(0) == "<loop") {
       m_commands[i].Raw() = "# REMOVED " + m_commands[i].Raw();
       int k = i+1;
+      if (extra.isize() > 0) {
+	m_commands.insert(m_commands.begin() + start+1, extra[0]);
+	k++;
+      }
       for (j=0; j<n; j++) {
+	if (extra.isize() > 0) {
+	  m_commands.insert(m_commands.begin() + k, extra[j+1]);
+	  k++;
+	}
 	for (int x=0; x<forloop.isize(); x++) {
 	  m_commands.insert(m_commands.begin() + k, forloop[x]);
 	  k++;
@@ -410,6 +443,7 @@ void ScriptParser::UnwrapLoops()
       
       forloop.clear();
       bLoop = false;
+      extra.clear();
     }   
 
   }
