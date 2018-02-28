@@ -188,6 +188,7 @@ class ScriptParser
 
   bool VariableAssign(const Command & c);
 
+  void UnwrapLoops();
   
   svec<Variable> m_vars;
   svec<Command> m_commands;

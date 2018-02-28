@@ -371,10 +371,51 @@ int ScriptParser::Read(const string & fileName)
     
     m_commands.push_back(tmp);
   }
-
+  
+  UnwrapLoops();
+  
   return 0;
 }
- 
+
+void ScriptParser::UnwrapLoops()
+{
+  int i, j;
+
+  svec<Command> forloop;
+
+  bool bLoop = false;
+  int n = 0;
+  for (i=0; i<m_commands.isize(); i++) {
+    StringParser pp;
+    if (bLoop) {
+      forloop.push_back(m_commands[i]);
+    }
+    pp.SetLine(m_commands[i].Raw());
+    if (pp.GetItemCount() == 0)
+      continue;
+    if (pp.GetItemCount() > 1 && pp.AsString(0) == ">loop") {
+      m_commands[i].Raw() = "# REMOVED " + m_commands[i].Raw();
+      n = pp.AsInt(1)-1;
+      bLoop = true;
+    }
+    if (pp.AsString(0) == "<loop") {
+      m_commands[i].Raw() = "# REMOVED " + m_commands[i].Raw();
+      int k = i+1;
+      for (j=0; j<n; j++) {
+	for (int x=0; x<forloop.isize(); x++) {
+	  m_commands.insert(m_commands.begin() + k, forloop[x]);
+	  k++;
+	}
+      }
+      
+      forloop.clear();
+      bLoop = false;
+    }   
+
+  }
+  
+}
+
 bool ScriptParser::CheckForErrors(const string & in)
 {
   int i;
