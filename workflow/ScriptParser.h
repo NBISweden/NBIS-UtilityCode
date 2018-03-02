@@ -154,6 +154,8 @@ class ScriptParser
     m_gramPath = g;
   }
   
+  void UnwrapLoops();
+ 
  private:
 
   void CollapseTable(const string & key) {
@@ -188,7 +190,6 @@ class ScriptParser
 
   bool VariableAssign(const Command & c);
 
-  void UnwrapLoops();
   
   svec<Variable> m_vars;
   svec<Command> m_commands;

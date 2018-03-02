@@ -372,7 +372,7 @@ int ScriptParser::Read(const string & fileName)
     m_commands.push_back(tmp);
   }
   
-  UnwrapLoops();
+  //UnwrapLoops();
   
   return 0;
 }

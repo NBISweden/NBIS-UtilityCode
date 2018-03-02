@@ -49,7 +49,9 @@ int main( int argc, char** argv )
   p.Read(fileName);
   if (headName != "")
     p.Read(headName);
-
+  
+  p.UnwrapLoops();
+  
   //p.Prepend("folder", "sample", "/");
 
   
