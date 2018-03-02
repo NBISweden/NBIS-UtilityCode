@@ -97,6 +97,7 @@ int main( int argc, char** argv )
 	cout << "*****************************************" << endl;
 	cout << "ERROR during submission!!!" << endl;
 	cout << "Check your permissions and accounts!" << endl;
+	fprintf(pGrapeLog, "There were ERRORS during job submission, check your permissions and accounts!\n");
 	fclose(pGrapeLog);
 	return -1;
       }
