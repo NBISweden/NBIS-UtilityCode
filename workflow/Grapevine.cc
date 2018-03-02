@@ -102,28 +102,36 @@ int main( int argc, char** argv )
   string s = subName + ".sbatch";
   string b = subName + ".bsub";
   string q = subName + ".qsub";
+  string a = subName + ".bash";
   FILE * pS = fopen(s.c_str(), "w"); 
   FILE * pB = fopen(b.c_str(), "w"); 
   FILE * pQ = fopen(q.c_str(), "w"); 
+  FILE * pA = fopen(a.c_str(), "w"); 
 
   for (i=0; i<script.isize(); i++) {
     fprintf(pS, "sbatch %s\n", script[i].c_str());
     fprintf(pB, "bsub %s\n", script[i].c_str());
     fprintf(pQ, "qsub %s\n", script[i].c_str());
+    fprintf(pA, "%s > log%d.out &\n", script[i].c_str(), i);
   }
+  
+  fprintf(pA, "wait\n");
   
 
   fclose(pS);
   fclose(pB);
   fclose(pQ);
+  fclose(pA);
 
   string sx = "chmod +x " + s;
   string bx = "chmod +x " + b;
   string qx = "chmod +x " + q;
+  string ax = "chmod +x " + a;
   //cout << "Run " << 
   int rrr = system(sx.c_str());
   rrr = system(bx.c_str());
   rrr = system(qx.c_str());
+  rrr = system(ax.c_str());
   
   cout << "Done" << endl;
   
