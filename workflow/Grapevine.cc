@@ -77,12 +77,12 @@ int main( int argc, char** argv )
     cout << "*****************************************************" << endl;
     cout << "***************** Generating script " << j << endl;
     for (i=0; i<p.isize(); i++) {
-      if (!p.IsSilent(i)) {
-	fprintf(pOut, "%s\n", p[i].c_str());
-	cout << p[i] << endl;
-      } else {
-	cout << "SILENT: " << p[i] << endl;
-      }
+      //if (!p.IsSilent(i)) {
+      fprintf(pOut, "%s\n", p[i].c_str());
+      cout << p[i] << endl;
+      //} else {
+      //cout << "SILENT: " << p[i] << endl;
+      //}
     }
     
     fclose(pOut);
