@@ -46,11 +46,11 @@ int main( int argc, char** argv )
   cout << "Using grammar path " << grName << endl;
   
   
-  p.Read(fileName);
   if (headName != "")
-    p.Read(headName);
+    p.Read(headName, true);
+  p.Read(fileName);
   
-  p.UnwrapLoops();
+  //p.UnwrapLoops();
   
   //p.Prepend("folder", "sample", "/");
 
@@ -77,8 +77,12 @@ int main( int argc, char** argv )
     cout << "*****************************************************" << endl;
     cout << "***************** Generating script " << j << endl;
     for (i=0; i<p.isize(); i++) {
-      fprintf(pOut, "%s\n", p[i].c_str());
-      cout << p[i] << endl;
+      if (!p.IsSilent(i)) {
+	fprintf(pOut, "%s\n", p[i].c_str());
+	cout << p[i] << endl;
+      } else {
+	cout << "SILENT: " << p[i] << endl;
+      }
     }
     
     fclose(pOut);

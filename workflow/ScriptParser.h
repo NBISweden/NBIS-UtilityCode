@@ -12,7 +12,7 @@
 class Command
 {
  public:
-  Command() {m_bg = false;}
+  Command() {m_bg = false; m_bSilent = false;}
 
   const string & Raw() const {return m_raw;}
   string & Raw() {return m_raw;}
@@ -28,6 +28,9 @@ class Command
 
   bool IsBG() const {return m_bg;}
   void SetBG(bool b) {m_bg = b;}
+
+  void SetSilent(bool b) {m_bSilent = b;}
+  bool IsSilent() const {return m_bSilent;}
   
  private:
   string m_raw;
@@ -35,6 +38,7 @@ class Command
   string m_processed;
   svec<string> m_out;
   bool m_bg;
+  bool m_bSilent;
 };
 
 
@@ -133,7 +137,7 @@ class ScriptParser
     m_curr = 0;
   }
 
-  int Read(const string & fileName);
+  int Read(const string & fileName, bool bSilent = false);
 
   int GetCount() const {
     if (m_table.isize() > 0)
@@ -145,7 +149,8 @@ class ScriptParser
 
   int isize() const {return m_commands.isize();}
   const string & operator [] (int i) const {return m_commands[i].Processed();}
-
+  bool IsSilent(int i) const {return m_commands[i].IsSilent();}
+  
   void Prepend(const string & what, const string & to, const string & sep = "") {
     m_table.Prepend(what, to, sep);
   }

@@ -247,7 +247,7 @@ bool Table::Get(string &ret, const string & label, int index) const
   return false;
 }
 
-int ScriptParser::Read(const string & fileName)
+int ScriptParser::Read(const string & fileName, bool bSilent)
 {
   FlatFileParser parser;
   
@@ -264,6 +264,7 @@ int ScriptParser::Read(const string & fileName)
     
     
     tmp.Raw() = parser.Line();
+    tmp.SetSilent(bSilent);
     bool bPre = false;
     if (parser.GetItemCount() >= 3) {
       if (parser.AsString(0) == "@table") {
@@ -372,7 +373,7 @@ int ScriptParser::Read(const string & fileName)
     m_commands.push_back(tmp);
   }
   
-  //UnwrapLoops();
+  UnwrapLoops();
   
   return 0;
 }
