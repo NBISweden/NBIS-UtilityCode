@@ -127,5 +127,16 @@ int main( int argc, char** argv )
   
   cout << "Done" << endl;
   
+  const svec<SoftwarePackage> & sw = p.GetPackages();
+  cout << endl;
+  FILE * package = fopen("grapevine.packages", "w");
+  
+  cout << "============= REQUIRED SOFTWARE PACKAGES ==============" << endl;
+  for (i=0; i<sw.isize(); i++) {
+    cout << sw[i].Name() << " " << sw[i].Version() << endl;
+    fprintf(package, "%s %s\n", sw[i].Name().c_str(), sw[i].Version().c_str());
+  }
+  cout << "============= REQUIRED SOFTWARE PACKAGES ==============" << endl;
+  fclose(package);
   return 0;
 }

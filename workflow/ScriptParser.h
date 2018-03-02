@@ -129,6 +129,30 @@ class Table
 };
 
 
+class SoftwarePackage
+{
+ public:
+  SoftwarePackage() {}
+
+  const string & Name() const {return m_name;}
+  const string & Version() const {return m_version;}
+  
+  string & Name()     {return m_name;}
+  string & Version()  {return m_version;}
+
+  bool operator < (const SoftwarePackage & s) const {
+    if (m_name == s.m_name)
+      return m_version < s.m_version;
+    return m_name < s.m_name;
+  }
+  
+ private:
+  string m_name;
+  string m_version;
+};
+
+
+
 //===========================================
 class ScriptParser
 {
@@ -160,7 +184,11 @@ class ScriptParser
   }
   
   void UnwrapLoops();
- 
+
+
+  const svec<SoftwarePackage> & GetPackages() const {return m_packages;}
+
+  
  private:
 
   void CollapseTable(const string & key) {
@@ -204,6 +232,9 @@ class ScriptParser
   svec<string> m_dict;
   string m_gramPath;
   string m_collapse;
+
+  svec<SoftwarePackage> m_packages;
+  
 };
 
 

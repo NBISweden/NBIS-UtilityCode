@@ -208,7 +208,7 @@ void Table::Collapse(const string & key)
   }
 
   *this = t2;
-  Print();
+  //Print();
 }
 
 void Table::Print() const
@@ -290,7 +290,7 @@ int ScriptParser::Read(const string & fileName, bool bSilent)
       } else {
 	// TODO: dynamic variable assignment!!!!
 	if (parser.AsString(0)[0] == '@') {
-	  cout << "Setting variable " << parser.AsString(0) << " to " << parser.AsString(2) << endl;
+	  //cout << "Setting variable " << parser.AsString(0) << " to " << parser.AsString(2) << endl;
 	  int idx = AddVariable(parser.AsString(0));
 	  m_vars[idx].Value() = parser.AsString(2);
 	  tmp.Raw() = "# REMOVED " + tmp.Raw();
@@ -464,7 +464,7 @@ bool ScriptParser::CheckForErrors(const string & in)
     if (p.AsString(i)[0] == '@')
       m++;
   }
-  cout << "n=" << n << " m=" << m << endl;
+  //cout << "n=" << n << " m=" << m << endl;
   if (n > 3 || m > 0)
     return true;
   return false;
@@ -543,7 +543,7 @@ bool ScriptParser::Process(int index)
   for (i=0; i<m_commands.isize(); i++) {
     Command & c = m_commands[i];
 
-    cout << "Line: " << c.Raw() << endl;
+    //cout << "Line: " << c.Raw() << endl;
     c.Processed() = "";
     if (c.Valid().isize() == 0) {
       c.Processed() = c.Raw();
@@ -552,7 +552,7 @@ bool ScriptParser::Process(int index)
     string line;
     for (j=0; j<c.Valid().isize(); j++) {
       string el = c.Valid()[j];
-      cout << "valid " << el << endl;
+      //cout << "valid " << el << endl;
       if (el[0] == '@') {
 	int index = GetVariable(el);
 	if (index < 0) {
@@ -574,11 +574,21 @@ bool ScriptParser::Process(int index)
       
       for (int j=0; j<result.length(); j++) {
 	string var = ((const char*)*result(j));
-	cout << "Returned: " << var << endl;
+	//cout << "Returned: " << var << endl;
 	StringParser pp;
 	pp.SetLine(var, " ");
 	if (pp.GetItemCount() < 3)
 	  continue;
+
+	if (pp.AsString(0) == "package") {
+	  for (int z=2; z<pp.GetItemCount(); z++) {
+	    SoftwarePackage sw;
+	    sw.Name() = pp.AsString(z);
+	    m_packages.push_back(sw);
+	  }
+	  UniqueSort(m_packages);
+	}
+	
 	if (pp.AsString(0) == "command") {
 	  //line = pp.AsString(2);
 	  line = "";
@@ -587,7 +597,7 @@ bool ScriptParser::Process(int index)
 	    line += pp.AsString(y);
 	    line += " ";
 	  }
-	  cout << "--> Command: " << line << endl;
+	  //cout << "--> Command: " << line << endl;
 	  if (c.IsBG())
 	    line += " &";
 	  NewLines(line);
@@ -597,11 +607,11 @@ bool ScriptParser::Process(int index)
 	for (int x=0; x<c.Out().isize(); x++) {
 	  string vv = "@";
 	  vv += pp.AsString(0);
-	  cout << "Checking " << c.Out()[x] << " vs " <<  vv << endl;
+	  //cout << "Checking " << c.Out()[x] << " vs " <<  vv << endl;
 	  if (c.Out()[x] == vv) {
 	    int index = GetVariable(vv);
 	    m_vars[index].Value() = pp.AsString(2);
-	    cout << "--> Set variable " << pp.AsString(0) << " to " << pp.AsString(2) << endl;
+	    //cout << "--> Set variable " << pp.AsString(0) << " to " << pp.AsString(2) << endl;
 	  }
 	}
       }
