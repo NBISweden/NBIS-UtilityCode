@@ -45,10 +45,10 @@ int main( int argc, char** argv )
 
   cout << "Using grammar path " << grName << endl;
   
-  
-  if (headName != "")
-    p.Read(headName, true);
   p.Read(fileName);
+ 
+  if (headName != "")
+    p.Read(headName);
   
   //p.UnwrapLoops();
   
