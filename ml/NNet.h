@@ -168,7 +168,7 @@ class NeuralNetwork
     m_beta = .3;
     m_floor = 0.01;
     m_distance = 0.5;
-    m_layerDistance = 1.;
+    m_layerDistance = 0.5;
     m_timeShift = 0;
     m_layers = 1;
     m_neuronCount = 0;

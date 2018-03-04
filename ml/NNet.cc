@@ -290,7 +290,50 @@ void NeuralNetwork::Learn(const NPCIO & n, double ext_weight, bool bUpHit)
   
   //cout << "Best: " << index << " -> " << bestDist << endl;
 
-  //for (i=0; i<m_neurons.isize(); i++) {
+  int from = LayerFrom(index);
+  int to = LayerTo(index);
+
+  double x_best = index - from;
+  double y_best = GetLayer(index); 
+  int tDist = 0;
+  for (i=0; i<m_neurons.isize(); i++) {
+    from = LayerFrom(i); 
+    double x = i - from;
+    double y = GetLayer(i); 
+
+    double xd = x - x_best;
+    if (xd < 0)
+      xd = -xd;
+    
+    if (xd > m_neuronCount/2) {
+      xd = m_neuronCount - xd;
+    }
+    double yd = y - y_best;
+    if (yd < 0)
+      yd = -yd;
+    
+    if (yd > m_layers/2) {
+      yd = m_layers- yd;
+    }
+    xd *= m_distance;
+    yd *= m_layerDistance;
+
+    double dist = sqrt(xd*xd + yd*yd);
+
+    //cout << i << " Best " << index << " x=" << x_best << " y=" << y_best << " curr x=" << x << " y=" << y << " dist=" << dist << endl;  
+    
+    double weight = exp(-dist);
+    weight *= m_beta;
+    weight *= ext_weight;
+    
+    m_neurons[i].Update(n, weight, m_timeShift*tDist);
+    m_neurons[i].DecAvoid(weight);
+    if (bUpHit)
+      m_neurons[i].DecayHit(ext_weight);
+    m_neurons[i].DecayAvoid(m_decayAvoid);
+  }
+
+  /*
   int from = LayerFrom(index);
   int to = LayerTo(index);
   for (i=from; i<to; i++) {
@@ -299,8 +342,8 @@ void NeuralNetwork::Learn(const NPCIO & n, double ext_weight, bool bUpHit)
     if (dist < 0)
       dist = -dist;
     
-    if (dist > m_neurons.isize()/2) {
-      dist = m_neurons.isize() - dist;
+    if (dist > m_neuronCount/2) {
+      dist = m_neuronCount - dist;
       tDist = -tDist;
     }
     
@@ -321,21 +364,26 @@ void NeuralNetwork::Learn(const NPCIO & n, double ext_weight, bool bUpHit)
   // Go through layers
   int currLayer = GetLayer(index);
   for (i=0; i<m_layers; i++) {
+    //for (j=0; j<m_neuronCount; j++) {
     int idx2 = index - from + m_neuronCount * i;
-    if (idx2 == index)
-      continue;
+    //if (idx2 == index)
+    //continue;
 
-    double dist = i - currLayer;
+    double y_dist = i - currLayer;
   
-    if (dist < 0)
-      dist = -dist;
+    if (y_dist < 0)
+      y_dist = -y_dist;
     
-    if (dist > m_layers/2) {
-      dist = m_layers - dist;      
+    if (y_dist > m_layers/2) {
+      y_dist = m_layers - y_dist;      
     }
     
+    y_dist *= m_layerDistance;
+
+    double dist = y_dist;
     
-    dist *= m_layerDistance;
+    //cout << "Layer " << i  << " curr " << currLayer << " neuron " << idx2 << " winner " << index << " dist=" << dist << " x_dist=" << x_dist << endl;
+
     
     double weight = exp(-dist);
     weight *= m_beta;
@@ -349,7 +397,7 @@ void NeuralNetwork::Learn(const NPCIO & n, double ext_weight, bool bUpHit)
 
 
   }
-
+  */
   
   m_beta *= m_decay;
   if (m_beta < m_floor)
