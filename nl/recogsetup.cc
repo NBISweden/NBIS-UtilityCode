@@ -198,7 +198,7 @@ bool CRecognizerSetup::DumpOutFiles(CMGrammarBigramExtract & bigrams, CMPtrStrin
   fprintf(pOut, "#ifndef _DICTDATA_H_\n");
 
   fprintf(pOut, "#define _DICTDATA_H_\n");
-  fprintf(pOut, "static long gNWords = %d;\n", dictOut.length()-1); //Minus silence
+  fprintf(pOut, "static long gNWords = %ld;\n", dictOut.length()-1); //Minus silence
   fprintf(pOut, "#define WORDID_MULT 0x10000\n\n");
 
 
@@ -213,7 +213,7 @@ bool CRecognizerSetup::DumpOutFiles(CMGrammarBigramExtract & bigrams, CMPtrStrin
 	entry += " ";
 	entry += prnsOut(i);
 	prns.WriteLine(entry);
-	fprintf(pOut, "  \"%s\",\n", (const char*)dictOut(i), i);
+	fprintf(pOut, "  \"%s\",\n", (const char*)dictOut(i));
     unigrams(i) = 900;
   }
 
@@ -319,14 +319,14 @@ bool CRecognizerSetup::DumpOutFiles(CMGrammarBigramExtract & bigrams, CMPtrStrin
 
 
   for (j=0; j<realBigramCount; j++) {
-    fprintf(pOut, "%d * WORDID_MULT + %d,\n", realBigrams1(j), realBigrams2(j));
+    fprintf(pOut, "%ld * WORDID_MULT + %ld,\n", realBigrams1(j), realBigrams2(j));
   }
 
-  fprintf(pOut, "};\n\nstatic long gNBigrams = %d;\n\n", realBigramCount);
+  fprintf(pOut, "};\n\nstatic long gNBigrams = %ld;\n\n", realBigramCount);
 
   fprintf(pOut, "const long gDictUnigrams[] = {\n");
   for (i=0; i<unigrams.length(); i++) {
-	fprintf(pOut, "  %d,\n", unigrams(i));  
+	fprintf(pOut, "  %ld,\n", unigrams(i));  
   }
   fprintf(pOut, "};\n\n");
 

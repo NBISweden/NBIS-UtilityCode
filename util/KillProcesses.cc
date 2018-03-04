@@ -19,7 +19,7 @@ int main(int argc, char * argv[])
   s += argv[1];
   s += " > kill.tmp"; 
   cout << s << endl;
-  system(s);
+  int r1 = system(s);
   in.Open("kill.tmp");
     
 
@@ -30,7 +30,7 @@ int main(int argc, char * argv[])
     Tokenize(tokens, line);
     CMString kill = "kill ";
     kill += *tokens(0);
-    system(kill);
+    r1 = system(kill);
     cout << kill << endl;
     
   }
