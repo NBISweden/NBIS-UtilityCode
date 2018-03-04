@@ -77,7 +77,8 @@ int main( int argc, char** argv )
   for (i=1; i<argc; i++)
     scripts.push_back(argv[i]);
 
-
+  FILE * pGrapeLog = fopen("grapevine.log", "w");
+  
   for (j=0; j<scripts.isize(); j++) {
   
     svec<string> ids, status;
@@ -96,6 +97,8 @@ int main( int argc, char** argv )
 	cout << "*****************************************" << endl;
 	cout << "ERROR during submission!!!" << endl;
 	cout << "Check your permissions and accounts!" << endl;
+	fprintf(pGrapeLog, "There were ERRORS during job submission, check your permissions and accounts!\n");
+	fclose(pGrapeLog);
 	return -1;
       }
       ids.push_back(id);
@@ -121,6 +124,7 @@ int main( int argc, char** argv )
 	  string ret1, stat;
 	  CheckExit(ret1, stat, ids[i]);
 	  cout << "Process " << ids[i] << " finished with ret " << ret1 << " status " << stat << endl;
+	  fprintf(pGrapeLog, "Process %s has finished with return code %s status %s\n", ids[i].c_str(), ret1.c_str(), stat.c_str());
 	  ids[i] = "";
 	  continue;
 	}
@@ -137,6 +141,7 @@ int main( int argc, char** argv )
   }
   cout << "Process is finished. " << endl;
 
-  
+  fclose(pGrapeLog);
+
   return 0;
 }

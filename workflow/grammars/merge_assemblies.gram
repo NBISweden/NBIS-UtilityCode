@@ -1,0 +1,17 @@
+#JSGF V1.0 ISO8859-1 en;
+
+
+
+grammar com.test.merge_assemblies;
+
+
+
+
+public <top> = rename fasta headers in <wildcard> {this.command = "ReplaceFastaHead -i " + this.wc; this.out = this.wc - ".fasta";  this.out = this.out - ".fa"; this.out = this.out + ".replaced.fasta"; this.command = this.command + " -o " + this.out; }
+
+| merge one round <wildcard> {this.in = this.wc} folder <wildcard> {this.folder = this.wc;} size <wildcard> {this.k = this.wc;} motif <wildcard> {this.motif = this.wc; this.out = this.folder + "/assembled.fasta"; this.sitemap = this.folder + "/sitemap.out"; this.raw = this.folder + "/rawlaps.out"; this.laps = this.folder + "/laps.out"; this.log = this.folder + "/log.out"; this.command = "MakeSiteMap -i " + this.in + " -s " + this.motif + " > " + this.sitemap + " \nFindSiteLaps -i " + this.sitemap + " -k " + this.k  + " > " + this.raw + "\ngrep OVER " + this.raw + " > " + this.laps + "\nAssembleSiteLaps -f " + this.in + " -i " + this.laps + " -o " + this.out + " > " + this.log;}
+;
+
+
+<wildcard> = % {this.wc = $}
+	   ;

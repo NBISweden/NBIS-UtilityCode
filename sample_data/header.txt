@@ -1,0 +1,2 @@
+@table   = sample_data/table.txt
+@ref = /data1/common/references/mm10/mm10

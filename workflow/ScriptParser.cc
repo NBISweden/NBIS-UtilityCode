@@ -3,6 +3,8 @@
 
 
 
+#define VAR_TOKEN '@'
+
 void NewLines(string &s)
 {
   int i;
@@ -206,7 +208,7 @@ void Table::Collapse(const string & key)
   }
 
   *this = t2;
-  Print();
+  //Print();
 }
 
 void Table::Print() const
@@ -245,7 +247,7 @@ bool Table::Get(string &ret, const string & label, int index) const
   return false;
 }
 
-int ScriptParser::Read(const string & fileName)
+int ScriptParser::Read(const string & fileName, bool bSilent)
 {
   FlatFileParser parser;
   
@@ -262,6 +264,7 @@ int ScriptParser::Read(const string & fileName)
     
     
     tmp.Raw() = parser.Line();
+    tmp.SetSilent(bSilent);
     bool bPre = false;
     if (parser.GetItemCount() >= 3) {
       if (parser.AsString(0) == "@table") {
@@ -287,7 +290,7 @@ int ScriptParser::Read(const string & fileName)
       } else {
 	// TODO: dynamic variable assignment!!!!
 	if (parser.AsString(0)[0] == '@') {
-	  cout << "Setting variable " << parser.AsString(0) << " to " << parser.AsString(2) << endl;
+	  //cout << "Setting variable " << parser.AsString(0) << " to " << parser.AsString(2) << endl;
 	  int idx = AddVariable(parser.AsString(0));
 	  m_vars[idx].Value() = parser.AsString(2);
 	  tmp.Raw() = "# REMOVED " + tmp.Raw();
@@ -369,10 +372,85 @@ int ScriptParser::Read(const string & fileName)
     
     m_commands.push_back(tmp);
   }
-
+  
+  UnwrapLoops();
+  
   return 0;
 }
- 
+
+void ScriptParser::UnwrapLoops()
+{
+  int i, j;
+
+  svec<Command> forloop;
+  svec<Command> extra;
+  
+  bool bLoop = false;
+  int n = 0;
+  int start = 0;
+  for (i=0; i<m_commands.isize(); i++) {
+    StringParser pp;
+    if (bLoop) {
+      forloop.push_back(m_commands[i]);
+    }
+    pp.SetLine(m_commands[i].Raw());
+    if (pp.GetItemCount() == 0)
+      continue;
+    if (pp.GetItemCount() > 1 && pp.AsString(0) == ">loop") {
+      start = i;
+      m_commands[i].Raw() = "# REMOVED " + m_commands[i].Raw();
+      if (pp.GetItemCount() == 2) {
+	n = pp.AsInt(1)-1;
+      } else {
+	if (pp.AsString(1)[0] != '@') {
+	  cout << "ERROR: wrong loop syntax in " << m_commands[i].Raw()<< endl;
+	} else {
+	  n = pp.GetItemCount() - 4;
+	  extra.clear();
+	  AddVariable(pp.AsString(1));
+	  for (int y=3; y<pp.GetItemCount(); y++) {
+	    Command tmp;
+	    tmp.Raw() = "# REMOVED " + pp.AsString(1) + " = " + pp.AsString(y);
+
+	    //######################################
+	    tmp.Valid().push_back(pp.AsString(1));
+	    tmp.Valid().push_back("=");
+	    tmp.Valid().push_back(pp.AsString(y));
+
+	    extra.push_back(tmp);
+	  } 
+	}
+
+      }
+      bLoop = true;
+    }
+    if (pp.AsString(0) == "<loop") {
+      m_commands[i].Raw() = "# REMOVED " + m_commands[i].Raw();
+      int k = i+1;
+      if (extra.isize() > 0) {
+	m_commands.insert(m_commands.begin() + start+1, extra[0]);
+	k++;
+      }
+      for (j=0; j<n; j++) {
+	if (extra.isize() > 0) {
+	  m_commands.insert(m_commands.begin() + k, extra[j+1]);
+	  k++;
+	}
+	for (int x=0; x<forloop.isize(); x++) {
+	  m_commands.insert(m_commands.begin() + k, forloop[x]);
+	  k++;
+	}
+      }
+      
+      forloop.clear();
+      bLoop = false;
+      extra.clear();
+    }   
+
+  }
+  
+}
+
 bool ScriptParser::CheckForErrors(const string & in)
 {
   int i;
@@ -386,7 +464,7 @@ bool ScriptParser::CheckForErrors(const string & in)
     if (p.AsString(i)[0] == '@')
       m++;
   }
-  cout << "n=" << n << " m=" << m << endl;
+  //cout << "n=" << n << " m=" << m << endl;
   if (n > 3 || m > 0)
     return true;
   return false;
@@ -407,6 +485,48 @@ void ScriptParser::AddTableVars(int index)
   }
 }
 
+bool ScriptParser::VariableAssign(const Command & c)
+{
+  
+  if (c.Valid().isize() < 3)
+    return false;
+  if ((c.Valid()[0])[0] != '@')
+    return false;
+  if (c.Valid()[1] != "=")
+    return false;
+ 
+  int left = GetVariable(c.Valid()[0]);
+  if (left < 0) {
+    cout << "ERROR: variable " << c.Valid()[0] << " is undefined!!" << endl;
+    return false;
+  }
+
+  int i;
+
+  int k = 0;
+  for (i=2; i<c.Valid().isize(); i++) {
+    if ((c.Valid()[i])[0] == '%')
+      break;
+
+    if (c.Valid()[i] == "+")
+      continue;
+    int right = GetVariable(c.Valid()[i]);
+    string val = c.Valid()[i];
+    if (right >= 0)
+      val = m_vars[right].Value();
+
+    if (k == 0) {
+      m_vars[left].Value() = val;
+    } else {
+      m_vars[left].Value() += val;
+    }
+    k++;
+  }
+    
+  return true;
+
+
+}
 
 bool ScriptParser::Process(int index)
 {
@@ -423,7 +543,7 @@ bool ScriptParser::Process(int index)
   for (i=0; i<m_commands.isize(); i++) {
     Command & c = m_commands[i];
 
-    cout << "Line: " << c.Raw() << endl;
+    //cout << "Line: " << c.Raw() << endl;
     c.Processed() = "";
     if (c.Valid().isize() == 0) {
       c.Processed() = c.Raw();
@@ -432,7 +552,7 @@ bool ScriptParser::Process(int index)
     string line;
     for (j=0; j<c.Valid().isize(); j++) {
       string el = c.Valid()[j];
-      cout << "valid " << el << endl;
+      //cout << "valid " << el << endl;
       if (el[0] == '@') {
 	int index = GetVariable(el);
 	if (index < 0) {
@@ -454,11 +574,21 @@ bool ScriptParser::Process(int index)
       
       for (int j=0; j<result.length(); j++) {
 	string var = ((const char*)*result(j));
-	cout << "Returned: " << var << endl;
+	//cout << "Returned: " << var << endl;
 	StringParser pp;
 	pp.SetLine(var, " ");
 	if (pp.GetItemCount() < 3)
 	  continue;
+
+	if (pp.AsString(0) == "package") {
+	  for (int z=2; z<pp.GetItemCount(); z++) {
+	    SoftwarePackage sw;
+	    sw.Name() = pp.AsString(z);
+	    m_packages.push_back(sw);
+	  }
+	  UniqueSort(m_packages);
+	}
+	
 	if (pp.AsString(0) == "command") {
 	  //line = pp.AsString(2);
 	  line = "";
@@ -467,7 +597,7 @@ bool ScriptParser::Process(int index)
 	    line += pp.AsString(y);
 	    line += " ";
 	  }
-	  cout << "--> Command: " << line << endl;
+	  //cout << "--> Command: " << line << endl;
 	  if (c.IsBG())
 	    line += " &";
 	  NewLines(line);
@@ -477,19 +607,20 @@ bool ScriptParser::Process(int index)
 	for (int x=0; x<c.Out().isize(); x++) {
 	  string vv = "@";
 	  vv += pp.AsString(0);
-	  cout << "Checking " << c.Out()[x] << " vs " <<  vv << endl;
+	  //cout << "Checking " << c.Out()[x] << " vs " <<  vv << endl;
 	  if (c.Out()[x] == vv) {
 	    int index = GetVariable(vv);
 	    m_vars[index].Value() = pp.AsString(2);
-	    cout << "--> Set variable " << pp.AsString(0) << " to " << pp.AsString(2) << endl;
+	    //cout << "--> Set variable " << pp.AsString(0) << " to " << pp.AsString(2) << endl;
 	  }
 	}
       }
       
     } else {
+      bool bVar = VariableAssign(c);
       bool bErr = CheckForErrors(line);
       c.Processed() = c.Raw();
-      if (bErr) {
+      if (bErr && !bVar) {
  	cout << "WARNING line: " << i << " Possible syntax error in command!" << endl;
 	c.Processed() =    "##>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n## WARNING!!! This line looks like a command, but wasn't understood:\n";
 	c.Processed() += c.Raw();

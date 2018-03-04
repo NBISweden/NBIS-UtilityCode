@@ -12,7 +12,7 @@
 class Command
 {
  public:
-  Command() {m_bg = false;}
+  Command() {m_bg = false; m_bSilent = false;}
 
   const string & Raw() const {return m_raw;}
   string & Raw() {return m_raw;}
@@ -28,6 +28,9 @@ class Command
 
   bool IsBG() const {return m_bg;}
   void SetBG(bool b) {m_bg = b;}
+
+  void SetSilent(bool b) {m_bSilent = b;}
+  bool IsSilent() const {return m_bSilent;}
   
  private:
   string m_raw;
@@ -35,6 +38,7 @@ class Command
   string m_processed;
   svec<string> m_out;
   bool m_bg;
+  bool m_bSilent;
 };
 
 
@@ -125,6 +129,30 @@ class Table
 };
 
 
+class SoftwarePackage
+{
+ public:
+  SoftwarePackage() {}
+
+  const string & Name() const {return m_name;}
+  const string & Version() const {return m_version;}
+  
+  string & Name()     {return m_name;}
+  string & Version()  {return m_version;}
+
+  bool operator < (const SoftwarePackage & s) const {
+    if (m_name == s.m_name)
+      return m_version < s.m_version;
+    return m_name < s.m_name;
+  }
+  
+ private:
+  string m_name;
+  string m_version;
+};
+
+
+
 //===========================================
 class ScriptParser
 {
@@ -133,7 +161,7 @@ class ScriptParser
     m_curr = 0;
   }
 
-  int Read(const string & fileName);
+  int Read(const string & fileName, bool bSilent = false);
 
   int GetCount() const {
     if (m_table.isize() > 0)
@@ -145,7 +173,8 @@ class ScriptParser
 
   int isize() const {return m_commands.isize();}
   const string & operator [] (int i) const {return m_commands[i].Processed();}
-
+  bool IsSilent(int i) const {return m_commands[i].IsSilent();}
+  
   void Prepend(const string & what, const string & to, const string & sep = "") {
     m_table.Prepend(what, to, sep);
   }
@@ -153,6 +182,12 @@ class ScriptParser
   void SetGrammarPath(const string & g) {
     m_gramPath = g;
   }
+  
+  void UnwrapLoops();
+
+
+  const svec<SoftwarePackage> & GetPackages() const {return m_packages;}
+
   
  private:
 
@@ -185,6 +220,9 @@ class ScriptParser
   bool CheckForErrors(const string & in);
   
   void AddTableVars(int index);
+
+  bool VariableAssign(const Command & c);
+
   
   svec<Variable> m_vars;
   svec<Command> m_commands;
@@ -194,6 +232,9 @@ class ScriptParser
   svec<string> m_dict;
   string m_gramPath;
   string m_collapse;
+
+  svec<SoftwarePackage> m_packages;
+  
 };
 
 

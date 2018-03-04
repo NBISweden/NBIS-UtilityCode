@@ -45,11 +45,13 @@ int main( int argc, char** argv )
 
   cout << "Using grammar path " << grName << endl;
   
-  
   p.Read(fileName);
+ 
   if (headName != "")
     p.Read(headName);
-
+  
+  //p.UnwrapLoops();
+  
   //p.Prepend("folder", "sample", "/");
 
   
@@ -75,8 +77,12 @@ int main( int argc, char** argv )
     cout << "*****************************************************" << endl;
     cout << "***************** Generating script " << j << endl;
     for (i=0; i<p.isize(); i++) {
+      //if (!p.IsSilent(i)) {
       fprintf(pOut, "%s\n", p[i].c_str());
       cout << p[i] << endl;
+      //} else {
+      //cout << "SILENT: " << p[i] << endl;
+      //}
     }
     
     fclose(pOut);
@@ -96,30 +102,49 @@ int main( int argc, char** argv )
   string s = subName + ".sbatch";
   string b = subName + ".bsub";
   string q = subName + ".qsub";
+  string a = subName + ".bash";
   FILE * pS = fopen(s.c_str(), "w"); 
   FILE * pB = fopen(b.c_str(), "w"); 
   FILE * pQ = fopen(q.c_str(), "w"); 
+  FILE * pA = fopen(a.c_str(), "w"); 
 
   for (i=0; i<script.isize(); i++) {
     fprintf(pS, "sbatch %s\n", script[i].c_str());
     fprintf(pB, "bsub %s\n", script[i].c_str());
     fprintf(pQ, "qsub %s\n", script[i].c_str());
+    fprintf(pA, "%s > log%d.out &\n", script[i].c_str(), i);
   }
+  
+  fprintf(pA, "wait\n");
   
 
   fclose(pS);
   fclose(pB);
   fclose(pQ);
+  fclose(pA);
 
   string sx = "chmod +x " + s;
   string bx = "chmod +x " + b;
   string qx = "chmod +x " + q;
+  string ax = "chmod +x " + a;
   //cout << "Run " << 
   int rrr = system(sx.c_str());
   rrr = system(bx.c_str());
   rrr = system(qx.c_str());
+  rrr = system(ax.c_str());
   
   cout << "Done" << endl;
   
+  const svec<SoftwarePackage> & sw = p.GetPackages();
+  cout << endl;
+  FILE * package = fopen("grapevine.packages", "w");
+  
+  cout << "============= REQUIRED SOFTWARE PACKAGES ==============" << endl;
+  for (i=0; i<sw.isize(); i++) {
+    cout << sw[i].Name() << " " << sw[i].Version() << endl;
+    fprintf(package, "%s %s\n", sw[i].Name().c_str(), sw[i].Version().c_str());
+  }
+  cout << "============= REQUIRED SOFTWARE PACKAGES ==============" << endl;
+  fclose(package);
   return 0;
 }
