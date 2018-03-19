@@ -1,0 +1,28 @@
+#JSGF V1.0 ISO8859-1 en;
+
+
+
+grammar com.test.tools;
+
+
+
+import <com.test.digits.*>
+
+
+public <top> = <do> 
+     	    ;
+
+
+<do> =  to binary {this.command = "samtools view -bS -F 4 "} <folder> <insam> {this.command = this.command + this.in + " > " + this.out}
+	  ;
+
+<insam> =  in <wildcard> {this.base = this.folder + this.wc; this.in = this.base + ".sam"; this.out = this.base + ".bam"} 
+	  ;
+	  
+
+<folder> = folder <wildcard> {this.folder = this.wc; this.folder = this.folder + "/"}
+	 ;
+	 
+
+<wildcard> = % {this.wc = $}
+	   ;

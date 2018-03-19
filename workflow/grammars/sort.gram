@@ -1,0 +1,21 @@
+#JSGF V1.0 ISO8859-1 en;
+
+
+
+grammar com.test.sort;
+
+
+
+import <com.test.digits.*>
+
+
+public <top> = <do> 
+     	    ;
+
+
+<do> =  sort {this.package = "samtools"; this.command = "samtools sort "} <wildcard> {this.base = this.folder + this.wc; this.in = this.base; this.out = this.base - ".bam"; this.out = this.out + ".sorted.bam"; this.command = this.command + this.in + " > " + this.out}
+	  ;
+
+
+<wildcard> = % {this.wc = $}
+	   ;

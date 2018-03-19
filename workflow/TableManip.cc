@@ -3,8 +3,22 @@
 #include <unistd.h>
 #include <stdlib.h>
 
+void TableManipulator::AddToColumn(const string & label, const string & item)
+{
+  MakeIfNotExist();
+  AddLock();
+  Table t;
+  t.Read(m_name);
+  t.AddToColumn(label, item);
+  t.Write(m_name);
+  RemoveLock();
+
+}
+
+
 void TableManipulator::AddColumn(const string & label)
 {
+  MakeIfNotExist();
   AddLock();
   Table t;
   t.Read(m_name);
@@ -13,8 +27,10 @@ void TableManipulator::AddColumn(const string & label)
   RemoveLock();
 }
 
+
 void TableManipulator::RemoveColumn(const string & label)
 {
+  MakeIfNotExist();
   AddLock();
   Table t;
   t.Read(m_name);
@@ -23,8 +39,21 @@ void TableManipulator::RemoveColumn(const string & label)
   RemoveLock();
 }
 
+void TableManipulator::RemoveHeaders()
+{
+  MakeIfNotExist();
+  AddLock();
+  Table t;
+  t.Read(m_name);
+  t.RemoveHeaders();
+  t.Write(m_name);
+  RemoveLock();
+  
+}
+
 void TableManipulator::FillColumn(const string & label, const svec<string> & c, int from)
 {
+  MakeIfNotExist();
   AddLock();
   Table t;
   t.Read(m_name);
@@ -35,6 +64,7 @@ void TableManipulator::FillColumn(const string & label, const svec<string> & c, 
 
 void TableManipulator::SetInColumn(const string & label, int i, const string & v)
 {
+  MakeIfNotExist();
   AddLock();
   Table t;
   t.Read(m_name);
@@ -45,6 +75,7 @@ void TableManipulator::SetInColumn(const string & label, int i, const string & v
 
 void TableManipulator::AddLock()
 {
+  MakeIfNotExist();
   Wait();
   FILE * p = fopen(m_lock.c_str(), "w");
   fprintf(p, "locked\n");
@@ -71,4 +102,13 @@ void TableManipulator::Wait()
       break;
     }
   }
+}
+
+void TableManipulator::MakeIfNotExist()
+{
+  FILE * p = fopen(m_name.c_str(), "r");
+  if (p == NULL) {
+    p = fopen(m_name.c_str(), "w");
+  }
+  fclose(p);
 }

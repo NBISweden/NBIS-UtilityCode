@@ -1,0 +1,22 @@
+#JSGF V1.0 ISO8859-1 en;
+
+
+
+grammar com.test.filterpairs;
+
+
+
+import <com.test.digits.*>
+
+
+public <top> = <do> 
+     	    ;
+
+
+<do> =  filter by pair {this.package = "samtools"; this.command = "samtools view -bh -f 2  "}  <wildcard> {this.in = this.wc; this.out = this.in - ".bam"; this.out = this.in - ".sorted"; this.out = this.out + ".pairs.bam"; this.command = this.command + this.in + " > " + this.out}
+	  ;
+
+	 
+
+<wildcard> = % {this.wc = $}
+	   ;

@@ -1,0 +1,33 @@
+#JSGF V1.0 ISO8859-1 en;
+
+
+
+grammar com.test.assembleDNA;
+
+
+
+import <com.test.digits.*>
+
+
+public <top> = assemble metatranscriptome {this.package = "Ananas"; this.command = "Ananas -dir fr ";} [<options>] <in1> <in2> [<toponly>] <output> {this.command = this.command + " -i " + this.in1 + "," + this.in2 + this.cores+  " -o " + this.output;}
+    	    ;
+
+
+
+<output> = output <wildcard> {this.output = this.wc;}
+	 ;
+	 
+<options> = cores <wildcard> {this.cores = " -no " + this.wc}
+        ;
+
+<toponly> = top only {this.command = this.command + " -top "}
+        ;
+
+<in1> = left <wildcard> {this.in1 = this.wc}
+        ;
+	
+<in2> = right <wildcard> {this.in2 = this.wc}
+	;
+
+<wildcard> = % {this.wc = $}
+	   ;

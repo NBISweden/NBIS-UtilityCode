@@ -1,0 +1,22 @@
+#JSGF V1.0 ISO8859-1 en;
+
+
+
+grammar com.test.index;
+
+
+
+import <com.test.digits.*>
+
+
+public <top> = <do> 
+     	    ;
+
+
+<do> =  index {this.packages = "samtools"; this.command = "samtools index "} <wildcard> {this.command = this.command + this.wc}
+	  ;
+
+	 
+
+<wildcard> = % {this.wc = $}
+	   ;

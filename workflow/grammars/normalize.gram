@@ -1,0 +1,21 @@
+#JSGF V1.0 ISO8859-1 en;
+
+
+
+grammar com.test.sort;
+
+
+
+import <com.test.digits.*>
+
+
+public <top> = <do> 
+     	    ;
+
+
+<do> =  normalize {this.package = "Minute-ChIP"; this.command = "Normalize -i "} <wildcard> {this.command = this.command + this.wc; this.out = this.wc + ".norm"; this.command = this.command + " -o " + this.out}
+	  ;
+
+
+<wildcard> = % {this.wc = $}
+	   ;

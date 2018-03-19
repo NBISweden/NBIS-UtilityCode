@@ -9,7 +9,7 @@ grammar com.test.assembleDNA;
 import <com.test.digits.*>
 
 
-public <top> = assemble dna {this.cores = " -t 16 "} [<options>] <in1> <in2> <output> {this.command = "mkdir " + this.output + "\n"; this.command = this.command + "cd " + this.output + "\n"; this.command = this.command + "MakeMasurcaConfig " + this.in + this.cores + " -o config.txt" + "\n"; this.command = this.command + "masurca config.txt\n"; this.command = this.command + "./assemble.sh\n"; this.command = this.command + "cd.. "}
+public <top> = assemble dna {this.package = "MaSuRCA"; this.cores = " -t 16 "} [<options>] <in1> <in2> <output> {this.command = "mkdir " + this.output + "\n"; this.command = this.command + "cd " + this.output + "\n"; this.command = this.command + "MakeMasurcaConfig " + this.in + this.cores + " -o config.txt" + "\n"; this.command = this.command + "masurca config.txt\n"; this.command = this.command + "./assemble.sh\n"; this.command = this.command + "cd.. "}
     	    ;
 
 

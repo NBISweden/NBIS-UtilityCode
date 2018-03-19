@@ -83,7 +83,9 @@ class TableColumn
 class Table
 {
  public:
-  Table() {}
+  Table() {
+    m_bNoHead = false;
+  }
 
   TableColumn & operator[] (int i) {return m_columns[i];}
   const TableColumn & operator[] (int i) const {return m_columns[i];}
@@ -109,8 +111,13 @@ class Table
       return 0;
     return m_index[i];
   }
+  void AddToColumn(const string & label, const string & d);
 
   const string & FileName() const {return m_fileName;}
+
+  void RemoveHeaders() {
+    m_bNoHead = true;
+  }
   
  private:
   int ColIndex(const string & s) const {
@@ -126,6 +133,7 @@ class Table
   string m_name;
   svec<int> m_index;
   string m_fileName;
+  bool m_bNoHead;
 };
 
 

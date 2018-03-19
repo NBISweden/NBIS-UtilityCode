@@ -1,0 +1,29 @@
+#JSGF V1.0 ISO8859-1 en;
+
+
+
+grammar com.test.alignstats;
+
+
+
+import <com.test.digits.*>
+
+
+
+public <top> = alignstats {this.package = "samtools"; this.out = ""} <wildcard> {this.in = this.wc} <out> [<postfix>] [<folder>] <name> {this.command = "samtools flagstat " + this.in + " > " + this.out + this.folder + this.name + this.pf + ".flagstat.txt"; this.command = this.command + "\n" + "samtools idxstats " + this.in + " > " + this.out + this.folder + this.name + this.pf + ".idxstats.txt";}
+     	    ;
+
+<folder> = <wildcard> {this.folder = this.wc + "/"}
+	;
+
+<name> = <wildcard> {this.name = this.wc}
+	;
+
+<out> = out <wildcard> {this.out = this.wc + "/"}
+	;
+	
+<postfix> = postfix <wildcard> {this.pf = "." + this.wc }
+	;
+
+<wildcard> = % {this.wc = $}
+	   ;

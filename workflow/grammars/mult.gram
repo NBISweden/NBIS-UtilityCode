@@ -13,7 +13,7 @@ public <top> = <do>
      	    ;
 
 
-<do> =  write to file <wc> {this.outraw = this.wc} folder <wc> {this.folder = this.wc} file base <wc> {this.base = this.wc} samples <eveneven> {this.out = this.folder + "/" + this.base + "_" + this.outraw; this.command = "MakeList -o " + this.out + " "; this.command = this.command + this.in}
+<do> =  write to file <wc> {this.package = "Minute-ChIP"; this.outraw = this.wc} folder <wc> {this.folder = this.wc} file base <wc> {this.base = this.wc} samples <eveneven> {this.out = this.folder + "/stats/" + this.base + "_" + this.outraw; this.command = "MakeList -o " + this.out + " "; this.command = this.command + this.in}
 	  ;	
 
 <two> = <w> | <w> <w> ;
@@ -24,7 +24,7 @@ public <top> = <do>
 
 <eveneven> = <evenmore> | <evenmore> <evenmore>  ;
 
-<w> = % {this.wc = $; this.in = this.in + " " + this.folder + "/" + this.base + "_" + this.wc}
+<w> = % {this.wc = $; this.in = this.in + " " + this.folder + "/stats/" + this.base + "_" + this.wc}
 	   ;
 
 <wc> = % {this.wc = $}

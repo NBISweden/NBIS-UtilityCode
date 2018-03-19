@@ -1,0 +1,30 @@
+#JSGF V1.0 ISO8859-1 en;
+
+
+
+grammar com.test.qc;
+
+
+
+import <com.test.digits.*>
+
+
+
+public <top> = <qc> {this.package = "fastqc"; this.out = ""} <folder> <in> {this.command = "fastqc -o " + this.folder + this.out + " " + this.file}
+     	    ;
+
+<folder> = folder <wildcard> {this.folder = this.wc; this.folder = this.folder + "/"}
+	 ;
+	 
+<qc> = qc | quality [check]
+	  ;
+	   
+
+<in> = in <wildcard> {this.file = this.wc} [<out>]
+	;
+
+<out> = out <wildcard> {this.out = this.wc + "/"}
+	;
+
+<wildcard> = % {this.wc = $}
+	   ;

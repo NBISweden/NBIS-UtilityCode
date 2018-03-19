@@ -1,0 +1,28 @@
+#JSGF V1.0 ISO8859-1 en;
+
+
+
+grammar com.test.markdups;
+
+
+
+import <com.test.digits.*>
+
+
+
+public <top> = <dedup> {this.package = "picard"; this.command = "java -jar $PICARD_HOME/picard.jar MarkDuplicates REMOVE_DUPLICATES=TRUE I=" + this.in + " O=" + this.out + " M=" + this.logg;}
+        | <collect>  {this.package = "picard"; this.command = "java -jar $PICARD_HOME/picard.jar CollectInsertSizeMetrics STOP_AFTER=1000000 I=" + this.in + " O=" + this.out + " H=" + this.logg;}
+     	    ;
+
+
+<dedup> = mark duplicates <wildcard> {this.in = this.wc; this.tmp = this.in - ".bam"; this.logg = this.tmp + ".MarkDuplicates.txt"; this.out = this.tmp + ".dedup.bam"} [<out>]
+	;
+
+<collect> = size metrics <wildcard> {this.in = this.wc; this.tmp = this.in - ".bam"; this.logg = this.tmp + ".insert_sizes.pdf"; this.out = this.tmp + ".insert_sizes.txt"} [<out>]
+	;
+
+<out> = out <wildcard> {this.outdir = this.wc + "/"; this.out = this.out - "bam/"; this.out = this.outdir + this.out; this.logg = this.logg - "bam/"; this.logg = this.outdir + this.logg; }
+	;
+
+<wildcard> = % {this.wc = $}
+	   ;

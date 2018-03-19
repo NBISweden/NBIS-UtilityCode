@@ -48,21 +48,36 @@ void Table::Write(const string & fileName)
 
   int i, j;
 
-  for (i=0; i<m_columns.isize(); i++) {
-    fprintf(p, "%s\t", m_columns[i].Label().c_str());
+  if (!m_bNoHead) {
+    for (i=0; i<m_columns.isize(); i++) {
+      fprintf(p, "%s\t", m_columns[i].Label().c_str());
+    }
+    fprintf(p, "\n");
   }
-  fprintf(p, "\n");
-
+  
   for (j=0; j<m_columns[0].isize(); j++) {
     //cout << "j=" << j << endl;
     for (i=0; i<m_columns.isize(); i++) {
       //cout << i << " " << m_columns[i].isize() << endl;
-      fprintf(p, "%s\t", (m_columns[i])[j].c_str());
+      if (j < m_columns[i].isize())
+	fprintf(p, "%s\t", (m_columns[i])[j].c_str());
     }
     fprintf(p, "\n");
   }
   
   fclose(p);
+}
+
+void Table::AddToColumn(const string & label, const string & d)
+{
+  int index = ColIndex(label);
+  if (index < 0) {
+    cout << "WARNING: column " << label << " does not exists!!" << endl;
+    return;
+  }
+  //cout << "Adding " << d << " to " << index << endl;
+  m_columns[index].push_back(d);
+  //cout << "done" << endl;
 }
 
 void Table::AddColumn(const string & label)
@@ -152,8 +167,9 @@ void Table::Read(const string & fileName)
       continue;
     m_index.push_back(k);
     k++;
-    for (i=0; i<parser.GetItemCount(); i++)
+    for (i=0; i<parser.GetItemCount(); i++) {
       m_columns[i].push_back(parser.AsString(i));
+    }
   }
 
 }

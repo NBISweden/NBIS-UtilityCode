@@ -1,0 +1,50 @@
+#JSGF V1.0 ISO8859-1 en;
+
+
+
+grammar com.test.demux;
+
+
+
+import <com.test.digits.*>
+
+
+
+public <top> =  <demux> {this.package = "Minute-ChIP"; this.in_dir = ""; this.mis = "1"; this.barcode = "AGCAATTC"; this.umisize = "6"} [<in_dir>] <folder> <name> [<demuxopt>] [<demuxopt>] [<demuxopt>] <sample> {this.out1 = this.folder + this.filebase + "_" + this.R1base; this.out2 = this.folder + this.filebase + "_" + this.R2base; this.command = this.command + " -i1 " + this.in_dir + this.filebase + this.R1ex + " -i2 " + this.in_dir + this.filebase + this.R2ex + " -o1 " + this.folder + this.filebase + "_" + this.R1base + " -o2 " + this.folder + this.filebase + "_" + this.R2base + " -b " + this.barcode + " -mis " + this.mis + " -off " + this.umisize}
+     	    ;
+
+<folder> = folder <wildcard> {this.folder = this.wc; this.folder = this.folder + "/"}
+	 ;
+
+<in_dir> = data dir <wildcard> {this.in_dir = this.wc; this.in_dir = this.in_dir + "/"}
+	 ;
+
+<demux> =  demux {this.command = "DeMuxFastq "; this.R1ex = "_R1.fastq.gz"; this.R2ex = "_R2.fastq.gz"; this.mis = "1"; this.umisize = "6"}
+	  | demultiplex {this.command = "  DeMuxFastq "; this.R1ex = "_R1.fastq.gz"; this.R2ex = "_R2.fastq.gz"; this.mis = 1; this.umisize = 6}
+	  ;
+	 
+
+<demuxopt> = mismatches <t_digit> {this.mis = this.result; this.result = ""}
+	   | umi size <t_digit> {this.umisize = this.result; this.result = ""}
+	   | partner <t_digit> {this.mispair = this.result; this.result = ""}
+ 	   | bar code <wildcard> {this.barcode = this.wc}
+	   | barcode <wildcard> {this.barcode = this.wc}
+	   ;
+	   
+<sample> = sample <wildcard> {this.sample = this.wc; this.R1base = this.sample + "_R1.demux.fastq"; this.R2base = this.sample + "_R2.demux.fastq"}
+	  ;
+
+<name> = fastq <wildcard> {this.filebase =  this.wc}
+       | fastq base <wildcard> {this.filebase =  this.wc}
+       | file base <wildcard> {this.filebase = this.wc}
+         ;
+
+
+<file2> = in1 <wildcard> {this.R1base = this.wc}
+	;
+
+<file2> = in2 <wildcard> {this.R2base = this.wc}
+	;
+
+<wildcard> = % {this.wc = $}
+        ;

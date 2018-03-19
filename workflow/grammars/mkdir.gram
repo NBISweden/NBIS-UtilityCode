@@ -8,23 +8,23 @@ grammar com.test.mkdir;
 
 
 
-public <top> = <do> {this.package = "NBIS-UtilityCode"; this.command = "MakeDir -i " + this.out}
-             | <do2> {this.package = "NBIS-UtilityCode"; this.command = "MakeDir -i " + this.out}
-            ;
+public <top> = <do> {this.package = "Minute-ChIP"; this.command = "MakeDir -i " + this.out}
+             | <do2> {this.package = "Minute-ChIP"; this.command = "MakeDir -i " + this.out}
+     	    ;
 
 
 <do> =  make directory <wildcard> {this.out = this.wc} 
      | make folder <wildcard> {this.out = this.wc} 
      | create directory <wildcard> {this.out = this.wc} 
      | create folder <wildcard> {this.out = this.wc} 
-          ;
+	  ;
 
 <do2> =  make directory <wildcard> {this.out = this.wc}  <wildcard> {this.out = this.out + "/" + this.wc} 
      | make folder <wildcard> {this.out = this.wc} <wildcard> {this.out = this.out + "/" + this.wc} 
      | create directory <wildcard> {this.out = this.wc} <wildcard> {this.out = this.out + "/" + this.wc} 
      | create folder <wildcard> {this.out = this.wc} <wildcard>  {this.out = this.out + "/" + this.wc} 
-          ;
+	  ;
 
 
 <wildcard> = % {this.wc = $}
-           ;
+	   ;

@@ -18,12 +18,15 @@ class TableManipulator
   void RemoveColumn(const string & label);
   void FillColumn(const string & label, const svec<string> & c, int from);
   void SetInColumn(const string & label, int i, const string & v);
+  void RemoveHeaders();
+  void AddToColumn(const string & label, const string & item);
 
   
  private:
   void AddLock();
   void RemoveLock();
   void Wait();
+  void MakeIfNotExist();
   
   string m_name;
   string m_lock;
