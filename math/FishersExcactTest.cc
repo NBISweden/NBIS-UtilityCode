@@ -64,55 +64,24 @@ double FishersExact(double a, double b, double c, double d)
 int main( int argc, char** argv )
 {
 
-  commandArg<string> tCmmd("-t","test input file");
-  commandArg<string> rCmmd("-r","reference input file");
+  commandArg<double> aCmmd("-a","samples A in test set");
+  commandArg<double> bCmmd("-b","samples B in test set");
+  commandArg<double> cCmmd("-c","samples A in truth set");
+  commandArg<double> dCmmd("-d","samples B in truth set");
   commandLineParser P(argc,argv);
-  P.SetDescription("Testing the file parser.");
-  P.registerArg(tCmmd);
-  P.registerArg(rCmmd);
+  P.SetDescription("Calculates an enrichment test.");
+  P.registerArg(aCmmd);
+  P.registerArg(bCmmd);
+  P.registerArg(cCmmd);
+  P.registerArg(dCmmd);
   
   P.parse();
-  
-  svec<string> ref, test;
 
-  Read(P.GetStringValueFor(rCmmd), ref);
-  Read(P.GetStringValueFor(tCmmd), test);
+  double a = P.GetDoubleValueFor(aCmmd);
+  double b = P.GetDoubleValueFor(bCmmd);
+  double c = P.GetDoubleValueFor(cCmmd);
+  double d = P.GetDoubleValueFor(dCmmd);
 
-  //cout << FishersExact(1, 9, 11, 3) << endl;
-  //return 0;
-
-
-  int i, j;
-  int n = 0;
-  int count = 0;
-  string last;
- 
-  last = test[0];
-  for (i=1; i<test.isize(); i++) {
-    if (test[i] == last) {
-      count++;
-    } else {
-      int refCount = 0;
-      for (j=0; j<ref.isize(); j++) {
-	if (ref[j] == last)
-	  refCount++;
-      }
-
-      int a = count;
-      int b = refCount;
-      int c = test.isize() - a;
-      int d = ref.isize() - b;
-      
-      double p = FishersExact(a, b, c, d);
-      //if (p < 0.0000000000000000001)
-      cout << last << "\t" << p << endl;
-
-      count = 1;
-      last = test[i];
-    }
-  }
-
-
-  //comment. ???
-  return 0;
+  cout << "Fisher's exact test: " << FishersExact(a, b, c, d) << endl;
+  return 0; 
 }

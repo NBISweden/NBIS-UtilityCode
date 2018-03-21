@@ -2,22 +2,16 @@
 
 
 
-grammar com.test.demux;
+grammar com.test.markdups;
 
 
 
-import <com.test.spellex.*>
 import <com.test.digits.*>
 
 
 
-public <top> =  do % {this.mis = $; this.works = "AGCAATTC"; this.umisize = "6"} 
-       	     	that  <some> {this.command = "true that it works"; this.command = this.command  + " " + this.cool}
-     	    ;
+public <top> = test {this.out = 5; this.out = this.out + 5;}
+       ;
 
-<some> = % {this.cool = $};
-
-
-
-
-
+<wildcard> = % {this.wc = $}
+	   ;
