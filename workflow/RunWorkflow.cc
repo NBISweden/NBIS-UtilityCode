@@ -173,6 +173,9 @@ int main(int argc,char** argv)
 	cout << "Running local" << endl;
 	cmmd = subbase + ".bash";
 	exec(cmmd);
+	FILE * p = fopen("grapevine.log", "w");
+	fprintf(p, "Local execution, check log files for status.\n");
+	fclose(p);
 	SendMail("Scripts batch " + Stringify(i) + " have finished on the local server." + ReadLog(), mail);
       }
     }
