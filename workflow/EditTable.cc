@@ -4,6 +4,10 @@
 
 #include "workflow/TableManip.h"
 #include "base/StringUtil.h"
+#include <unistd.h>
+#include <stdlib.h>
+#include <time.h>
+#include "util/SysTime.h"
 
 
 int main( int argc, char** argv )
@@ -35,24 +39,47 @@ int main( int argc, char** argv )
 
   TableManipulator tm(fileName);
 
+  int max = 10;
+  if (idx >= 0) {
+    cout << "Waiting my turn: " << idx << endl;
+    int s = -1;
+    do {
+      usleep(10000);
+      struct timespec tv;
+      clock_gettime( CLOCK_REALTIME, &tv);
+      s = tv.tv_sec % max; /* / 1000000;*/
+      //s /= 10;
+      //cout << s << endl;
+      //s = s % 60;
+      //cout << s << endl;
+    } while (s != (idx % max));    
+  }
+  
+  cout << "Edit table " << fileName << " at " << GetTimeStatic() << endl;
+  
   if (actName == "add_column") {
     tm.AddColumn(labName);
+    cout << "Complete" << endl;
     return 0;
   }
   if (actName == "remove_column") {
     tm.RemoveColumn(labName);
+    cout << "Complete" << endl;
     return 0;
   }
   if (actName == "set_in_column") {
     tm.SetInColumn(labName, idx, parName);
+    cout << "Complete" << endl;
     return 0;
   }
   if (actName == "add_to_column") {
     tm.AddToColumn(labName, parName);
+    cout << "Complete" << endl;
     return 0;
   }
   if (actName == "remove_headers") {
     tm.RemoveHeaders();
+    cout << "Complete" << endl;
     return 0;
   }
   if (actName == "set_in_column_from_file") {
@@ -64,6 +91,7 @@ int main( int argc, char** argv )
     parser.Open(parName);
     parser.ParseLine();
     tm.SetInColumn(labName, idx, parser.AsString(0));
+    cout << "Complete" << endl;
     return 0;        
   }
   
@@ -83,7 +111,8 @@ int main( int argc, char** argv )
     }
     tm.FillColumn(labName, s, idx);
   }
-  
-   
+
+  cout << "Complete" << endl;
+
   return 0;
 }

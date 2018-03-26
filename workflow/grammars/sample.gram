@@ -1,0 +1,23 @@
+#JSGF V1.0 ISO8859-1 en;
+
+
+
+grammar com.test.sample;
+
+
+
+
+
+
+public <top> = <do> {this.package = "NBIS-UtilityCode";}
+       ;
+       
+<do> = get n50 <rest> {this.out = this.out + ".n50"; this.command = "FastaN50 -i " + this.folder + "/" + this.in + " | GetColumns -from 1 -to 1 -i > " + this.out}
+     | get size <rest> {this.out = this.out + ".size"; this.command = "FastaSizes -total -i " + this.folder + "/" + this.in + " | grep total | GetColumns -from 1 -to 1 -i > " + this.out}
+       ;
+
+<rest> = in <wildcard> {this.in = this.wc;} folder <wildcard> {this.folder = this.wc} outdir <wildcard> {this.out = this.wc + "/" + this.in - ".fasta"; }
+       ;
+
+<wildcard> = % {this.wc = $}
+	   ;

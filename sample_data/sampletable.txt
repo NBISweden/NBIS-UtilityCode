@@ -1,0 +1,6 @@
+sample	fasta	folder	outdir	n50	n50_file	size	
+1	sample1.fasta	sample_data/fasta	grapevine_test	961	grapevine_test/sample1.n50	5690	
+2	sample2.fasta	sample_data/fasta	grapevine_test	954	grapevine_test/sample2.n50	16362	
+3	sample3.fasta	sample_data/fasta	grapevine_test	2080	grapevine_test/sample3.n50	15076	
+4	sample4.fasta	sample_data/fasta	grapevine_test	219	grapevine_test/sample4.n50	3690	
+5	sample5.fasta	sample_data/fasta	grapevine_test	1185	grapevine_test/sample5.n50	9740	

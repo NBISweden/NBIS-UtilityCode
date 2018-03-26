@@ -13,6 +13,7 @@ public <top> = table <wc> {this.package = "NBIS-UtilityCode"; this.table = this.
        |  table <wc> {this.package = "NBIS-UtilityCode"; this.table = this.wc} remove column <wc> {this.column = this.wc; this.command = "EditTable -i " + this.table + " -a remove_column -l " + this.column}
        |  table <wc> {this.package = "NBIS-UtilityCode"; this.table = this.wc} add to column <wc> {this.column = this.wc} from file <wc> {this.file = this.wc} row <wc> {this.row = this.wc; this.command = "EditTable -i " + this.table + " -a  set_in_column_from_file -l " + this.column + " -p " + this.file + " -idx " + this.row}
        |  table <wc> {this.package = "NBIS-UtilityCode"; this.table = this.wc} fill column <wc> {this.column = this.wc} from file <wc> {this.file = this.wc} row <wc> {this.row = this.wc; this.command = "EditTable -i " + this.table + " -a  fill_column_from_file -l " + this.column + " -p " + this.file + " -idx " + this.row}
+       |  table <wc> {this.package = "NBIS-UtilityCode"; this.table = this.wc} set column <wc> {this.column = this.wc} row <wc> {this.row = this.wc;} to <wc> {this.value = this.wc; this.command = "EditTable -i " + this.table + " -a set_in_column -l " + this.column + " -p " + this.value + " -idx " + this.row}
       
     	    ;
 

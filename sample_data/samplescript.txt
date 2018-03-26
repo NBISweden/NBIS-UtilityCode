@@ -1,28 +1,45 @@
 #!/bin/bash -l
 
-#SBATCH -A b2017079
+#SBATCH -A <yourproject>
 #SBATCH -p core
-#SBATCH -n 16
-#SBATCH -t 6:00:00
+#SBATCH -n 1
+#SBATCH -t 0:05:00
 
-module load bioinfo-tools
-module load bowtie2
-module load samtools
-module load IGVtools
-module load FastQC
-module load picard
+# Exit if a single process fails!
+set -e
 
+export PATH=./:$PATH
 
-# @table = sample_data/table.txt
->grammar = sample_data/test.gram
+>grammar = workflow/grammars/mkdir.gram
+>grammar = workflow/grammars/tableops.gram
+>grammar = workflow/grammars/sample.gram
 
 
 
 ##############################################
+# Make sure the out dir exists
+make directory @table.outdir 
 
-do XYZZ that AAAA > @cool @works
+##############################################
+# Compute n50 and add to table
+get n50 in @table.fasta folder @table.folder outdir @table.outdir > @out
 
-do @cool that @works
+# Add the N50
+@col = n50
+table @table add column @col
+table @table add to column @col from file @out row @index
+
+# Add where it came from
+table @table add column n50_file
+table @table set column n50_file row @index to @out
 
 
+##############################################
+# Get total length & add to table
+get size in @table.fasta folder @table.folder outdir @table.outdir > @out
+
+# Add the size
+@col = size
+table @table add column @col
+table @table add to column @col from file @out row @index
 

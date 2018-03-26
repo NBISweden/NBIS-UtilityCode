@@ -25,7 +25,7 @@ class TableManipulator
  private:
   void AddLock();
   void RemoveLock();
-  void Wait();
+  bool Wait();
   void MakeIfNotExist();
   
   string m_name;

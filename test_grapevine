@@ -1,0 +1,6 @@
+cp sample_data/sampletable_orig.txt sample_data/sampletable.txt 
+rm sample_data/sampletable.txt.lock
+
+./RunWorkflow -s local -head sample_data/sampleheader.txt -i sample_data/samplescript.txt
+
+cat sample_data/sampletable.txt 

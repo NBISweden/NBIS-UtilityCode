@@ -113,6 +113,7 @@ int main( int argc, char** argv )
     fprintf(pB, "bsub %s\n", script[i].c_str());
     fprintf(pQ, "qsub %s\n", script[i].c_str());
     fprintf(pA, "%s > log%d.out &\n", script[i].c_str(), i);
+    fprintf(pA, "sleep 1\n");
   }
   
   fprintf(pA, "wait\n");

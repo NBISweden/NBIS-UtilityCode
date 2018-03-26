@@ -8,9 +8,16 @@ void TableManipulator::AddToColumn(const string & label, const string & item)
   MakeIfNotExist();
   AddLock();
   Table t;
-  t.Read(m_name);
-  t.AddToColumn(label, item);
-  t.Write(m_name);
+  try {
+    t.Read(m_name);
+    t.AddToColumn(label, item);
+    t.Write(m_name);
+  }
+  catch (...) {
+    cout << "ERROR" << endl;
+
+  }
+  
   RemoveLock();
 
 }
@@ -21,9 +28,15 @@ void TableManipulator::AddColumn(const string & label)
   MakeIfNotExist();
   AddLock();
   Table t;
-  t.Read(m_name);
-  t.AddColumn(label);
-  t.Write(m_name);
+  try {
+    t.Read(m_name);
+    t.AddColumn(label);
+    t.Write(m_name);
+  }
+  catch (...) {
+    cout << "ERROR" << endl;
+
+  }
   RemoveLock();
 }
 
@@ -33,9 +46,14 @@ void TableManipulator::RemoveColumn(const string & label)
   MakeIfNotExist();
   AddLock();
   Table t;
-  t.Read(m_name);
-  t.RemoveColumn(label);
-  t.Write(m_name);
+  try {
+    t.Read(m_name);
+    t.RemoveColumn(label);
+    t.Write(m_name);
+  }
+  catch (...) {       
+    cout << "ERROR" << endl;
+  }
   RemoveLock();
 }
 
@@ -44,9 +62,15 @@ void TableManipulator::RemoveHeaders()
   MakeIfNotExist();
   AddLock();
   Table t;
-  t.Read(m_name);
-  t.RemoveHeaders();
-  t.Write(m_name);
+  try {
+    t.Read(m_name);
+    t.RemoveHeaders();
+    t.Write(m_name);
+  }
+  catch (...) {
+    cout << "ERROR" << endl;
+
+  }
   RemoveLock();
   
 }
@@ -56,9 +80,15 @@ void TableManipulator::FillColumn(const string & label, const svec<string> & c, 
   MakeIfNotExist();
   AddLock();
   Table t;
-  t.Read(m_name);
-  t.FillColumn(label, c, from);
-  t.Write(m_name);
+  try {
+    t.Read(m_name);
+    t.FillColumn(label, c, from);
+    t.Write(m_name);
+  }
+  catch (...) {
+    cout << "ERROR" << endl;
+
+  }
   RemoveLock();
 }
 
@@ -67,16 +97,25 @@ void TableManipulator::SetInColumn(const string & label, int i, const string & v
   MakeIfNotExist();
   AddLock();
   Table t;
-  t.Read(m_name);
-  t.SetInColumn(label, i, v);
-  t.Write(m_name);
+  try {
+    t.Read(m_name);
+    t.SetInColumn(label, i, v);
+    t.Write(m_name);
+  }
+  catch (...) {
+    cout << "ERROR" << endl;
+  }
+
   RemoveLock();
 }
 
 void TableManipulator::AddLock()
 {
-  MakeIfNotExist();
-  Wait();
+  //MakeIfNotExist();
+  if (!Wait()) {
+    throw;
+  }
+  
   FILE * p = fopen(m_lock.c_str(), "w");
   fprintf(p, "locked\n");
   fclose(p);
@@ -88,20 +127,22 @@ void TableManipulator::RemoveLock()
   int r = system(cmmd.c_str());
 }
 
-void TableManipulator::Wait()
+bool TableManipulator::Wait()
 {
   FILE * p = fopen(m_lock.c_str(), "r");
   int n = 0;
   while (p != NULL) {
     fclose(p);
-    usleep(1000000);
+    usleep(100000);
     p = fopen(m_lock.c_str(), "r");
     n++;
-    if (n > 60) {
+    //cout << n << endl;
+    if (n > 120) {
       cout << "WARNING: file lock broken!!!" << endl;
-      break;
+      return false;
     }
   }
+  return true;
 }
 
 void TableManipulator::MakeIfNotExist()

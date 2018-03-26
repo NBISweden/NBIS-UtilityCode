@@ -1,0 +1,6 @@
+sample	fasta	folder	outdir
+1	sample1.fasta	sample_data/fasta	grapevine_test
+2	sample2.fasta	sample_data/fasta	grapevine_test
+3	sample3.fasta	sample_data/fasta	grapevine_test
+4	sample4.fasta	sample_data/fasta	grapevine_test
+5	sample5.fasta	sample_data/fasta	grapevine_test
