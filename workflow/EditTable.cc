@@ -43,6 +43,9 @@ int main( int argc, char** argv )
   if (idx >= 0) {
     cout << "Waiting my turn: " << idx << endl;
     int s = -1;
+
+#ifndef __APPLE__
+
     do {
       usleep(10000);
       struct timespec tv;
@@ -53,8 +56,9 @@ int main( int argc, char** argv )
       //s = s % 60;
       //cout << s << endl;
     } while (s != (idx % max));    
+#endif  
   }
-  
+
   cout << "Edit table " << fileName << " at " << GetTimeStatic() << endl;
   
   if (actName == "add_column") {
