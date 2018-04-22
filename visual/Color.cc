@@ -736,15 +736,14 @@ color MakeUpColor(int num)
     return color(0, 0, 0);
   case 0:
     return HexToColor(0x006600);
-  case 9:
-    return HexToColor(0x009900);
-  case 16:
-    return HexToColor(0x00FF00);
-  case 11:
-    return HexToColor(0xCCFF00);
-  case 18:
-    return HexToColor(0x999900);
-
+  case 1:
+    return HexToColor(0x3300FF);
+  case 2:
+    return HexToColor(0x990000);
+  case 3: 
+    return HexToColor(0x6699CC);
+  case 4: 
+    return HexToColor(0xCC9966);
   case 5:
     return HexToColor(0xCCFF99);
   case 6:
@@ -753,12 +752,12 @@ color MakeUpColor(int num)
     return HexToColor(0x66FFFF);
   case 8:
     return HexToColor(0x99CCFF);
-  case 1:
-    return HexToColor(0x3300FF);
+  case 9:
+    return HexToColor(0x009900);
   case 10:
-    return HexToColor(0x6699CC);
-  case 2:
     return HexToColor(0xFF33CC);
+  case 11:
+    return HexToColor(0xCCFF00);
   case 12:
     return HexToColor(0x9966CC);
   case 13:
@@ -767,12 +766,12 @@ color MakeUpColor(int num)
     return HexToColor(0x9999CC);
   case 15:
     return HexToColor(0xFF66FF);
-  case 3:
-    return HexToColor(0xCC9966);
+  case 16:
+    return HexToColor(0x00FF00);
   case 17:
     return HexToColor(0xFFCCFF);
-  case 4:
-    return HexToColor(0x990000);
+  case 18:
+    return HexToColor(0x999900);
   case 19:
     return HexToColor(0x996600);
   case 20:
