@@ -1,0 +1,44 @@
+#JSGF V1.0 ISO8859-1 en;
+
+
+
+grammar com.test.mapping;
+
+
+
+import <com.test.digits.*>
+
+
+public <map> = map {this.package = "Satsuma"; this.cores = " -p 8 "}  [<options>] <in> to <ref> {this.out = this.in; this.out = this.out - ".fastq"; this.out = this.out + ".papaya"; this.command = "Papaya -no_verbose " + this.cores + this.ref + " -q " + this.in + this.file2 + " -o " + this.out;}
+     	    ;
+	    
+public <count> = count reads {this.package = "Satsuma";} <in1> <in2> <annot> <folder> <sample> {this.out = this.folder + this.sample + ".readcounts"; this.command = "CountReads -e ribosomal " + this.in1 + this.in2 + this.annot + " -o " + this.out;}
+     	    ;
+
+<in1> = <wildcard> {this.in1 = " -i " + this.wc}
+	 ;
+<in2> = <wildcard> {this.in2 = " -i2 " + this.wc}
+	 ;
+<annot> = annotation <wildcard> {this.annot = " -f " + this.wc}
+	;
+
+
+<in> = <wildcard> {this.in = this.wc}
+	 ;
+	 
+<ref> = <wildcard> {this.ref = " -t " + this.wc}
+	 ;
+
+<folder> = folder <wildcard> {this.folder = this.wc; this.folder = this.folder + "/"}
+	 ;
+	 
+<sample> = sample <wildcard> {this.sample = this.wc}
+	 ;
+
+
+<options> = cores <wildcard> {this.cores = " -n " + this.wc}
+        ;
+
+	
+<wildcard> = % {this.wc = $}
+	   ;
