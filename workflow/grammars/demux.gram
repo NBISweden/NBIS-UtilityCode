@@ -10,7 +10,7 @@ import <com.test.digits.*>
 
 
 
-public <top> =  <demux> {this.package = "Minute-ChIP"; this.in_dir = ""; this.mis = "1"; this.barcode = "AGCAATTC"; this.umisize = "6"} [<in_dir>] <folder> <name> [<demuxopt>] [<demuxopt>] [<demuxopt>] <sample> {this.out1 = this.folder + this.filebase + "_" + this.R1base; this.out2 = this.folder + this.filebase + "_" + this.R2base; this.command = this.command + " -i1 " + this.in_dir + this.filebase + this.R1ex + " -i2 " + this.in_dir + this.filebase + this.R2ex + " -o1 " + this.folder + this.filebase + "_" + this.R1base + " -o2 " + this.folder + this.filebase + "_" + this.R2base + " -b " + this.barcode + " -mis " + this.mis + " -off " + this.umisize}
+public <top> =  <demux> {this.package = "Minute-ChIP"; this.in_dir = ""; this.mis = "1"; this.umisize = "0"} [<in_dir>] <folder> <name> [<demuxopt>] [<demuxopt>] [<demuxopt>] <sample> {this.out1 = this.folder + this.filebase + "_" + this.R1base; this.out2 = this.folder + this.filebase + "_" + this.R2base; this.command = this.command + " -i1 " + this.in_dir + this.filebase + this.R1ex + " -i2 " + this.in_dir + this.filebase + this.R2ex + " -o1 " + this.folder + this.filebase + "_" + this.R1base + " -o2 " + this.folder + this.filebase + "_" + this.R2base + " -b " + this.barcode + " -mis " + this.mis + " -off " + this.umisize}
      	    ;
 
 <folder> = folder <wildcard> {this.folder = this.wc; this.folder = this.folder + "/"}
@@ -19,8 +19,8 @@ public <top> =  <demux> {this.package = "Minute-ChIP"; this.in_dir = ""; this.mi
 <in_dir> = data dir <wildcard> {this.in_dir = this.wc; this.in_dir = this.in_dir + "/"}
 	 ;
 
-<demux> =  demux {this.command = "DeMuxFastq "; this.R1ex = "_R1.fastq.gz"; this.R2ex = "_R2.fastq.gz"; this.mis = "1"; this.umisize = "6"}
-	  | demultiplex {this.command = "  DeMuxFastq "; this.R1ex = "_R1.fastq.gz"; this.R2ex = "_R2.fastq.gz"; this.mis = 1; this.umisize = 6}
+<demux> =  demux {this.command = "DeMuxFastq "; this.R1ex = "_R1.fastq.gz"; this.R2ex = "_R2.fastq.gz"; this.mis = "1"; this.umisize = "0"}
+	  | demultiplex {this.command = "  DeMuxFastq "; this.R1ex = "_R1.fastq.gz"; this.R2ex = "_R2.fastq.gz"; this.mis = 1; this.umisize = 0}
 	  ;
 	 
 

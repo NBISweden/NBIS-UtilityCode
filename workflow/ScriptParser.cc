@@ -308,7 +308,12 @@ int ScriptParser::Read(const string & fileName, bool bSilent)
 	if (parser.AsString(0)[0] == '@') {
 	  //cout << "Setting variable " << parser.AsString(0) << " to " << parser.AsString(2) << endl;
 	  int idx = AddVariable(parser.AsString(0));
-	  m_vars[idx].Value() = parser.AsString(2);
+	  if (parser.AsString(2)[0] == '@') {
+	    int idx2 = AddVariable(parser.AsString(2)); // WARNING!!!: Check it RHS variable exists!!!
+	    m_vars[idx].Value() = m_vars[idx2].Value();
+	  } else {
+	    m_vars[idx].Value() = parser.AsString(2);
+	  }
 	  tmp.Raw() = "# REMOVED " + tmp.Raw();
 
 	} 
@@ -528,8 +533,11 @@ bool ScriptParser::VariableAssign(const Command & c)
       continue;
     int right = GetVariable(c.Valid()[i]);
     string val = c.Valid()[i];
-    if (right >= 0)
+    //cout << "DEBUG variable assign " <<  c.Valid()[0] << " " << c.Valid()[i] << endl;
+    if (right >= 0) {
       val = m_vars[right].Value();
+      //cout << "DEBUG variable contains " << val << endl;
+    }
 
     if (k == 0) {
       m_vars[left].Value() = val;
