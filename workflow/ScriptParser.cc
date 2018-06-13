@@ -562,6 +562,15 @@ bool ScriptParser::ProcessConditions(int index)
     Command & c = m_commands[i];
     StringParser pp;
     pp.SetLine(m_commands[i].Raw());
+
+    if (pp.GetItemCount() == 1 && pp.AsString(0) == ">else<") {
+      if (bNot)
+	bNot = false;
+      else
+	bNot = true;
+      c.Processed() = "# CONDITION " + c.Processed();
+      continue;
+    }
     
     if (!bNot && pp.GetItemCount() > 0 && pp.AsString(pp.GetItemCount()-1) == "endif<") {
       //c.Raw() = "# CONDITION " + c.Raw();
