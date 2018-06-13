@@ -552,6 +552,78 @@ bool ScriptParser::VariableAssign(const Command & c)
 
 }
 
+bool ScriptParser::ProcessConditions(int index)
+{
+
+  cout << "Resolve conditions for # " << index << endl;
+  int i;
+  bool bNot = false;
+  for (i=0; i<m_commands.isize(); i++) {
+    Command & c = m_commands[i];
+    StringParser pp;
+    pp.SetLine(m_commands[i].Raw());
+    
+    if (!bNot && pp.GetItemCount() > 0 && pp.AsString(pp.GetItemCount()-1) == "endif<") {
+      //c.Raw() = "# CONDITION " + c.Raw();
+      c.Processed() = "# CONDITION " + c.Processed();
+      continue;
+    }
+    
+    if (bNot) {
+      //c.Raw() = "# CONDITION " + c.Raw();
+      c.Processed() = "# CONDITION " + c.Processed();
+      if (pp.GetItemCount() > 0 && pp.AsString(pp.GetItemCount()-1) == "endif<") {
+	bNot = false;
+	cout << "Condition END!!" << endl;
+      }
+      continue;
+    }
+  
+    
+    if (pp.GetItemCount() < 4)
+      continue;
+
+    if (pp.AsString(0) != ">if")
+      continue;
+    
+    cout << "Condition ENTER!!" << endl;
+    
+    if (pp.AsString(2) != "==" && pp.AsString(2) != "!=") {
+      cout << "ERROR: malformed >if statement in line " << i << ": " << c.Raw() << endl;      
+    }
+    
+    int idx = GetVariable(pp.AsString(1));
+    if (idx < 0) {
+      cout << "ERROR: variable " << pp.AsString(1) << " undefined in line " << i << ": " << c.Raw() << endl;
+      continue;
+    }
+    int b = -1;
+    string cmp = pp.AsString(3);
+    if (cmp[0] == '@') {
+      int idx2 = GetVariable(cmp);
+      if (idx2 < 0) {
+	cout << "ERROR: variable " << cmp << " undefined in line " << i << ": " << c.Raw() << endl;
+	continue;
+      }
+      cmp = m_vars[idx2].Value();
+    }
+    if (m_vars[idx].Value() == cmp)
+      b = 1;
+    if (pp.AsString(2) == "!=")
+      b = -b;
+    if (b == -1) {
+      bNot = true;
+      cout << "Condition FALSE!!" << endl;
+    } else {
+      cout << "Condition TRUE!!" << endl;
+    }
+    c.Processed() = "# CONDITION " + c.Processed();
+    //c.Raw() = "# CONDITION " + c.Raw();
+  }
+
+  return true;
+}
+
 bool ScriptParser::Process(int index)
 {
   int i, j;
@@ -578,12 +650,12 @@ bool ScriptParser::Process(int index)
       string el = c.Valid()[j];
       //cout << "valid " << el << endl;
       if (el[0] == '@') {
-	int index = GetVariable(el);
-	if (index < 0) {
+	int index2 = GetVariable(el);
+	if (index2 < 0) {
 	  cout << "ERROR line " << i << ": variable " << el << " is undefined!!" << endl;
 	  return false;
 	}
-	el = m_vars[index].Value();
+	el = m_vars[index2].Value();
       }
       line += el;
       line += " ";
@@ -633,8 +705,8 @@ bool ScriptParser::Process(int index)
 	  vv += pp.AsString(0);
 	  //cout << "Checking " << c.Out()[x] << " vs " <<  vv << endl;
 	  if (c.Out()[x] == vv) {
-	    int index = GetVariable(vv);
-	    m_vars[index].Value() = pp.AsString(2);
+	    int index2 = GetVariable(vv);
+	    m_vars[index2].Value() = pp.AsString(2);
 	    //cout << "--> Set variable " << pp.AsString(0) << " to " << pp.AsString(2) << endl;
 	  }
 	}
@@ -650,10 +722,12 @@ bool ScriptParser::Process(int index)
 	c.Processed() += c.Raw();
 	c.Processed() += "\n##<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<";
      } else {
-	cout << "No result, routing command through:" << c.Raw() << endl;
+	cout << "No result, routing command through (for now):" << c.Raw() << endl;
       }
     }
   }
+
+  ProcessConditions(index);
   
   return true;
 }

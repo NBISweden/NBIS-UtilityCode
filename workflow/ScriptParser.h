@@ -178,6 +178,7 @@ class ScriptParser
   }
 
   bool Process(int i);
+  bool ProcessConditions(int i);
 
   int isize() const {return m_commands.isize();}
   const string & operator [] (int i) const {return m_commands[i].Processed();}
