@@ -602,9 +602,14 @@ bool ScriptParser::ProcessConditions(int index)
     }
     
     int idx = GetVariable(pp.AsString(1));
+
+    string val;
     if (idx < 0) {
-      cout << "ERROR: variable " << pp.AsString(1) << " undefined in line " << i << ": " << c.Raw() << endl;
+      cout << "WARNING: variable " << pp.AsString(1) << " undefined in line " << i << ": " << c.Raw() << endl;
+      cout << "WARNING: assuming FALSE condition!" << endl;      
       continue;
+    } else {
+      val = m_vars[idx].Value();
     }
     int b = -1;
     string cmp = pp.AsString(3);
@@ -616,7 +621,8 @@ bool ScriptParser::ProcessConditions(int index)
       }
       cmp = m_vars[idx2].Value();
     }
-    if (m_vars[idx].Value() == cmp)
+    
+    if (val == cmp)
       b = 1;
     if (pp.AsString(2) == "!=")
       b = -b;

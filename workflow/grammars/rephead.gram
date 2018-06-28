@@ -1,0 +1,22 @@
+#JSGF V1.0 ISO8859-1 en;
+
+
+
+grammar com.test.rephead;
+
+
+
+import <com.test.digits.*>
+
+
+public <top> = <do> 
+     	    ;
+
+
+<do> =  reset fasta headers {this.packages = "NBIS-UtilityCode"; this.command = "ReplaceFastaHead -i "} <wildcard> {this.in = this.wc; this.out = this.in - ".fasta"; this.out = this.out + ".replaced.fasta"; this.command = this.command + this.in + " -o " + this.out}
+	  ;
+
+	 
+
+<wildcard> = % {this.wc = $}
+	   ;

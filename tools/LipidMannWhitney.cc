@@ -39,11 +39,15 @@ void TestEnrich(const Lipid & l, const svec<Sample> & s, const string &name, dou
   for (i=0; i<l.data.isize(); i++) {
     Pair p;
     if (s[i].cat == "CTL" || s[i].cat == "DM") {
-      p.cat = s[i].cat;
-      p.val = l.data[i];
-      pair.push_back(p);
+      if (l.data[i] >= 0) {
+	p.cat = s[i].cat;
+	p.val = l.data[i];
+	pair.push_back(p);
+      }
     }
   }
+  if (pair.isize() < 100)
+    return;
   Sort(pair);
   int r1 = 0;
   int r2 = 0;
@@ -107,10 +111,13 @@ int main( int argc, char** argv )
   int i, j;
   int off = 7;
   parser.ParseLine();
+  int bmi_index = -1;
   for (i=off; i<parser.GetItemCount(); i++) {
     Lipid l;
     l.name = parser.AsString(i);
     lipids.push_back(l);
+    if (l.name == "BMI_B")
+      bmi_index = i;
   }
   
   parser.ParseLine();
@@ -122,20 +129,36 @@ int main( int argc, char** argv )
     
   }
 
-  
+  svec<double> bmi;
+
+  int n = 0;
+  int nc = 0;
+  int nd = 0;
   while (parser.ParseLine()) {
     if (parser.GetItemCount() == 0)
       continue;
     Sample s;
+
+    double bb = parser.AsFloat(bmi_index);
+
+    //if (bb < 25 || bb > 30)
+    //continue;
+
+    n++;
     s.name = parser.AsString(3);
-    if (strstr(s.name.c_str(), "CTL") != NULL)
+    if (strstr(s.name.c_str(), "CTL") != NULL) {
       s.cat = "CTL";
-    if (strstr(s.name.c_str(), "DM") != NULL)
+      nc++;
+    }
+    if (strstr(s.name.c_str(), "DM") != NULL) {
       s.cat = "DM";
+      nd++;
+    }
 
     for (i=off; i<parser.GetItemCount(); i++) {
       if (parser.AsString(i) == ".") {
-	double v = RandomFloat(0.05);
+	//double v = RandomFloat(0.05);
+	double v = -1;
 	s.data.push_back(v);
 	lipids[i-off].data.push_back(v);
       } else {
@@ -145,12 +168,16 @@ int main( int argc, char** argv )
     }
     samples.push_back(s);
   }
-
+  cerr << "Samples: " << n << " ctl: " << nc << " dia: " << nd << endl;
   for (i=0; i<lipids.isize(); i++) {
     //cout << lipids[i].name << "\t";
     TestEnrich(lipids[i], samples, lipids[i].name, (double)lipids.isize());
   }
   return 0;
+
+
+  //+++++++++++++++++++++++++++++++++++++++++++
+
   cout << "Correlations" << endl;
   
   for (i=0; i<lipids.isize(); i++) {
