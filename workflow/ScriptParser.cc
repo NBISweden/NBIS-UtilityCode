@@ -518,7 +518,7 @@ bool ScriptParser::VariableAssign(const Command & c)
  
   int left = GetVariable(c.Valid()[0]);
   if (left < 0) {
-    cout << "ERROR: variable " << c.Valid()[0] << " is undefined!!" << endl;
+    cout << "ERROR (0): variable " << c.Valid()[0] << " is undefined!!" << endl;
     return false;
   }
 
@@ -552,6 +552,15 @@ bool ScriptParser::VariableAssign(const Command & c)
 
 }
 
+void RemoveCR(string & s) {
+  for (int i=0; i<(int)s.length(); i++) {
+    if (s[i] == '\n')
+      s[i] = ' ';
+  }
+  //cout << "CHECKING " << s << endl;
+
+}
+
 bool ScriptParser::ProcessConditions(int index)
 {
 
@@ -581,6 +590,7 @@ bool ScriptParser::ProcessConditions(int index)
     if (bNot) {
       //c.Raw() = "# CONDITION " + c.Raw();
       c.Processed() = "# CONDITION " + c.Processed();
+      RemoveCR(c.Processed());
       if (pp.GetItemCount() > 0 && pp.AsString(pp.GetItemCount()-1) == "endif<") {
 	bNot = false;
 	cout << "Condition END!!" << endl;
@@ -602,7 +612,7 @@ bool ScriptParser::ProcessConditions(int index)
     }
     
     int idx = GetVariable(pp.AsString(1));
-
+    cout << "DEBUG" << endl;
     string val;
     if (idx < 0) {
       cout << "WARNING: variable " << pp.AsString(1) << " undefined in line " << i << ": " << c.Raw() << endl;
@@ -616,7 +626,7 @@ bool ScriptParser::ProcessConditions(int index)
     if (cmp[0] == '@') {
       int idx2 = GetVariable(cmp);
       if (idx2 < 0) {
-	cout << "ERROR: variable " << cmp << " undefined in line " << i << ": " << c.Raw() << endl;
+	cout << "ERROR (1): variable " << cmp << " undefined in line " << i << ": " << c.Raw() << endl;
 	continue;
       }
       cmp = m_vars[idx2].Value();
@@ -633,6 +643,7 @@ bool ScriptParser::ProcessConditions(int index)
       cout << "Condition TRUE!!" << endl;
     }
     c.Processed() = "# CONDITION " + c.Processed();
+    RemoveCR(c.Processed());
     //c.Raw() = "# CONDITION " + c.Raw();
   }
 
