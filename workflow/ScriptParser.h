@@ -12,7 +12,7 @@
 class Command
 {
  public:
-  Command() {m_bg = false; m_bSilent = false;}
+  Command() {m_bg = false; m_bSilent = false; m_alien = false;}
 
   const string & Raw() const {return m_raw;}
   string & Raw() {return m_raw;}
@@ -31,6 +31,9 @@ class Command
 
   void SetSilent(bool b) {m_bSilent = b;}
   bool IsSilent() const {return m_bSilent;}
+
+  void SetAlien(bool b) {m_alien = b;}
+  bool IsAlien() const {return m_alien;}
   
  private:
   string m_raw;
@@ -39,6 +42,7 @@ class Command
   svec<string> m_out;
   bool m_bg;
   bool m_bSilent;
+  bool m_alien;
 };
 
 
@@ -249,11 +253,13 @@ class ScriptParser
 
   bool VariableAssign(const Command & c);
 
-  bool CheckAutoRemove(svec<string> & out, const string & var, const string & value);
+  bool CheckAutoRemove(svec<string> & out, const string & var, const string & value) const;
 
   void InsertCommand(int after, const string & c);
 
+  void RemoveAliens();
 
+  void ResetAutoRemeove();
   
   svec<Variable> m_vars;
   svec<Command> m_commands;

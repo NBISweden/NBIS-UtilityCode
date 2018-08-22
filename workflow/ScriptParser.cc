@@ -269,6 +269,7 @@ int ScriptParser::Read(const string & fileName, bool bSilent)
   
   parser.Open(fileName);
 
+  //m_autoremove.clear();
 
   int i;
 
@@ -577,9 +578,23 @@ void RemoveCR(string & s) {
 
 }
 
+void ScriptParser::RemoveAliens()
+{
+  int i;
+ 
+  for (i=0; i<m_commands.isize(); i++) {
+    if (m_commands[i].IsAlien()) {
+      for (int j=i+1; j<m_commands.isize(); j++) {
+	m_commands[j-1] = m_commands[j]; 
+      }
+      m_commands.resize(m_commands.isize()-1);
+      i--;
+    }
+  }
+}
+
 bool ScriptParser::ProcessConditions(int index)
 {
-
   cout << "Resolve conditions for # " << index << endl;
   int i;
   bool bNot = false;
@@ -669,7 +684,9 @@ bool ScriptParser::ProcessConditions(int index)
 bool ScriptParser::Process(int index)
 {
   int i, j;
-
+  RemoveAliens();
+  ResetAutoRemeove();
+  
   AddTableVars(index);
   
   m_curr = index;
@@ -793,11 +810,24 @@ void ScriptParser::InsertCommand(int after, const string & c)
   }
   Command ins;
   ins.Raw() = c;
+  ins.SetAlien(true);
   m_commands[after+1] = ins;
   
 }
 
-bool ScriptParser::CheckAutoRemove(svec<string> & out, const string & var, const string & value)
+void ScriptParser::ResetAutoRemeove()
+{
+  for (int i=0; i<m_vars.isize(); i++) {
+    for (int j=0; j<m_autoremove.isize(); j++) {
+      if (m_vars[i].Name() == m_autoremove[j].Var())
+	m_vars[i].Value() = "";
+    }
+
+  }
+
+}
+
+bool ScriptParser::CheckAutoRemove(svec<string> & out, const string & var, const string & value) const
 {
   if (value == "")
     return false;

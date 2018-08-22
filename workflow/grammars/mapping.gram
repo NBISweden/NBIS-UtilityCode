@@ -9,7 +9,7 @@ grammar com.test.mapping;
 import <com.test.digits.*>
 
 
-public <top> = <map> {this.package = "bowtie2"; this.cores = " -p 16 "} [<options>] <in1> <in2>  {this.command = "bowtie2 " + this.cores + this.ref + this.file1 + this.file2 + " --fast -S " + this.folder + this.filebase + "_" + this.sample + ".sam"; this.out = this.folder + this.filebase + "_" + this.sample + ".sam"; this.align = this.filebase + "_" + this.sample;}
+public <top> = <map> {this.package = "bowtie2"; this.cores = " -p 16 "} [<options>] <in1> <in2>  {this.command = "bowtie2 " + this.cores + this.ref + this.file1 + this.file2 + " --fast -S " + this.folder + this.sample + ".sam"; this.out = this.folder + this.sample + ".sam"; this.align =  this.sample;}
      	    ;
 
 
