@@ -160,6 +160,23 @@ class SoftwarePackage
 };
 
 
+class AutoRemoveItem
+{
+ public:
+  AutoRemoveItem() {}
+
+  string & Var() {return m_var;}
+  string & Ext() {return m_ext;}
+  const string & Var() const {return m_var;}
+  const string & Ext() const {return m_ext;}
+  
+ private:
+ 
+  string m_var;
+  string m_ext;
+};
+
+
 
 //===========================================
 class ScriptParser
@@ -232,6 +249,11 @@ class ScriptParser
 
   bool VariableAssign(const Command & c);
 
+  bool CheckAutoRemove(svec<string> & out, const string & var, const string & value);
+
+  void InsertCommand(int after, const string & c);
+
+
   
   svec<Variable> m_vars;
   svec<Command> m_commands;
@@ -243,7 +265,7 @@ class ScriptParser
   string m_collapse;
 
   svec<SoftwarePackage> m_packages;
-  
+  svec<AutoRemoveItem> m_autoremove;
 };
 
 

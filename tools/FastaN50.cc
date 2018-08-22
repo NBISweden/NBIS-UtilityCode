@@ -29,7 +29,8 @@ int main( int argc, char** argv )
   }
 
   Sort(len);
-  int k = 0;
+  long long k = 0;
+  cout << "Printing N50" << endl;
   for (i=0; i<len.isize(); i++) {
     if (k >= total/2) {
       cout << "N50: " << len[i] << endl; 

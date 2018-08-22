@@ -13,7 +13,7 @@ public <top> = <do>
      	    ;
 
 
-<do> =  to binary {this.package = "samtools"; this.command = "samtools view -bS -F 4 "}  <wildcard> {this.base = this.wc; this.in = this.base + ".sam"; this.out = this.base + ".bam"; this.command = this.command + this.in + " > " + this.out}
+<do> =  to binary {this.package = "samtools"; this.command = "samtools view -bS -F 4 "}  <wildcard> {this.base = this.wc; this.in = this.base; this.out = this.base - ".sam"; this.out = this.out + ".bam"; this.command = this.command + this.in + " > " + this.out}
 	  ;
 
 

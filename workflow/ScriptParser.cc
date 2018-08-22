@@ -282,6 +282,21 @@ int ScriptParser::Read(const string & fileName, bool bSilent)
     tmp.Raw() = parser.Line();
     tmp.SetSilent(bSilent);
     bool bPre = false;
+
+
+    if (parser.GetItemCount() >= 2) {
+      if (parser.AsString(0) == ">autoremove") {
+	tmp.Raw() = "# REMOVED " + tmp.Raw();
+ 	AutoRemoveItem ar;
+	ar.Var() = parser.AsString(1);
+	
+	if (parser.GetItemCount() == 3)
+	  ar.Ext() = parser.AsString(2);
+	m_autoremove.push_back(ar);
+      }
+    }
+
+    
     if (parser.GetItemCount() >= 3) {
       if (parser.AsString(0) == "@table") {
 	bPre = true;
@@ -320,6 +335,7 @@ int ScriptParser::Read(const string & fileName, bool bSilent)
 	
       }
       
+       
       if (parser.AsString(0) == ">collapse") {
 	if (parser.AsString(1) == "table" || parser.AsString(1) == "@table")
 	  m_collapse = parser.AsString(2);
@@ -732,6 +748,16 @@ bool ScriptParser::Process(int index)
 	  //cout << "Checking " << c.Out()[x] << " vs " <<  vv << endl;
 	  if (c.Out()[x] == vv) {
 	    int index2 = GetVariable(vv);
+	    //++++++++++++++++++++++++++++++++++++++++++
+	    svec<string> ar;
+	    CheckAutoRemove(ar, vv, m_vars[index2].Value());
+	    //InsertCommand(i, "");
+	    //InsertCommand(i, "");
+	    for (int w=0; w<ar.isize(); w++) {
+	      InsertCommand(i, ar[w]);
+	    }	    	      	    
+	    
+	    //++++++++++++++++++++++++++++++++++++++++++
 	    m_vars[index2].Value() = pp.AsString(2);
 	    //cout << "--> Set variable " << pp.AsString(0) << " to " << pp.AsString(2) << endl;
 	  }
@@ -758,3 +784,40 @@ bool ScriptParser::Process(int index)
   return true;
 }
 
+void ScriptParser::InsertCommand(int after, const string & c)
+{
+  int i;
+  m_commands.resize(m_commands.isize()+1);
+  for (i=m_commands.isize()-1; i>after; i--) {
+    m_commands[i] = m_commands[i-1];
+  }
+  Command ins;
+  ins.Raw() = c;
+  m_commands[after+1] = ins;
+  
+}
+
+bool ScriptParser::CheckAutoRemove(svec<string> & out, const string & var, const string & value)
+{
+  if (value == "")
+    return false;
+  
+  int i;
+  out.clear();
+  bool b = false;
+  for (i=0; i<m_autoremove.isize(); i++) {
+    if (m_autoremove[i].Var() == var) {
+      b = true;
+      string s = "rm " + value;
+      out.push_back(s);
+      if (m_autoremove[i].Ext() != "") {
+	s = "rm " + value + m_autoremove[i].Ext();
+	out.push_back(s);
+      }
+    }
+
+  }
+  UniqueSort(out);
+  return b;
+}
+ 
