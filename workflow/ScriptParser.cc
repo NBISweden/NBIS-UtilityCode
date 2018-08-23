@@ -838,10 +838,11 @@ bool ScriptParser::CheckAutoRemove(svec<string> & out, const string & var, const
   for (i=0; i<m_autoremove.isize(); i++) {
     if (m_autoremove[i].Var() == var) {
       b = true;
-      string s = "rm " + value;
-      out.push_back(s);
       if (m_autoremove[i].Ext() != "") {
-	s = "rm " + value + m_autoremove[i].Ext();
+	string s = "TryRemove " + value + m_autoremove[i].Ext();
+	out.push_back(s);
+      } else {
+	string s = "rm " + value;
 	out.push_back(s);
       }
     }
