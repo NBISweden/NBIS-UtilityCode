@@ -6,6 +6,7 @@
 #include "base/StringUtil.h"
 
 
+
 void WrapSingle(string & line, const string & log)
 {
   StringParser pp;

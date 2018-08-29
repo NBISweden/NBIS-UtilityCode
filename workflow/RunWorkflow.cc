@@ -111,6 +111,7 @@ int main(int argc,char** argv)
   commandArg<string> mailCmd("-m","e-mail address for notifications", "");
   commandArg<string> dirCmd("-d","scripts directory", "grapevine_scripts");
   commandArg<string> subCmd("-s","queueing system (SLURM, local)", "SLURM");
+  commandArg<bool> noLogCmd("-nolog","turn off system logging", false);
   //commandArg<string> oCmd("-o","output directory");
  
   
@@ -122,12 +123,14 @@ int main(int argc,char** argv)
   P.registerArg(mailCmd);
   P.registerArg(dirCmd);
   P.registerArg(subCmd);
+  P.registerArg(noLogCmd);
   //P.registerArg(oCmd);
 
   P.parse();
 
   string header = P.GetStringValueFor(iCmd);
   bool bDry = P.GetBoolValueFor(dryCmd);
+  bool noLog = P.GetBoolValueFor(noLogCmd);
   string mail = P.GetStringValueFor(mailCmd);
   string s = P.GetStringValueFor(sCmd);
   string sub = P.GetStringValueFor(subCmd);
@@ -159,7 +162,8 @@ int main(int argc,char** argv)
     cmmd += " -o " + sdir + "/level_" + Stringify(i);
     string subbase = sdir + "/submit_" + Stringify(i);
     cmmd += " -s " + subbase;
-    cmmd += " -l " + logDir;
+    if (!noLog)
+      cmmd += " -l " + logDir;
     exec(cmmd);
 
     UpdatePackages(packages);
