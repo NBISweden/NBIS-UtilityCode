@@ -18,6 +18,7 @@ int main( int argc, char** argv )
   commandArg<string> parCmmd("-p","parameter", "");
   commandArg<string> labCmmd("-l","label", "");
   commandArg<int> idxCmmd("-idx","index", -1);
+  commandArg<int> colCmmd("-col","column to read", 0);
   
   commandLineParser P(argc,argv);
   P.SetDescription("Table editor.");
@@ -26,6 +27,7 @@ int main( int argc, char** argv )
   P.registerArg(parCmmd);
   P.registerArg(labCmmd);
   P.registerArg(idxCmmd);
+  P.registerArg(colCmmd);
  
   P.parse();
   
@@ -33,6 +35,7 @@ int main( int argc, char** argv )
   string actName = P.GetStringValueFor(actCmmd);
   string parName = P.GetStringValueFor(parCmmd);
   int idx = P.GetIntValueFor(idxCmmd);
+  int col = P.GetIntValueFor(colCmmd);
   string labName = P.GetStringValueFor(labCmmd);
   
   int i, j;
@@ -111,7 +114,7 @@ int main( int argc, char** argv )
     while (parser.ParseLine()) {
       if (parser.GetItemCount() == 0)
 	continue;
-      s.push_back(parser.AsString(0));
+      s.push_back(parser.AsString(col));
     }
     tm.FillColumn(labName, s, idx);
   }
