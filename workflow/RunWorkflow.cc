@@ -132,7 +132,8 @@ int main(int argc,char** argv)
   string s = P.GetStringValueFor(sCmd);
   string sub = P.GetStringValueFor(subCmd);
   string sdir = P.GetStringValueFor(dirCmd);
- 
+  string logDir = sdir + "/" + "runlog";
+  
   int i, j;
 
   string cmmd = "mkdir " +  sdir;
@@ -158,6 +159,7 @@ int main(int argc,char** argv)
     cmmd += " -o " + sdir + "/level_" + Stringify(i);
     string subbase = sdir + "/submit_" + Stringify(i);
     cmmd += " -s " + subbase;
+    cmmd += " -l " + logDir;
     exec(cmmd);
 
     UpdatePackages(packages);

@@ -6,6 +6,73 @@
 #include "base/StringUtil.h"
 
 
+void WrapSingle(string & line, const string & log)
+{
+  StringParser pp;
+  pp.SetLine(line);
+
+  if (pp.GetItemCount() == 0)
+    return;
+  if (pp.AsString(0)[0] == '#')
+    return;
+  if (pp.AsString(0) == "module")
+    return;
+  if (pp.AsString(0) == "export")
+    return;
+  if (pp.AsString(0) == "set")
+    return;
+  if (pp.AsString(0) == "MakeDir")
+    return;
+  if (pp.AsString(0) == "rm")
+    return;
+  if (pp.AsString(0) == "TryRemove")
+    return;
+  if (pp.AsString(0) == "wait")
+    return;
+
+  string out = "ExecuteTracked -o " + log + " " + line;
+  line = out;
+  
+}
+
+string Wrap(const string & line, const string & log)
+{
+  StringParser pp;
+  char delim[16];
+  delim[0] = 10;
+  delim[1] = 0;
+  pp.SetLine(line.c_str(), delim);
+  //cout << "WRAP: raw ";
+
+  /*
+  int i = 0;
+  while (line[i] != 0) {
+    if (line[i] >= ' ')
+      cout << line[i];
+    else {
+      int n = line[i];
+      cout << endl << n << endl;
+    }
+    i++;
+  }
+  cout << endl;
+  printf("WRAP printf %s\n", line.c_str());
+  */
+  
+  //cout << "WRAP: Lines " << pp.GetItemCount() << endl;
+  string out;
+  for (int i=0; i<pp.GetItemCount(); i++) {
+    string in = pp.AsString(i);
+    //cout << "WRAP Before " << in << endl;
+    WrapSingle(in, log);
+    //cout << "WRAP After " << in << endl;
+    out += in;
+    if (i<pp.GetItemCount()-1)
+      out += delim;
+  } 
+  return out;
+}
+
 int main( int argc, char** argv )
 {
 
@@ -14,6 +81,7 @@ int main( int argc, char** argv )
   commandArg<string> outCmmd("-o","output script file");
   commandArg<string> subCmmd("-s","submit script prefix", "submit");
   commandArg<string> grCmmd("-g","grammar directory", "");
+  commandArg<string> logCmmd("-l","log directory", "");
   //commandArg<bool> helpCmmd("-h","help", false);
   commandLineParser P(argc,argv);
   P.SetDescription("Natural language-like workflow manager.");
@@ -22,6 +90,7 @@ int main( int argc, char** argv )
   P.registerArg(outCmmd);
   P.registerArg(subCmmd);
   P.registerArg(grCmmd);
+  P.registerArg(logCmmd);
   // P.registerArg(helpCmmd);
  
   P.parse();
@@ -32,7 +101,13 @@ int main( int argc, char** argv )
   string subName = P.GetStringValueFor(subCmmd);
   string grName = P.GetStringValueFor(grCmmd);
   // bool bHelp = P.GetBoolValueFor(helpCmmd);
+  string logDir = P.GetStringValueFor(logCmmd);
 
+  if (logDir != "") {
+    string md = "mkdir " + logDir;
+    int r = system(md.c_str());
+  }
+  
   int i, j;
 
 
@@ -67,6 +142,15 @@ int main( int argc, char** argv )
       name += Stringify(j);
     }
 
+    string logFile;
+    if (logDir != "") {
+      StringParser pp;
+      pp.SetLine(name, "/");
+      logFile = logDir + "/" + pp.AsString(pp.GetItemCount()-1) + ".log";
+      string rmcmmd = "rm " + logFile;
+      int rx = system(rmcmmd.c_str());
+    }
+    
     script.push_back(name);
     FILE * pOut = fopen(name.c_str(), "w");
     if (pOut == NULL) {
@@ -78,8 +162,13 @@ int main( int argc, char** argv )
     cout << "***************** Generating script " << j << endl;
     for (i=0; i<p.isize(); i++) {
       //if (!p.IsSilent(i)) {
-      fprintf(pOut, "%s\n", p[i].c_str());
-      cout << p[i] << endl;
+      string wrap = p[i];
+      if (logDir != "") {
+	wrap = Wrap(wrap.c_str(), logFile);
+      }
+      fprintf(pOut, "%s\n", wrap.c_str());
+      //fprintf(stdout, "CHECK  %s\n", wrap.c_str());
+      //cout << "FINAL " << p[i] << endl;
       //} else {
       //cout << "SILENT: " << p[i] << endl;
       //}
