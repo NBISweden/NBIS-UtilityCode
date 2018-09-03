@@ -174,13 +174,25 @@ void Table::Read(const string & fileName)
 
 }
 
-void Table::Collapse(const string & key)
+void Table::Collapse(const string & keyraw)
 {
   int i, j;
   int index = -1;
   Table t2;
   t2.resize(isize());
   t2.Name() = Name();
+
+  string delim = " ";
+
+  string key = keyraw;
+  if (key[key.length()-1] == ',') {
+    delim = ",";
+    char tmp[1024];
+    strcpy(tmp, key.c_str());
+    tmp[strlen(tmp)-1] = 0;
+    key = tmp;
+  }
+  
   for (i=0; i<m_columns.isize(); i++) {
     if (m_columns[i].Label() == key) {
       index = i;
@@ -218,7 +230,7 @@ void Table::Collapse(const string & key)
 	if ((t2[i])[k] == "")
 	  (t2[i])[k] = ((*this)[i])[j];
 	else
-	  (t2[i])[k] += " " + ((*this)[i])[j];
+	  (t2[i])[k] += delim + ((*this)[i])[j];
       }
     }
   }
@@ -705,6 +717,7 @@ bool ScriptParser::Process(int index)
       continue;
     }
     string line;
+    StringParser tok;
     for (j=0; j<c.Valid().isize(); j++) {
       string el = c.Valid()[j];
       //cout << "valid " << el << endl;
@@ -717,19 +730,49 @@ bool ScriptParser::Process(int index)
 	el = m_vars[index2].Value();
       }
       line += el;
-      line += " ";
+      line += " ";     
     }
+    tok.SetLine(line);
   
     cout << "Parsing line: " << line << endl; 
     CMPtrStringList result;
-    GRAMMAR_HANDLE h = m_grmStack.ParseAndEvaluate(result, line.c_str());
+
+    
+    GRAMMAR_HANDLE h = -1;
+    // WARNING!!!!!!!!!!!!!!!!!!!!!!!!!
+    // HARD CODED COMMAND
+    if (tok.GetItemCount() >= 5 && tok.AsString(0) == "write" && tok.AsString(1) == "to" && tok.AsString(2) == "file") {
+      cout << "Entering special grammar." << endl;
+      string add = tok.AsString(5) + "/stats/";
+      string out = add + tok.AsString(3);
+      string pseudo = "command = MakeList -o " + out;
+      if (tok.AsString(4) == "folder") {
+	for (int x=7; x<tok.GetItemCount(); x++) {
+	  pseudo += " " + add + tok.AsString(x);
+	}
+      } else {
+	for (int x=5; x<tok.GetItemCount(); x++) {
+	  pseudo += " " + tok.AsString(x);
+	}
+      }
+      cout << "Pseudocommand: " << pseudo << " " << " ||| " << add << endl;
+      result.add();
+      (*result[0]) = pseudo.c_str();
+      result.add();
+      (*result[1]) = "out = ";
+      (*result[1]) += out.c_str();
+      h = 4095;
+    } else {
+      // Parse the grammars
+      h = m_grmStack.ParseAndEvaluate(result, line.c_str());
+    }
     
     if (h != -1) {
       cout << "Parsed w/ handle " << h << ", length=" << result.length() << endl;
       
       for (int j=0; j<result.length(); j++) {
 	string var = ((const char*)*result(j));
-	//cout << "Returned: " << var << endl;
+	cout << "Returned: " << var << endl;
 	StringParser pp;
 	pp.SetLine(var, " ");
 	if (pp.GetItemCount() < 3)

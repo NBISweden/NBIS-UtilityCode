@@ -47,7 +47,7 @@ public:
 	  m_flags = 0;
 	  m_bIsActive = true;
 	  m_pNextNode = NULL;
-      m_dummyFlag = false;
+	  m_dummyFlag = false;
 	  m_bOptional = NODE_OPT_FLAG_FALSE;
 	  m_bIsWildCard = false;
 	}
@@ -61,7 +61,7 @@ public:
 	  m_references.removeNoDeleteAll();
 	}
 
-    virtual bool DoesParse(CMParseStack * pStack);
+	virtual bool DoesParse(CMParseStack * pStack);
     
 	virtual void Expand(CMGrammarExtract & extract, CMParseStack * pStack);
     
@@ -111,19 +111,19 @@ public:
 		long len = m_token.length();
 		for (int i=0; i<len; i++) {
 		  if (((const char*)m_token)[i] == GRMNODE_WILDCARD)
-	        m_bIsWildCard = true;
+		    m_bIsWildCard = true;
 		}
 	}
 
-    bool IsActive() {return m_bIsActive;}
-    void SetActive(bool b) {m_bIsActive = b;}
+	bool IsActive() {return m_bIsActive;}
+	void SetActive(bool b) {m_bIsActive = b;}
 
 	void SetNextNode(CMGrammarNode * p) {m_pNextNode = p;}
 	bool IsDelimiter() {return (m_pNextNode != NULL);}
 
 	CMGrammarNode & operator=(const CMGrammarNode & node)
 	{
-      m_tag = node.m_tag;
+	  m_tag = node.m_tag;
 	  m_token = node.m_token;
 	  m_flags = node.m_flags;
 	  m_bIsActive = node.m_bIsActive;

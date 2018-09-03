@@ -24,7 +24,17 @@ private:
 };
 
 
-
+string GetID(const string & date)
+{
+  StringParser p;
+  p.SetLine(date, ":");
+  int n = p.AsInt(p.GetItemCount()-1);
+  int m = n | ((2 ^ 16)-1);
+  string s = Stringify(m);
+  s = "ID=" + s;
+  //cout << s << endl;
+  return s;
+}
 
 int main( int argc, char** argv )
 {
@@ -51,7 +61,9 @@ int main( int argc, char** argv )
   
   Elapsed timer;
   int i;
-  string l = GetTimeStatic() + " START ";
+  string l = GetTimeStatic();
+  string pid = GetID(l);
+  l += " " + pid + " START ";
   string cmmd;
   for (i=3; i<argc; i++) {
     l += " ";
@@ -65,16 +77,16 @@ int main( int argc, char** argv )
 
   int ret = system(cmmd.c_str());
   
-  fprintf(p, "Elapsed %f\n", timer.InSeconds());
+  fprintf(p, "ELAPSED %s %f\n", pid.c_str(), timer.InSeconds());
   
   if (ret != 0) {
-    l = GetTimeStatic() + " ERROR program returned ";
+    l = GetTimeStatic() + " ERROR " + pid + " program returned ";
     fprintf(p, "%s %d and died.\n", l.c_str(), ret);
     fclose(p);
     return ret;
   }
 
-  l = GetTimeStatic() + " FINISH";
+  l = GetTimeStatic() + " FINISH " + pid;
   fprintf(p, "%s\n", l.c_str());
   fclose(p);
   return ret;

@@ -12,6 +12,8 @@ void WrapSingle(string & line, const string & log)
   StringParser pp;
   pp.SetLine(line);
 
+  // Let's not make any decisions early on here and defer this to later instead.
+  /*
   if (pp.GetItemCount() == 0)
     return;
   if (pp.AsString(0)[0] == '#')
@@ -30,7 +32,9 @@ void WrapSingle(string & line, const string & log)
     return;
   if (pp.AsString(0) == "wait")
     return;
+  */
 
+  
   string out = "ExecuteTracked -o " + log + " " + line;
   line = out;
   
