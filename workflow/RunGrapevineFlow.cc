@@ -5,7 +5,74 @@
 
 #include "base/CommandLineParser.h"
 #include "base/FileParser.h"
+#include "base/ThreadHandler.h"
+#include "base/StringUtil.h"
 
+string exec(const char* cmd);
+
+
+class PipeThread : public IOneThread
+{
+public:
+  PipeThread(const string & path) {
+    m_execPath = path;
+  }
+
+  void SetExecPath(const string & path) {
+    m_execPath = path;
+  }
+  
+protected:
+
+  virtual bool OnDie() {
+    cout << "Killed!!" << endl;
+    return true;
+  }
+
+  virtual bool OnDo(const string & pipe) {
+    cout << "Start listening to: " << pipe << endl;
+    do {
+      cout << "Check pipe." << endl;
+      string rr = "cat < " + pipe;
+      string result = exec(rr.c_str());
+      cout << "Pipe returned " << result << endl;
+      StringParser p;
+      char tmp[256];
+      tmp[0] = 10;
+      tmp[1] = 0;
+      p.SetLine(result, tmp);
+      cout << "Messages: " << p.GetItemCount() << endl;
+      for (int i=0; i<p.GetItemCount(); i++) {
+	if (strstr(p.AsString(i).c_str(), "RunGrapevineFlow") != NULL)
+	  continue;
+	if (p.AsString(i) == "exit") {
+	  cout << "Got directive exit" << endl;
+	  return true;
+	}
+
+	string cmmd = p.AsString(i);
+	StringParser pp;
+	pp.SetLine(p.AsString(i));
+	if  (pp.AsString(0) == "EditTable")
+	  cmmd = m_execPath + "/" + p.AsString(i);
+	
+	cout << "Executing locally: " << cmmd << endl;
+	int d = system(cmmd.c_str());
+      }
+    } while (true);
+    return true;
+  }
+  
+  virtual bool OnInitialize(const string & msg) {
+    //IOneThread::Initialize(msg);
+    return true;
+  }
+
+  string m_execPath;
+};
+
+
+//-------------------------------------------
 
 string exec(const char* cmd) {
   //cout << "EXECUTING: " << cmd << endl;
@@ -64,84 +131,146 @@ bool CheckExit(string & ret, string & succ, const string & id)
 int main( int argc, char** argv )
 {
 
+  /*
   if (argc < 2 || strcmp(argv[1], "-help") == 0 ||  strcmp(argv[1], "--help") == 0) {
     cout << "Usage: RunGrapevineFlow script1 script2 script3..." << endl;
     return 0;    
-  }
+    }*/
+  commandArg<string> sCmd("-i","list of scripts");
+  commandArg<string> qCmd("-q","job scheduling system, can be SLURM or local");
+  commandArg<string> pCmd("-p","listening pipe", "");
   
+  commandLineParser P(argc,argv);
+  P.SetDescription("Executes a grapevine workflow locally or using SLURM");
 
+  P.registerArg(sCmd);
+  P.registerArg(qCmd);
+  P.registerArg(pCmd);
+
+  P.parse();
+
+  string input = P.GetStringValueFor(sCmd);
+  string job = P.GetStringValueFor(qCmd);
+  string pipe = P.GetStringValueFor(pCmd);
+
+  
   svec<string> scripts;
   
   int i, j;
 
-  for (i=1; i<argc; i++)
-    scripts.push_back(argv[i]);
+  StringParser p;
+  p.SetLine(input, ",");
+  
+  for (i=0; i<p.GetItemCount(); i++)
+    scripts.push_back(p.AsString(i));
 
+  
   FILE * pGrapeLog = fopen("grapevine.log", "w");
-  
-  for (j=0; j<scripts.isize(); j++) {
-  
-    svec<string> ids, status;
 
-    FlatFileParser parser;
-  
-    parser.Open(scripts[j]);
+  // Start listening thread
+  ThreadHandler th;
 
-    while (parser.ParseLine()) {
-      if (parser.GetItemCount() == 0)
-	continue;
-    
-      string id = "11794110";
-      id = SubmitOne(parser.Line());
-      if (id == "-1") {
-	cout << "*****************************************" << endl;
-	cout << "ERROR during submission!!!" << endl;
-	cout << "Check your permissions and accounts!" << endl;
-	fprintf(pGrapeLog, "There were ERRORS during job submission, check your permissions and accounts!\n");
-	fclose(pGrapeLog);
-	return -1;
-      }
-      ids.push_back(id);
-      status.push_back("");
-    }
+  
+  if (pipe != "") {
+    string mp = "mkfifo " + pipe;
+    exec(mp.c_str());
+ 
+    th.AddThread(new PipeThread(ExecPath(argv[0])));    
+    th.Feed(0, pipe);
+
+    cout << "Stuffing pipe" << endl;
+    mp = "echo RunGrapevineFlow > " + pipe;
+    int x = system(mp.c_str());
+    cout << "done" << endl;
+  }
+
+  cout << "Continue" << endl;
+
+  
+  if (job == "SLURM") {
+    cout << "Submit to SLURM" << endl;
+    for (j=0; j<scripts.isize(); j++) {
       
-    int counter = ids.isize();
-
-    while (counter > 0) {
-
-      for (i=0; i<ids.isize(); i++) {
-	if (ids[i] == "")
+      svec<string> ids, status;
+      
+      FlatFileParser parser;
+      
+      parser.Open(scripts[j]);
+      
+      while (parser.ParseLine()) {
+	if (parser.GetItemCount() == 0)
 	  continue;
 	
-	string cmd = "squeue -j " + ids[i] /*+ " | grep " + ids[i]*/;
-	//cout << cmd << endl;
-	string ret = exec(cmd.c_str());
-	//cout << "RETURNED " << endl << ret << endl;
-	StringParser p;
-	p.SetLine(ret);
-	if (p.GetItemCount() < 9) {	  
-	  counter--;
-	  string ret1, stat;
-	  CheckExit(ret1, stat, ids[i]);
-	  cout << "Process " << ids[i] << " finished with ret " << ret1 << " status " << stat << endl;
-	  fprintf(pGrapeLog, "Process %s has finished with return code %s status %s\n", ids[i].c_str(), ret1.c_str(), stat.c_str());
-	  ids[i] = "";
-	  continue;
+	string id;
+	id = SubmitOne(parser.Line());
+	if (id == "-1") {
+	  cout << "*****************************************" << endl;
+	  cout << "ERROR during submission!!!" << endl;
+	  cout << "Check your permissions and accounts!" << endl;
+	  fprintf(pGrapeLog, "There were ERRORS during job submission, check your permissions and accounts!\n");
+	  fclose(pGrapeLog);
+	  return -1;
 	}
-	string s = p.AsString(12);
-	string t = p.AsString(13);
-	if (s != status[i]) {
-	  status[i] = s;
-	  cout << "Program " << ids[i] << " has status " << s << endl;
-	}
+	ids.push_back(id);
+	status.push_back("");
       }
-      usleep(1000000);
+      
+      int counter = ids.isize();
+      
+      while (counter > 0) {
+	
+	for (i=0; i<ids.isize(); i++) {
+	  if (ids[i] == "")
+	    continue;
+	  
+	  string cmd = "squeue -j " + ids[i] /*+ " | grep " + ids[i]*/;
+	  //cout << cmd << endl;
+	  string ret = exec(cmd.c_str());
+	  //cout << "RETURNED " << endl << ret << endl;
+	  StringParser p;
+	  p.SetLine(ret);
+	  if (p.GetItemCount() < 9) {	  
+	    counter--;
+	    string ret1, stat;
+	    CheckExit(ret1, stat, ids[i]);
+	    cout << "Process " << ids[i] << " finished with ret " << ret1 << " status " << stat << endl;
+	    fprintf(pGrapeLog, "Process %s has finished with return code %s status %s\n", ids[i].c_str(), ret1.c_str(), stat.c_str());
+	    ids[i] = "";
+	    continue;
+	  }
+	  string s = p.AsString(12);
+	  string t = p.AsString(13);
+	  if (s != status[i]) {
+	    status[i] = s;
+	    cout << "Program " << ids[i] << " has status " << s << endl;
+	  }
+	}
+	usleep(1000000);
+      }
+      cout << "Script " << scripts[j] << " is complete." << endl;
     }
-    cout << "Script " << scripts[j] << " is complete." << endl;
+    cout << "Process is finished. " << endl;
   }
-  cout << "Process is finished. " << endl;
 
+  if (job == "local") {
+    cout << "Running locally" << endl;
+    for (i=0; i<scripts.isize(); i++) {
+      cout << "Execute " << scripts[i] << endl;
+      int rrr = system(scripts[i].c_str());
+    }    
+  }
+  cout << "All processes are finished!" << endl;
+  //sleep(200);
+  
   fclose(pGrapeLog);
+  if (pipe != "") {
+    cout << "Cleaning up named pipe." << endl;
+    string mp = "echo exit > " + pipe;
+    int x = system(mp.c_str());
+    while (!th.AllDone()) {
+      usleep(10000);
+    }
+  }
 
   return 0;
 }

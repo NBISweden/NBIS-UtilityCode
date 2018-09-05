@@ -7,7 +7,7 @@
 
 
 
-void WrapSingle(string & line, const string & log)
+void WrapSingle(string & line, const string & log, const string & pipe)
 {
   StringParser pp;
   pp.SetLine(line);
@@ -34,14 +34,27 @@ void WrapSingle(string & line, const string & log)
   if (pp.AsString(0) == "wait")
     return;
  
-
+  if (pp.AsString(0) == "EditTable") {
+    string send = "echo \"" + line + "\" > " + pipe;
+    line = send;
+    return;
+  }
+  
+  if (pp.AsString(0) == ">local") {
+    string send = "echo \"";
+    for (int i=1; i<pp.GetItemCount(); i++)
+      send += " " + pp.AsString(i);
+    send += "\" > " + pipe;
+    line = send;
+    return;
+  }
   
   string out = "ExecuteTracked -o " + log + " " + line;
   line = out;
   
 }
 
-string Wrap(const string & line, const string & log)
+string Wrap(const string & line, const string & log, const string & pipe)
 {
   StringParser pp;
   char delim[16];
@@ -70,7 +83,7 @@ string Wrap(const string & line, const string & log)
   for (int i=0; i<pp.GetItemCount(); i++) {
     string in = pp.AsString(i);
     //cout << "WRAP Before " << in << endl;
-    WrapSingle(in, log);
+    WrapSingle(in, log, pipe);
     //cout << "WRAP After " << in << endl;
     out += in;
     if (i<pp.GetItemCount()-1)
@@ -113,6 +126,8 @@ int main( int argc, char** argv )
     string md = "mkdir " + logDir;
     int r = system(md.c_str());
   }
+
+  string pipe = logDir + "/grapevine.pipe"; 
   
   int i, j;
 
@@ -170,7 +185,7 @@ int main( int argc, char** argv )
       //if (!p.IsSilent(i)) {
       string wrap = p[i];
       if (logDir != "") {
-	wrap = Wrap(wrap.c_str(), logFile);
+	wrap = Wrap(wrap.c_str(), logFile, pipe);
       }
       fprintf(pOut, "%s\n", wrap.c_str());
       //fprintf(stdout, "CHECK  %s\n", wrap.c_str());

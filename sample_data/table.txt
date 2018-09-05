@@ -2,3 +2,5 @@ analysis                sample                  folder          file    barcodeN
 H33_Pulse_Chase_v1      H33TAG_ctrl             20170828BK_MC   H3      BC1             CTACCAGG        6       ChIP    Input   
 H33_Pulse_Chase_v1      H33TAG_P1               20170828BK_MC   H3      BC2             CATGCTTA        6       ChIP    Input   
 H33_Pulse_Chase_v1      H33TAG_P2               20170828BK_MC   H3      BC3             GCACATCT        6       ChIP    Input   
+H33_Pulse_Chase_v1      H33TAG_P3               20170828BK_MC   H3      BC3             GCACATCT        6       ChIP    Input   
+H33_Pulse_Chase_v1      H33TAG_P4               20170828BK_MC   H3      BC3             GCACATCT        6       ChIP    Input   

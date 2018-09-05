@@ -83,6 +83,39 @@ string ReadLog()
   return ret;
 }
 
+
+bool CopyTableAndHeader(const string & h, const string & dir)
+{
+  string o = dir + "/header.txt"; 
+  FILE * p = fopen(o.c_str(), "w");
+
+  FlatFileParser parser;
+  
+  parser.Open(h);
+
+
+
+  while (parser.ParseLine()) {
+    if (parser.GetItemCount() < 3) {
+      fprintf(p, "%s\n", parser.Line().c_str());
+      continue;
+    }
+    if (parser.AsString(0) == "@table") {
+      string cmmd = "cp " + parser.AsString(2) + " " + dir + "/table.txt";
+      exec(cmmd);
+      string t = dir + "/table.txt";
+      fprintf(p, "@table = %s\n", t.c_str());
+    } else {      
+      fprintf(p, "%s\n", parser.Line().c_str());
+    }
+  }
+
+
+  fclose(p);
+  return true;
+}
+
+//======================================================
 int main(int argc,char** argv)
 {
 
@@ -109,7 +142,7 @@ int main(int argc,char** argv)
   commandArg<string> iCmd("-head","data header file", "");
   commandArg<bool> dryCmd("-dryrun","do not submit to the job queue", false);
   commandArg<string> mailCmd("-m","e-mail address for notifications", "");
-  commandArg<string> dirCmd("-d","scripts directory", "grapevine_scripts");
+  commandArg<string> dirCmd("-o","project directory");
   commandArg<string> subCmd("-s","queueing system (SLURM, local)", "SLURM");
   commandArg<bool> noLogCmd("-nolog","turn off system logging", false);
   //commandArg<string> oCmd("-o","output directory");
@@ -134,14 +167,36 @@ int main(int argc,char** argv)
   string mail = P.GetStringValueFor(mailCmd);
   string s = P.GetStringValueFor(sCmd);
   string sub = P.GetStringValueFor(subCmd);
-  string sdir = P.GetStringValueFor(dirCmd);
-  string logDir = sdir + "/" + "runlog";
-  
+  string projDir = P.GetStringValueFor(dirCmd);
+
+  string logDir = projDir + "/" + "runlog";
+  string scriptDir = projDir + "/grapevine_scripts";
+ 
   int i, j;
 
-  string cmmd = "mkdir " +  sdir;
+  string cmmd = "mkdir " +  projDir;
+  exec(cmmd);
+ 
+  cmmd = "mkdir " + logDir;
   exec(cmmd);
 
+  cmmd = "mkdir " + scriptDir;
+  exec(cmmd);
+
+  string pipe = logDir + "/grapevine.pipe";
+  
+  if (header == "") {
+    header = projDir + "/header.txt";
+  } else {    
+    if (!CopyTableAndHeader(header, projDir)) {
+      cout << "Aborting." << endl;
+      return -1;
+    }
+    header = projDir + "/header.txt";
+  }
+
+
+  
   StringParser pp;
   pp.SetLine(s, ",");
 
@@ -159,8 +214,8 @@ int main(int argc,char** argv)
     cmmd = exe_path + "/Grapevine -i " + scripts[i];
     if (header != "")
       cmmd += " -head " + header;
-    cmmd += " -o " + sdir + "/level_" + Stringify(i);
-    string subbase = sdir + "/submit_" + Stringify(i);
+    cmmd += " -o " + scriptDir + "/level_" + Stringify(i);
+    string subbase = scriptDir + "/submit_" + Stringify(i);
     cmmd += " -s " + subbase;
     if (!noLog)
       cmmd += " -l " + logDir;
@@ -170,20 +225,26 @@ int main(int argc,char** argv)
 
     if (!bDry) {
       if (sub == "SLURM") {
-	cout << "Submitting to SLURM" << endl;
-	cmmd = exe_path + "RunGrapevineFlow " + subbase + ".sbatch";
+	//cout << "Submitting to SLURM" << endl;
+	cmmd = exe_path + "RunGrapevineFlow -q " + sub + " -p " + pipe + " -i " + subbase + ".sbatch";
 	exec(cmmd);
 	SendMail("Scripts batch " + Stringify(i) + " have finished on SLURM." + ReadLog(), mail);
       }
       if (sub == "local") {
+	cmmd = exe_path + "RunGrapevineFlow -q " + sub + " -p " + pipe + " -i " + subbase + ".bash";
+	exec(cmmd);
+	SendMail("Scripts batch " + Stringify(i) + " have finished on the local server." + ReadLog(), mail);
+      }
+	/*
 	cout << "Running local" << endl;
 	cmmd = subbase + ".bash";
 	exec(cmmd);
 	FILE * p = fopen("grapevine.log", "w");
 	fprintf(p, "Local execution, check log files for status.\n");
 	fclose(p);
-	SendMail("Scripts batch " + Stringify(i) + " have finished on the local server." + ReadLog(), mail);
-      }
+	SendMail("Scripts batch " + Stringify(i) + " have finished on the local server." + ReadLog(), mail);*/
+	
+      //}
     }
   }
 

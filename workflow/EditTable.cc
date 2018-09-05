@@ -42,6 +42,7 @@ int main( int argc, char** argv )
 
   TableManipulator tm(fileName);
 
+  /*
   int max = 10;
   if (idx >= 0) {
     cout << "Waiting my turn: " << idx << endl;
@@ -53,14 +54,14 @@ int main( int argc, char** argv )
       usleep(10000);
       struct timespec tv;
       clock_gettime( CLOCK_REALTIME, &tv);
-      s = tv.tv_sec % max; /* / 1000000;*/
+      s = tv.tv_sec % max;
       //s /= 10;
       //cout << s << endl;
       //s = s % 60;
       //cout << s << endl;
     } while (s != (idx % max));    
 #endif  
-  }
+  }*/
 
   cout << "Edit table " << fileName << " at " << GetTimeStatic() << endl;
   

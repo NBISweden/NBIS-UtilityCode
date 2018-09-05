@@ -1,6 +1,6 @@
-sample	fasta	folder	outdir	n50	n50_file	size	
-1	sample1.fasta	sample_data/fasta	grapevine_test	961	grapevine_test/sample1.n50	5690	
-2	sample2.fasta	sample_data/fasta	grapevine_test	954	grapevine_test/sample2.n50	16362	
-3	sample3.fasta	sample_data/fasta	grapevine_test	2080	grapevine_test/sample3.n50	15076	
-4	sample4.fasta	sample_data/fasta	grapevine_test	219	grapevine_test/sample4.n50	3690	
-5	sample5.fasta	sample_data/fasta	grapevine_test	1185	grapevine_test/sample5.n50	9740	
+analysis	sample	folder	file	barcodeName	barcode	umi_length	type	reference	n50	n50_file	size	
+H33_Pulse_Chase_v1	H33TAG_ctrl	20170828BK_MC	H3	BC1	CTACCAGG	6	ChIP	Input	961	grapevine_test/sample1.n50	5690	
+H33_Pulse_Chase_v1	H33TAG_P1	20170828BK_MC	H3	BC2	CATGCTTA	6	ChIP	Input	954	grapevine_test/sample2.n50	16362	
+H33_Pulse_Chase_v1	H33TAG_P2	20170828BK_MC	H3	BC3	GCACATCT	6	ChIP	Input	2080	grapevine_test/sample3.n50	15076	
+H33_Pulse_Chase_v1	H33TAG_P3	20170828BK_MC	H3	BC3	GCACATCT	6	ChIP	Input	219	grapevine_test/sample4.n50	3690	
+H33_Pulse_Chase_v1	H33TAG_P4	20170828BK_MC	H3	BC3	GCACATCT	6	ChIP	Input	1185	grapevine_test/sample5.n50	9740	
