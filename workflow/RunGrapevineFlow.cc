@@ -55,9 +55,12 @@ protected:
 	pp.SetLine(p.AsString(i));
 	if  (pp.AsString(0) == "EditTable")
 	  cmmd = m_execPath + "/" + p.AsString(i);
+
 	
-	cout << "Executing locally: " << cmmd << endl;
-	int d = system(cmmd.c_str());
+	if (!Internal(pipe, pp)) {
+	  cout << "Executing locally: " << cmmd << endl;
+	  int d = system(cmmd.c_str());
+	}
       }
     } while (true);
     return true;
@@ -68,6 +71,33 @@ protected:
     return true;
   }
 
+  bool Internal(const string & pipe, StringParser & p) {
+    int i;
+    if (p.AsString(0) != "!terminal")
+      return false;
+
+    string pipeOut = pipe + "_fb";
+    
+    string cmmd = "echo Sorry, I do not understand, try again. > "  + pipeOut;
+    if (p.AsString(1) == "hello")
+      cmmd = "echo Welcome! > " + pipeOut;
+
+    if (p.AsString(1) == "exec" || p.AsString(1) == "execute") {
+      string l;
+      for (i=2; i<p.GetItemCount(); i++) {
+	l += p.AsString(i) + " ";
+      }
+      cout << "Executing " << l << endl;
+      string r; // = exec(l.c_str());
+      cout << "Returned " << r << endl;
+      cmmd = "echo response\n" + r + " > " + pipeOut;
+    }
+    
+    int ret = system(cmmd.c_str());
+
+    return true;
+  }
+  
   string m_execPath;
 };
 
