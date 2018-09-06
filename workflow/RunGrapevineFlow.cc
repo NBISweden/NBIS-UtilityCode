@@ -187,7 +187,7 @@ int main( int argc, char** argv )
     }*/
   commandArg<string> sCmd("-i","list of scripts");
   commandArg<string> qCmd("-q","job scheduling system, can be SLURM or local");
-  commandArg<string> pCmd("-p","listening pipe", "");
+  commandArg<string> pCmd("-p","communication file (also location of log file)", "");
   
   commandLineParser P(argc,argv);
   P.SetDescription("Executes a grapevine workflow locally or using SLURM");
@@ -213,8 +213,17 @@ int main( int argc, char** argv )
   for (i=0; i<p.GetItemCount(); i++)
     scripts.push_back(p.AsString(i));
 
-  
-  FILE * pGrapeLog = fopen("grapevine.log", "w");
+  char logName[1024];
+  strcpy(logName, pipe.c_str());
+  for (i=strlen(logName); i<=0; i--) {
+    if (logName[i] == '/') {
+      logName[i] = 0;
+      break;
+    }
+  }
+  strcat(logName, "/grapevine.log");
+     
+  FILE * pGrapeLog = fopen(logName, "w");
 
   // Start listening thread
   ThreadHandler th;

@@ -61,9 +61,9 @@ void UpdatePackages(svec<string> & sw)
 
 }
 
-string ReadLog()
+string ReadLog(const string & logFile)
 {
-  FILE *p = fopen("grapevine.log", "r");
+  FILE *p = fopen(logFile.c_str(), "r");
   if (p == NULL) {
     string r = "\nERROR: Log file grapevine.log not found!!";
     return r;
@@ -72,7 +72,7 @@ string ReadLog()
   fclose(p);
   FlatFileParser parser;
   
-  parser.Open("grapevine.log");
+  parser.Open(logFile);
   string ret = "\n";
   while (parser.ParseLine()) {
     if (parser.GetItemCount() == 0)
@@ -83,6 +83,28 @@ string ReadLog()
   return ret;
 }
 
+int CheckLog(const string & l)
+{
+  FILE *p = fopen(l.c_str(), "r");
+  if (p == NULL) {
+    string r = "\nERROR: Log file grapevine.log not found!!";
+    return 0x7FFF;
+  }
+
+  fclose(p);
+  FlatFileParser parser;
+  
+  parser.Open(l);
+  int err = 0;
+  while (parser.ParseLine()) {
+    if (parser.GetItemCount() == 0)
+      continue;
+    if (parser.AsString(parser.GetItemCount()-1) != "COMPLETED")
+      err++;
+  } 
+ 
+  return err;
+}
 
 bool CopyTableAndHeader(const string & h, const string & dir)
 {
@@ -184,6 +206,7 @@ int main(int argc,char** argv)
   exec(cmmd);
 
   string pipe = logDir + "/grapevine.pipe";
+  string logFile = logDir + "/grapevine.log";
   
   if (header == "") {
     header = projDir + "/header.txt";
@@ -222,18 +245,20 @@ int main(int argc,char** argv)
     exec(cmmd);
 
     UpdatePackages(packages);
-
+    int err = 0;
     if (!bDry) {
       if (sub == "SLURM") {
 	//cout << "Submitting to SLURM" << endl;
 	cmmd = exe_path + "RunGrapevineFlow -q " + sub + " -p " + pipe + " -i " + subbase + ".sbatch";
 	exec(cmmd);
-	SendMail("Scripts batch " + Stringify(i) + " have finished on SLURM." + ReadLog(), mail);
+	err = CheckLog(logFile);
+	SendMail("Scripts batch " + Stringify(i) + " have finished on SLURM." + ReadLog(logFile), mail);
       }
       if (sub == "local") {
 	cmmd = exe_path + "RunGrapevineFlow -q " + sub + " -p " + pipe + " -i " + subbase + ".bash";
 	exec(cmmd);
-	SendMail("Scripts batch " + Stringify(i) + " have finished on the local server." + ReadLog(), mail);
+	err = CheckLog(logFile);
+	SendMail("Scripts batch " + Stringify(i) + " have finished on the local server." + ReadLog(logFile), mail);
       }
 	/*
 	cout << "Running local" << endl;
@@ -242,9 +267,13 @@ int main(int argc,char** argv)
 	FILE * p = fopen("grapevine.log", "w");
 	fprintf(p, "Local execution, check log files for status.\n");
 	fclose(p);
-	SendMail("Scripts batch " + Stringify(i) + " have finished on the local server." + ReadLog(), mail);*/
+	SendMail("Scripts batch " + Stringify(i) + " have finished on the local server." + ReadLog(logFile), mail);*/
 	
       //}
+    }
+    if (err > 0) {
+      SendMail("The Grapevine pipeline termiated because of errors.\n", mail);
+      break;
     }
   }
 
