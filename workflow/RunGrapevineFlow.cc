@@ -215,14 +215,16 @@ int main( int argc, char** argv )
 
   char logName[1024];
   strcpy(logName, pipe.c_str());
-  for (i=strlen(logName); i<=0; i--) {
+  for (i=strlen(logName)-1; i>=0; i--) {
     if (logName[i] == '/') {
       logName[i] = 0;
       break;
     }
   }
   strcat(logName, "/grapevine.log");
-     
+
+  cout << "Log file name: " << logName << " " << pipe << endl;
+  
   FILE * pGrapeLog = fopen(logName, "w");
 
   // Start listening thread
