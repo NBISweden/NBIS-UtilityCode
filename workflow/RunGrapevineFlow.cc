@@ -31,30 +31,48 @@ protected:
 
   virtual bool OnDo(const string & pipe) {
     cout << "Start listening to: " << pipe << endl;
+    int index = 0;
+    
     do {
-      cout << "Check pipe." << endl;
-      string rr = "cat < " + pipe;
-      string result = exec(rr.c_str());
-      cout << "Pipe returned " << result << endl;
-      StringParser p;
-      char tmp[256];
-      tmp[0] = 10;
-      tmp[1] = 0;
-      p.SetLine(result, tmp);
-      cout << "Messages: " << p.GetItemCount() << endl;
-      for (int i=0; i<p.GetItemCount(); i++) {
-	if (strstr(p.AsString(i).c_str(), "RunGrapevineFlow") != NULL)
+      cout << "Check pseudopipe." << endl;
+      //string rr = "cat < " + pipe;
+      //string result = exec(rr.c_str());
+      //cout << "Pipe returned " << result << endl;
+      //StringParser p;
+      //char tmp[256];
+      //tmp[0] = 10;
+      //tmp[1] = 0;
+      //p.SetLine(result, tmp);
+      sleep(1);
+      
+      FlatFileParser parser;
+  
+      parser.Open(pipe);
+      svec<string> p;
+      int k = 0;
+      while (parser.ParseLine()) {
+	if (parser.GetItemCount() == 0)
 	  continue;
-	if (p.AsString(i) == "exit") {
+	if (k >= index)
+	  p.push_back(parser.Line());
+	k++;
+      }
+      index = k;
+	
+      cout << "Messages: " << p.isize() << endl;
+      for (int i=0; i<p.isize(); i++) {
+	if (strstr(p[i].c_str(), "RunGrapevineFlow") != NULL)
+	  continue;
+	if (p[i] == "exit") {
 	  cout << "Got directive exit" << endl;
 	  return true;
 	}
 
-	string cmmd = p.AsString(i);
+	string cmmd = p[i];
 	StringParser pp;
-	pp.SetLine(p.AsString(i));
+	pp.SetLine(p[i]);
 	if  (pp.AsString(0) == "EditTable")
-	  cmmd = m_execPath + "/" + p.AsString(i);
+	  cmmd = m_execPath + "/" + p[i];
 
 	
 	if (!Internal(pipe, pp)) {
@@ -72,6 +90,7 @@ protected:
   }
 
   bool Internal(const string & pipe, StringParser & p) {
+       
     int i;
     if (p.AsString(0) != "!terminal")
       return false;
@@ -202,14 +221,14 @@ int main( int argc, char** argv )
 
   
   if (pipe != "") {
-    string mp = "mkfifo " + pipe;
+    string mp = "rm " + pipe;
     exec(mp.c_str());
  
     th.AddThread(new PipeThread(ExecPath(argv[0])));    
     th.Feed(0, pipe);
 
     cout << "Stuffing pipe" << endl;
-    mp = "echo RunGrapevineFlow > " + pipe;
+    mp = "echo RunGrapevineFlow >> " + pipe;
     int x = system(mp.c_str());
     cout << "done" << endl;
   }
@@ -295,7 +314,7 @@ int main( int argc, char** argv )
   fclose(pGrapeLog);
   if (pipe != "") {
     cout << "Cleaning up named pipe." << endl;
-    string mp = "echo exit > " + pipe;
+    string mp = "echo exit >> " + pipe;
     int x = system(mp.c_str());
     while (!th.AllDone()) {
       usleep(10000);

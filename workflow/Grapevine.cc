@@ -35,7 +35,7 @@ void WrapSingle(string & line, const string & log, const string & pipe)
     return;
  
   if (pp.AsString(0) == "EditTable") {
-    string send = "echo \"" + line + "\" > " + pipe;
+    string send = "echo \"" + line + "\" >> " + pipe;
     line = send;
     return;
   }
