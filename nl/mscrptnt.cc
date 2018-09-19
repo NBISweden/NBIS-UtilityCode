@@ -20,6 +20,84 @@
 
 #define TMP_EXT_FILE	"grmscrpt.tmp"
 
+
+
+bool CMVariableOperations::Execute(CMScriptVariable & var, const CMString & command)
+{
+  //cout << "Performing " << command << endl;
+  CMString out;
+  if (command == "_filename") {
+    FilePath(out, var.StringVal(), 1, false);
+  }
+  if (command == "_pathname") {
+    FilePath(out, var.StringVal(), 1, true);
+  }
+  if (command == "_removeext") {
+    RemoveExtension(out, var.StringVal());
+  }
+
+  if (out != "") {
+    var.StringVal() = out;
+    return true;
+  } else {
+    return false;
+  }
+}
+
+bool CMVariableOperations::RemoveExtension(CMString & out, const CMString & in)
+{
+  int i;
+  CMTokenizer tokenizer;
+  tokenizer.AddDelimiter(".", "");
+
+  CMPtrStringList tokens;
+  tokenizer.Tokenize(tokens, in);
+
+  out = "";
+  if (tokens.length() <= 1)
+    return false;
+  
+  for (i=0; i<tokens.length()-1; i++) {      
+    out += *tokens(i);
+    if (i < tokens.length()-2)
+      out += ".";
+  }
+  return true;
+}
+
+bool CMVariableOperations::FilePath(CMString & out, const CMString & in, int n, bool bPath)
+{
+  int i;
+  CMTokenizer tokenizer;
+  tokenizer.AddDelimiter("/", "");
+
+  CMPtrStringList tokens;
+  tokenizer.Tokenize(tokens, in);
+
+  out = "";
+  
+  if (!bPath) {   
+    for (i=tokens.length()-n; i<tokens.length(); i++) {
+      if (i > tokens.length()-n)
+	out += "/";
+      out += *tokens(i);
+    }
+    return true;
+  } else {
+
+    for (i=0; i<tokens.length()-n; i++) {
+      
+      out += *tokens(i);
+      out += "/";
+   }
+    return true;
+
+  }
+   
+  
+}
+
+//==================================================
 CMScriptInterpreter::CMScriptInterpreter()
 {
 }
@@ -39,7 +117,7 @@ bool CMScriptInterpreter::IsTerminal(const CMString & exp)
 }
 
 bool CMScriptInterpreter::Interprete(CMPtrStringList & result, const CMPtrStringList & script,
-									 const CMPtrStringList & preParseTokens)
+				     const CMPtrStringList & preParseTokens)
 {
   m_variables.removeAll();
   m_tempVariables.removeAll();
@@ -54,49 +132,50 @@ bool CMScriptInterpreter::Interprete(CMPtrStringList & result, const CMPtrString
 
   int i;
   for (i=0; i<statements.length(); i++) {
-	const CMString & exp = *statements(i);
-	const CMString & token = *parseTokens(i);
-	CMString nonTermVarName;
-	if (IsTerminal(token)) {
-	  dollarVar.StringVal() = token;
-	  bool bExit = false;
-	  for (int j=i; j<parseTokens.length(); j++) {
-	  //for (int j=i; j<m; j++) {
-		if (!IsTerminal(*parseTokens(j))) {
-	      nonTermVarName = *parseTokens(j);
-		  bExit = true;
+    const CMString & exp = *statements(i);
+    const CMString & token = *parseTokens(i);
+    //cout << exp << " <-> " << token << endl;
+    CMString nonTermVarName;
+    if (IsTerminal(token)) {
+      dollarVar.StringVal() = token;
+      bool bExit = false;
+      for (int j=i; j<parseTokens.length(); j++) {
+	//for (int j=i; j<m; j++) {
+	if (!IsTerminal(*parseTokens(j))) {
+	  nonTermVarName = *parseTokens(j);
+	  bExit = true;
           if (*statements(j) != "")
-			break;
-		  //break;
-		} else {
-		  if (bExit)
-			break;
-		}
-	  }
+	    break;
+	  //break;
 	} else {
-	  //int x = 0;
+	  if (bExit)
+	    break;
 	}
+      }
+    } else {
+      //int x = 0;
+    }
     if (i+1<statements.length() && !IsTerminal(*parseTokens(i+1)))
-	  nonTermVarName = *parseTokens(i+1);
-	else
+      nonTermVarName = *parseTokens(i+1);
+    else
       nonTermVarName = ""; 
     ExecuteStatement(exp, nonTermVarName);
   }
 
   result.removeAll();
-
+  
   for (i=0; i<m_variables.length(); i++) {
-	if (m_variables(i)->VarName() == SCRPT_THIS_VAR) {
-	  CMString * pString = new CMString;
-	  *pString = m_variables(i)->MemberName();
-	  result.add(pString);
-
-	  pString = new CMString;
-	  *pString = m_variables(i)->StringVal();
-	  result.add(pString);
-	}
+    if (m_variables(i)->VarName() == SCRPT_THIS_VAR) {
+      CMString * pString = new CMString;
+      *pString = m_variables(i)->MemberName();
+      result.add(pString);
+      
+      pString = new CMString;
+      *pString = m_variables(i)->StringVal();
+      result.add(pString);
+    }
   }
-
+  
   return true;
 }
 
@@ -109,60 +188,60 @@ bool CMScriptInterpreter::HandleSystemCall(CMScriptVariable & dest, CMString & r
   CMPtrStringList arguments;
   if (!ResolveFunctionAndArguments(function, arguments, systemCallWithArguments))
     return false;
-
+  
   int i;
   //--------------------------------------------------------------------------------------------
   if (function == "ReadFile") {
-	if (arguments.length() == 0) {
-	  MLog("Grammar Script Interpreter: Too few arguments", systemCallWithArguments);
-	  return false;
-	} 
-
+    if (arguments.length() == 0) {
+      MLog("Grammar Script Interpreter: Too few arguments", systemCallWithArguments);
+      return false;
+    } 
+    
     CMAsciiReadFileStream res;
     MCL_TRY {
       res.Open(*arguments(0));
-	} 
-
+    } 
+    
 #ifndef MCL_NO_EXCEPTIONS
     catch(CMException & ) {
-	  MLog("Grammar Script Interpreter: Could not execute (File I/O Error)", systemCallWithArguments);
+      MLog("Grammar Script Interpreter: Could not execute (File I/O Error)", systemCallWithArguments);
       return false;
-	} 
+    } 
 #endif 
-
+    
     while (!res.IsEnd()) {
       CMString line;
-	  res.ReadLine(line);
-	  if (result != "")
-	    result += " ";
-	  result += line;
-	}
-	res.Close();
+      res.ReadLine(line);
+      if (result != "")
+	result += " ";
+      result += line;
+    }
+    res.Close();
     return true;
   }
   //--------------------------------------------------------------------------------------------
 
   //--------------------------------------------------------------------------------------------
   if (function == "WriteFile") {
-	if (arguments.length() < 2) {
-	  MLog("Grammar Script Interpreter: Too few arguments", systemCallWithArguments);
-	  return false;
-	} 
+    if (arguments.length() < 2) {
+      MLog("Grammar Script Interpreter: Too few arguments", systemCallWithArguments);
+      return false;
+    } 
     CMAsciiWriteFileStream res;
     MCL_TRY {
       res.Open(*arguments(0));
-	} 
-
+    } 
+    
 #ifndef MCL_NO_EXCEPTIONS
     catch(CMException & ) {
-	  MLog("Grammar Script Interpreter: Could not execute (File I/O Error)", systemCallWithArguments);
+      MLog("Grammar Script Interpreter: Could not execute (File I/O Error)", systemCallWithArguments);
       return false;
-	} 
+    } 
 #endif
-
-	for (i = 1; i<arguments.length(); i++)
-	  res.WriteLine(*arguments(i));
-	res.Close();
+    
+    for (i = 1; i<arguments.length(); i++)
+      res.WriteLine(*arguments(i));
+    res.Close();
     return true;
   }
   //--------------------------------------------------------------------------------------------
@@ -184,46 +263,46 @@ bool CMScriptInterpreter::HandleSystemCall(CMScriptVariable & dest, CMString & r
 //MDLLEXPORT long CMGetSystemDateDay();
 //MDLLEXPORT void CMGetSystemDateDOW(CMString & dow, long plusminus = 0);
   if (function == "GetSystemTime") {
-	if (arguments.length() == 2) {
+    if (arguments.length() == 2) {
       MGetSystemTime(result, atol(*arguments(0)), atol(*arguments(1)));
-	  dest.StringVal() = result; 
+      dest.StringVal() = result; 
       return true;
-	} 
-	if (arguments.length() == 1) {
+    } 
+    if (arguments.length() == 1) {
       MGetSystemTime(result, atol(*arguments(0)));
-	  dest.StringVal() = result; 
+      dest.StringVal() = result; 
       return true;
-	} 
-	if (arguments.length() == 0) {
+    } 
+    if (arguments.length() == 0) {
       MGetSystemTime(result);
-	  dest.StringVal() = result; 
+      dest.StringVal() = result; 
       return true;
-	} 
+    } 
   }
   //--------------------------------------------------------------------------------------------
   if (function == "GetSystemDate") {
-	if (arguments.length() == 2) {
+    if (arguments.length() == 2) {
       MGetSystemDate(result, atol(*arguments(0)), atol(*arguments(1)));
-	  dest.StringVal() = result; 
+      dest.StringVal() = result; 
       return true;
-	} 
-	if (arguments.length() == 1) {
+    } 
+    if (arguments.length() == 1) {
       MGetSystemDate(result, atol(*arguments(0)));
-	  dest.StringVal() = result; 
+      dest.StringVal() = result; 
       return true;
-	} 
-	if (arguments.length() == 0) {
+    } 
+    if (arguments.length() == 0) {
       MGetSystemDate(result);
-	  dest.StringVal() = result; 
+      dest.StringVal() = result; 
       return true;
-	} 
+    } 
   }
   //--------------------------------------------------------------------------------------------
   
   if (function == "GetSystemDayOfWeek") {
-
+    
     //MGetSystemDateDOW(result, atol(*arguments(0)), atol(*arguments(1)));
-	dest.IntVal() = MGetSystemDateDOW(); 
+    dest.IntVal() = MGetSystemDateDOW(); 
     return true;
   } 
 
@@ -353,6 +432,15 @@ bool CMScriptInterpreter::ExecuteStatement(const CMString & statement, const CMS
   int j;
   for (j=i; j<tokens.length(); j++) {
     const CMString & workToken = *tokens(j);
+    // Test for var ops
+    if (workToken == "|" && i < tokens.length()-1 && locals.length() > 0) {
+      //cout << "Found var op. " << workToken << " " << *tokens[j+1] << " -> " << locals[locals.length()-1]->VarName() << ": " << locals[locals.length()-1]->StringVal() << endl;
+      // Execute variable operations
+      m_varOps.Execute(*locals[locals.length()-1], *tokens[j+1]);
+      j++;
+      continue;
+    }
+    
     if (workToken == "+" || workToken == "-" || workToken == "*" || workToken == "/") {
       ops.add(new CMString(workToken));
     } else {
@@ -394,6 +482,8 @@ bool CMScriptInterpreter::ExecuteStatement(const CMString & statement, const CMS
   
   //plus and minus
   k = 0;
+
+   
   for (j=0; j<ops.length(); j++) {
     if (*ops(j) == "+") {
       *locals(k) += *locals(k+1);
@@ -417,12 +507,12 @@ bool CMScriptInterpreter::ExecuteStatement(const CMString & statement, const CMS
   dest = *locals(0);
 
   if (dest.MemberName() == SCRPT_VALUE_VAR && dest.VarName() == SCRPT_THIS_VAR) {
-	if (ntVarName != "") {
+    if (ntVarName != "") {
       CMScriptVariable & toSave = FindVariable(SCRPT_THIS_VAR, ntVarName);
       CMScriptVariable & dollarSave = FindVariable("", SCRPT_DOLLAR_VAR);
       toSave = dest;
-	  dollarSave = toSave;
-	}
+      dollarSave = toSave;
+    }
   }
 
 

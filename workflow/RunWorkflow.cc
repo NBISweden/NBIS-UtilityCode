@@ -166,6 +166,7 @@ int main(int argc,char** argv)
   commandArg<string> mailCmd("-m","e-mail address for notifications", "");
   commandArg<string> dirCmd("-o","project directory");
   commandArg<string> subCmd("-s","queueing system (SLURM, local)", "SLURM");
+  commandArg<bool> errCmd("-e","continue if there are errors", false);
   commandArg<bool> noLogCmd("-nolog","turn off system logging", false);
   //commandArg<string> oCmd("-o","output directory");
  
@@ -178,6 +179,7 @@ int main(int argc,char** argv)
   P.registerArg(mailCmd);
   P.registerArg(dirCmd);
   P.registerArg(subCmd);
+  P.registerArg(errCmd);
   P.registerArg(noLogCmd);
   //P.registerArg(oCmd);
 
@@ -186,6 +188,7 @@ int main(int argc,char** argv)
   string header = P.GetStringValueFor(iCmd);
   bool bDry = P.GetBoolValueFor(dryCmd);
   bool noLog = P.GetBoolValueFor(noLogCmd);
+  bool lenient = P.GetBoolValueFor(errCmd);
   string mail = P.GetStringValueFor(mailCmd);
   string s = P.GetStringValueFor(sCmd);
   string sub = P.GetStringValueFor(subCmd);
@@ -271,7 +274,7 @@ int main(int argc,char** argv)
 	
       //}
     }
-    if (err > 0) {
+    if (!lenient && err > 0) {
       SendMail("The Grapevine pipeline termiated because of errors.\n", mail);
       break;
     }

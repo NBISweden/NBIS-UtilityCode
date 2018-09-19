@@ -176,6 +176,20 @@ class CMScriptVariable
   
 };
 
+/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+class CMVariableOperations
+{
+ public:
+  CMVariableOperations() {}
+
+  bool Execute(CMScriptVariable & var, const CMString & command);
+
+ protected:
+  bool FilePath(CMString & out, const CMString & in, int n, bool bPath);
+  bool RemoveExtension(CMString & out, const CMString & in);
+};
 
 typedef TMPtrList<CMScriptVariable> CMVariableList;
 
@@ -194,21 +208,23 @@ public:
 private:
 	bool ExecuteStatement(const CMString & statement, const CMString & ntVarName);
 	void PreParse(CMPtrStringList & statements, const CMPtrStringList & script,
-				  CMPtrStringList & postTokens, const CMPtrStringList & preTokens);
-
-    bool TokenizeStatement(CMPtrStringList & result, const CMString & source);
-    bool AssignTemp(CMScriptVariable * pVar, const CMString & token);
-    bool IsTerminal(const CMString & exp);
-
+		      CMPtrStringList & postTokens, const CMPtrStringList & preTokens);
+	
+	bool TokenizeStatement(CMPtrStringList & result, const CMString & source);
+	bool AssignTemp(CMScriptVariable * pVar, const CMString & token);
+	bool IsTerminal(const CMString & exp);
+	
 	CMScriptVariable & AddVariable(const CMString & var, const CMString & member);
 	CMScriptVariable & FindVariable(const CMString & var, const CMString & member);
-
+	
 
 	CMVariableList m_variables;
 	CMVariableList m_tempVariables;
-
+	
 	CMScriptVariable m_lastReferenced;
 
+	CMVariableOperations m_varOps;
+	
 	bool HandleSystemCall(CMScriptVariable & dest, CMString & result, const CMString & systemCallWithArguments);
 	bool HandleExternalCall(CMString & result, const CMString & externalCallWithArguments);
 	bool ResolveFunctionAndArguments(CMString & funcion, CMPtrStringList & arguments, const CMString & toParse);
