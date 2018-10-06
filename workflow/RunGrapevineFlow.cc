@@ -290,13 +290,15 @@ int main( int argc, char** argv )
 	  StringParser p;
 	  p.SetLine(ret);
 	  if (p.GetItemCount() < 9) {	  
-	    counter--;
 	    string ret1, stat;
 	    CheckExit(ret1, stat, ids[i]);
-	    cout << "Process " << ids[i] << " finished with ret " << ret1 << " status " << stat << endl;
-	    fprintf(pGrapeLog, "Process %s has finished with return code %s status %s\n", ids[i].c_str(), ret1.c_str(), stat.c_str());
-	    ids[i] = "";
-	    continue;
+	    if (stat != "PENDING" && stat != "RUNNING") {
+	      counter--;
+	      cout << "Process " << ids[i] << " finished with ret " << ret1 << " status " << stat << endl;
+	      fprintf(pGrapeLog, "Process %s has finished with return code %s status %s\n", ids[i].c_str(), ret1.c_str(), stat.c_str());
+	      ids[i] = "";
+	      continue;
+	    }
 	  }
 	  string s = p.AsString(12);
 	  string t = p.AsString(13);
