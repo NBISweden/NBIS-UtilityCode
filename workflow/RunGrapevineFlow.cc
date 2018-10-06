@@ -292,8 +292,8 @@ int main( int argc, char** argv )
 	  p.SetLine(ret);
 	  if (p.GetItemCount() < 9 && p.AsString(0) != "slurm_load_jobs") {	   
 	    string ret1, stat;
-	    CheckExit(ret1, stat, ids[i]);
-	    if (stat != "PENDING" && stat != "RUNNING") {
+	    bool bOK = CheckExit(ret1, stat, ids[i]);
+	    if (bOK && stat != "PENDING" && stat != "RUNNING") {
 	      counter--;
 	      cout << "Process " << ids[i] << " finished with ret " << ret1 << " status " << stat << endl;
 	      fprintf(pGrapeLog, "Process %s has finished with return code %s status %s\n", ids[i].c_str(), ret1.c_str(), stat.c_str());
