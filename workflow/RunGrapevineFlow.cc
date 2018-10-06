@@ -170,6 +170,7 @@ bool CheckExit(string & ret, string & succ, const string & id)
   if (p.GetItemCount() < 21) {
     ret = "<unknown>";
     succ = "<unknown>";
+    return false;
   } else {
     ret = p.AsString(20);
     succ = p.AsString(19);
@@ -289,7 +290,7 @@ int main( int argc, char** argv )
 	  //cout << "RETURNED " << endl << ret << endl;
 	  StringParser p;
 	  p.SetLine(ret);
-	  if (p.GetItemCount() < 9) {	  
+	  if (p.GetItemCount() < 9 && p.AsString(0) != "slurm_load_jobs") {	   
 	    string ret1, stat;
 	    CheckExit(ret1, stat, ids[i]);
 	    if (stat != "PENDING" && stat != "RUNNING") {
