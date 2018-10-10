@@ -170,6 +170,7 @@ bool CheckExit(string & ret, string & succ, const string & id)
   if (p.GetItemCount() < 21) {
     ret = "<unknown>";
     succ = "<unknown>";
+    return false;
   } else {
     ret = p.AsString(20);
     succ = p.AsString(19);
@@ -289,15 +290,17 @@ int main( int argc, char** argv )
 	  //cout << "RETURNED " << endl << ret << endl;
 	  StringParser p;
 	  p.SetLine(ret);
-	  if (p.GetItemCount() < 9) {	  
-	    counter--;
+	  if (p.GetItemCount() < 9 && p.AsString(0) != "slurm_load_jobs") {	   
 	    string ret1, stat;
-	    CheckExit(ret1, stat, ids[i]);
-	    cout << "Process " << ids[i] << " finished with ret " << ret1 << " status " << stat << endl;
-	    fprintf(pGrapeLog, "Process %s has finished with return code %s status %s\n", ids[i].c_str(), ret1.c_str(), stat.c_str());
-	    fflush(pGrapeLog);
-	    ids[i] = "";
-	    continue;
+	    bool bOK = CheckExit(ret1, stat, ids[i]);
+	    if (bOK && stat != "PENDING" && stat != "RUNNING") {
+	      counter--;
+	      cout << "Process " << ids[i] << " finished with ret " << ret1 << " status " << stat << endl;
+	      fprintf(pGrapeLog, "Process %s has finished with return code %s status %s\n", ids[i].c_str(), ret1.c_str(), stat.c_str());
+	      fflush(pGrapeLog);
+	      ids[i] = "";
+	      continue;
+	    }
 	  }
 	  string s = p.AsString(12);
 	  string t = p.AsString(13);
@@ -325,7 +328,7 @@ int main( int argc, char** argv )
   
   fclose(pGrapeLog);
   if (pipe != "") {
-    cout << "Cleaning up connection." << endl;
+    cout << "Cleaning up named pipe." << endl;
     string mp = "echo exit >> " + pipe;
     int x = system(mp.c_str());
     while (!th.AllDone()) {
