@@ -1832,22 +1832,64 @@ void vecDNAVectorStream::ReadStream(const string & fileName)
 }
 
 
-const DNAVector & vecDNAVectorStream::Next()
+
+bool vecDNAVectorStream::Next()
 {
 
+  
   m_seq.resize(0);
-  while (m_pParser->ParseLine()) {
-    if (m_pParser->GetItemCount() == 0)
-      continue;
+
+  if (m_bEnd)
+    return false;
+  
+  if (m_count == 0) {
+    m_pParser->ParseLine();
     const char * p = m_pParser->AsString(0).c_str();
-    if (p[0] == '>') {
-      break;
-    }
-    DNAVector tmp;
-    tmp.SetFromBases(m_pParser->Line());
-    m_seq += tmp;
+    if (p[0] != '>') {
+      m_bIsFQ = true;
+    } 
+    m_last = m_pParser->Line();
+    m_name = m_last;
   }
-  return m_seq;
+
+  if (m_bIsFQ) {
+    bool b;
+    if (m_count > 0) {
+      b = m_pParser->ParseLine();
+      if (!b)
+	return false;
+      m_name = m_pParser->Line();
+    }
+    b = m_pParser->ParseLine();
+    if (!b)
+      return false;
+    m_seq.SetFromBases(m_pParser->Line());
+    m_pParser->ParseLine();
+    m_pParser->ParseLine();
+    m_qual = m_pParser->Line();    
+  } else {
+    bool bBreak = false;
+    m_name = m_last;
+    while (m_pParser->ParseLine()) {
+      if (m_pParser->GetItemCount() == 0)
+	continue;
+      const char * p = m_pParser->AsString(0).c_str();
+      if (p[0] == '>') {
+	m_last = m_pParser->Line();
+	//cout << m_name << " " << m_last << endl;
+	bBreak = true;
+	break;      
+      }
+      DNAVector tmp;
+      tmp.SetFromBases(m_pParser->Line());
+      m_seq += tmp;
+    }
+    if (!bBreak)
+      m_bEnd = true;
+  }
+  
+  m_count++;
+  return true;
 }
 
 vecDNAVectorStream::~vecDNAVectorStream() 

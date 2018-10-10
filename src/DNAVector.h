@@ -792,17 +792,33 @@ class vecDNAVectorStream
  public:
   vecDNAVectorStream() {
     m_pParser = NULL;
+    m_bIsFQ = false;
+    m_count = 0;
+    m_bEnd = false;
   }
   ~vecDNAVectorStream();
 
   void ReadStream(const string & fileName);
 
   // Returns an empty vector at the end
-  const DNAVector & Next();
+  bool Next();
+  const DNAVector & Get() const {return m_seq;}
+  const string & Qual() const {return m_qual;}
+  const string & Name() const {return m_name;}
 
+  int isize() const {return m_seq.isize();}
+  char operator[] (int i) const {return m_seq[i];}
+
+  
  private:
   FlatFileParser * m_pParser;
   DNAVector m_seq;
+  string m_qual;
+  string m_name;
+  string m_last;
+  bool m_bIsFQ;
+  int m_count;
+  bool m_bEnd;
 };
 
 

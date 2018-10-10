@@ -295,6 +295,7 @@ int main( int argc, char** argv )
 	    CheckExit(ret1, stat, ids[i]);
 	    cout << "Process " << ids[i] << " finished with ret " << ret1 << " status " << stat << endl;
 	    fprintf(pGrapeLog, "Process %s has finished with return code %s status %s\n", ids[i].c_str(), ret1.c_str(), stat.c_str());
+	    fflush(pGrapeLog);
 	    ids[i] = "";
 	    continue;
 	  }
@@ -324,7 +325,7 @@ int main( int argc, char** argv )
   
   fclose(pGrapeLog);
   if (pipe != "") {
-    cout << "Cleaning up named pipe." << endl;
+    cout << "Cleaning up connection." << endl;
     string mp = "echo exit >> " + pipe;
     int x = system(mp.c_str());
     while (!th.AllDone()) {
