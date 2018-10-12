@@ -48,6 +48,9 @@ public:
   }
 
   void Read(FlatFileParser & f) {
+    if (f.Line()[0] == '#')
+      return;
+    //cout << f.Line() << endl;
     m_start = f.AsInt(3);
     m_stop = f.AsInt(4);
     m_scaff = f.AsString(0);
@@ -58,6 +61,7 @@ public:
     
     for (int i=0; i<f.GetItemCount(); i++)
       m_all.push_back(f.AsString(i));
+    //cout << "done" << endl;
   }
 
   const int & Start() const {return m_start;}
@@ -134,25 +138,40 @@ int main( int argc, char** argv )
   FlatFileParser parser;
   
   parser.Open(gff);
-
-  svec<Annot> annot;
   
+  svec<Annot> annot;
+  //cout << "Start" << endl;
   while (parser.ParseLine()) {
+    //cout << parser.Line() << endl;
     if (parser.GetItemCount() == 0)
       continue;
     Annot a;
     a.Read(parser);
     annot.push_back(a);
   }
-
+  //cout << "Done loading gff" << endl;
   int i, j;
+
+  //cout << "Starting" << endl;
 
   svec<string> remove;
   for (i=0; i<coords.isize(); i++) {
     int index = dna.NameIndex(coords[i].scaff);
-    DNAVector d;
-    d.SetToSubOf(dna[index], coords[i].pos);
+    if (index < 0) {
+      cout << "Sequence not found: " << coords[i].scaff << endl;
+      return -1;
+    }
+    DNAVector d, a;
+    if (coords[i].pos >= dna[index].isize()) {
+      cout << "ERROR, position=" << coords[i].pos << ", length=" << dna[index].isize() << endl;
+      return -1;
+    }
+    d.SetToSubOf(dna[index], coords[i].pos, dna[index].isize()-coords[i].pos);
+    //a.SetToSubOf(dna[index], 0, coords[i].pos);
+
     dna[index].resize(coords[i].pos);
+    //dna[index] = a;
+    
     string name = dna.Name(index) + "_split_" + Stringify(coords[i].pos);
     dna.push_back(d, name);
     //cout << "Split " << name << endl;
