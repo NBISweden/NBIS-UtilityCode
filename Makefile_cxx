@@ -60,7 +60,7 @@ endif
 
 ifeq ($(PTHREADS),yes)
   PTHREAD_FLAGS	+= -pthread
-  PTHREAD_LIBS	+= -lpthread
+  PTHREAD_LIBS	+= -lpthread -lrt
 endif
 
 
