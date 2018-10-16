@@ -89,7 +89,10 @@ public:
 	cout << "\t" << m_stop;
 	continue;
       }
-      cout << "\t" << m_all[i];
+      if (i > 8)
+	cout << " " << m_all[i];
+      else
+	cout << "\t" << m_all[i];
     }
     cout << endl;
   }
