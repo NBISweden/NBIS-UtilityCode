@@ -175,8 +175,10 @@ int main( int argc, char** argv )
     dna[index].resize(coords[i].pos);
     //dna[index] = a;
     
-    string name = dna.Name(index) + "_split_" + Stringify(coords[i].pos);
-    dna.push_back(d, name);
+    string name = dna.NameClean(index);
+    name += "_split_" + Stringify(coords[i].pos);
+    string nameX = ">" + name;
+    dna.push_back(d, nameX);
     //cout << "Split " << name << endl;
 
     for (j=0; j<annot.isize(); j++) {
