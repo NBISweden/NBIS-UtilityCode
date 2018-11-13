@@ -97,6 +97,7 @@ int main( int argc, char** argv )
 
   commandArg<string> fileCmmd("-i","script file");
   commandArg<string> headCmmd("-head","header file", "");
+  commandArg<string> confCmmd("-config","configuration file", "");
   commandArg<string> outCmmd("-o","output script file");
   commandArg<string> subCmmd("-s","submit script prefix", "submit");
   commandArg<string> grCmmd("-g","grammar directory", "");
@@ -106,6 +107,7 @@ int main( int argc, char** argv )
   P.SetDescription("Natural language-like workflow manager.");
   P.registerArg(fileCmmd);
   P.registerArg(headCmmd);
+  P.registerArg(confCmmd);
   P.registerArg(outCmmd);
   P.registerArg(subCmmd);
   P.registerArg(grCmmd);
@@ -116,6 +118,7 @@ int main( int argc, char** argv )
   
   string fileName = P.GetStringValueFor(fileCmmd);
   string headName = P.GetStringValueFor(headCmmd);
+  string confName = P.GetStringValueFor(confCmmd);
   string outName = P.GetStringValueFor(outCmmd);
   string subName = P.GetStringValueFor(subCmmd);
   string grName = P.GetStringValueFor(grCmmd);
@@ -140,6 +143,9 @@ int main( int argc, char** argv )
   p.SetGrammarPath(grName);
 
   cout << "Using grammar path " << grName << endl;
+
+  if (confName != "")
+    p.Read(confName);
   
   p.Read(fileName);
  

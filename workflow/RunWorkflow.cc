@@ -162,7 +162,8 @@ int main(int argc,char** argv)
 
   commandArg<string> sCmd("-i","list of scripts");
   commandArg<string> iCmd("-head","data header file", "");
-  commandArg<bool> dryCmd("-dryrun","do not submit to the job queue", false);
+  commandArg<string> confCmd("-config","configuration file", "");
+    commandArg<bool> dryCmd("-dryrun","do not submit to the job queue", false);
   commandArg<string> mailCmd("-m","e-mail address for notifications", "");
   commandArg<string> dirCmd("-o","project directory");
   commandArg<string> subCmd("-s","queueing system (SLURM, local)", "SLURM");
@@ -175,6 +176,7 @@ int main(int argc,char** argv)
   P.SetDescription("Runs a grapevine workflow, specify a list of scripts via the -i option, e.g. -i script1,script2!");
   P.registerArg(sCmd);
   P.registerArg(iCmd);
+  P.registerArg(confCmd);
   P.registerArg(dryCmd);
   P.registerArg(mailCmd);
   P.registerArg(dirCmd);
@@ -185,6 +187,7 @@ int main(int argc,char** argv)
 
   P.parse();
 
+  string config = P.GetStringValueFor(confCmd);
   string header = P.GetStringValueFor(iCmd);
   bool bDry = P.GetBoolValueFor(dryCmd);
   bool noLog = P.GetBoolValueFor(noLogCmd);
@@ -199,6 +202,9 @@ int main(int argc,char** argv)
  
   int i, j;
 
+  if (config != "")
+    config = " -config " + config;
+  
   string cmmd = "mkdir " +  projDir;
   exec(cmmd);
  
@@ -245,6 +251,8 @@ int main(int argc,char** argv)
     cmmd += " -s " + subbase;
     if (!noLog)
       cmmd += " -l " + logDir;
+    cmmd += config;
+    
     exec(cmmd);
 
     UpdatePackages(packages);

@@ -34,7 +34,7 @@ protected:
     int index = 0;
     
     do {
-      cout << "Check pseudopipe." << endl;
+      //cout << "Check pseudopipe." << endl;
       //string rr = "cat < " + pipe;
       //string result = exec(rr.c_str());
       //cout << "Pipe returned " << result << endl;
@@ -59,7 +59,7 @@ protected:
       }
       index = k;
 	
-      cout << "Messages: " << p.isize() << endl;
+      //cout << "Messages: " << p.isize() << endl;
       for (int i=0; i<p.isize(); i++) {
 	if (strstr(p[i].c_str(), "RunGrapevineFlow") != NULL)
 	  continue;
