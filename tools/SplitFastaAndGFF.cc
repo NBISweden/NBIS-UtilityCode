@@ -57,8 +57,11 @@ public:
 
     StringParser p;
     p.SetLine(f.AsString(8), ";");
-    m_id = p.AsString(1);
-    
+    if (p.GetItemCount() > 1)
+      m_id = p.AsString(1);
+    else
+      m_id = p.AsString(0);
+       
     for (int i=0; i<f.GetItemCount(); i++)
       m_all.push_back(f.AsString(i));
     //cout << "done" << endl;

@@ -1,3 +1,5 @@
+#define FORCE_DEBUG
+
 #include <string>
 #include "base/CommandLineParser.h"
 #include "base/FileParser.h"
@@ -9,6 +11,7 @@ public:
   Annot() {
     start = stop = 0;
     byName = false;
+    gene = "<unk>";
   }
   
   int start;
@@ -18,6 +21,7 @@ public:
   string name;
   string source;
   bool byName;
+  string gene;
   
   bool operator < (const Annot & a) const {
     if (byName) {
@@ -52,6 +56,17 @@ void Load(svec<Annot> & annot, const string fileName, const string & filter)
     a.source = fileName;
     a.ori = parser.AsString(6);
     a.name = parser.AsString(9);
+
+    StringParser nn;
+    //cout << parser.GetItemCount() << endl;
+
+    //cout << parser.AsString(13) << endl;
+    if (parser.GetItemCount() > 13) {
+      nn.SetLine(parser.AsString(13), "Name=");
+      if (nn.GetItemCount() == 3)
+	a.gene = nn.AsString(1);
+    }
+    
     annot.push_back(a);
   }
 
@@ -60,6 +75,19 @@ void Load(svec<Annot> & annot, const string fileName, const string & filter)
 void Print(const svec<Annot> & tmp)
 {
   int i;
+
+  svec<string> strain;
+  for (i=0; i<tmp.isize(); i++) {
+    StringParser p;
+    p.SetLine(tmp[i].name, "0");
+    strain.push_back(p.AsString(0));
+  }
+  UniqueSort(strain);
+  if (strain.isize() == 1) {
+    //cerr << "Skipping." << endl;
+    return;
+  }
+  
   if (tmp.isize() > 0) {
     if (tmp.isize() == 1) {
       cout << "SINGLE" << endl;
@@ -70,11 +98,29 @@ void Print(const svec<Annot> & tmp)
 	cout << "MULT:" << endl;
     }
     for (i=0; i<tmp.isize(); i++) {
-      cout << tmp[i].name << "\t" << tmp[i].chr << "\t" << tmp[i].start << "\t" << tmp[i].stop << "\t" << tmp[i].ori << endl;
+      cout << tmp[i].name << "\t" << tmp[i].chr << "\t" << tmp[i].start << "\t" << tmp[i].stop << "\t" << tmp[i].ori << "\t" << tmp[i].gene << endl;
     }
     cout << endl;
   }
 }
+
+bool OK(int a, int b)
+{
+  int n = a - b;
+  if (n < 0)
+    n = -n;
+  if (n < 10)
+    return true;
+  return false;
+}
+
+bool Check(int start1, int stop1, int start2, int stop2)
+{
+  if (OK(start1, start2) && OK(stop1, stop2))
+    return true;
+  return false;
+}
+
 
 int main( int argc, char** argv )
 {
@@ -113,8 +159,9 @@ int main( int argc, char** argv )
     //cout << i << " " << both[i].name << " " << both[i].chr << " " << both[i].start << " " << both[i].stop << " " << last.start << " " << last.stop << endl;
     
     if (both[i].chr == last.chr) {
-      if ((last.start <= both[i].start && last.stop > both[i].start + lap)
-	  ||(last.start < both[i].stop - lap && last.stop >= both[i].stop)) {
+      if (((last.start <= both[i].start && last.stop > both[i].start + lap)
+	   ||(last.start < both[i].stop - lap && last.stop >= both[i].stop))
+	  && Check(last.start, last.stop, both[i].start, both[i].stop)) {
 	Annot tt = both[i];
 	tt.byName = true;
 	tmp.push_back(tt);
