@@ -39,7 +39,10 @@ int main(int argc,char** argv)
   string lName;
   if (bString != "")
     cout << bString << endl;
-  unsigned int total = 0;
+  long long total = 0;
+  long long ns = 0;
+  
+  
   for (i=0; i<test.isize(); i++) {
     total += test[i].isize();
     if (!bTotal) {
@@ -53,11 +56,17 @@ int main(int argc,char** argv)
       ll = i;
       lName = test.Name(i);
     }
+    for (int j=0; j<test[i].isize(); j++) {
+      if ((test[i])[j] == 'N')
+	ns++;
+    }
   }
 
   cout << endl;
 
   cout << "total: " << tot << endl;
+  cout << "valid: " << tot - ns << endl;
+  cout << "N's:   " << ns << endl;
   cout << "longest: " << longest <<  " (" << ll << " " << lName << " )" << endl;
   return 0;
 
