@@ -7,7 +7,10 @@ string exec(const char* cmd) {
   char buffer[2048];
   string result = "";
   FILE* pipe = popen(cmd, "r");
-  if (!pipe) throw std::runtime_error("popen() failed!");
+  if (!pipe) { 
+    cout << "Could not open pipe!!" << endl;
+    throw ;
+  }
   try {
     while (!feof(pipe)) {
       if (fgets(buffer, sizeof(buffer), pipe) != NULL)
