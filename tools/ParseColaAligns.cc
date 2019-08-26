@@ -14,7 +14,21 @@
 
 #define STRAND_MASK 128
 
-void MarkDNA(vecDNAVector & dna, const string & fileName)
+class Annot
+{
+public:
+  Annot() {
+    start = stop = -1;
+  }
+
+  int start;
+  int stop;
+  string chr;
+  string gene;
+
+};
+
+void MarkDNA(svec<Annot> & annot, vecDNAVector & dna, const string & fileName)
 {
   int i, j;
   for (i=0; i<dna.isize(); i++) {
@@ -36,6 +50,19 @@ void MarkDNA(vecDNAVector & dna, const string & fileName)
       continue;
     
     const string & t = parser.AsString(2);
+
+    if (t == "gene") {
+      Annot a;
+      //cout << parser.Line() << endl;
+      a.start = parser.AsInt(3);
+      a.stop = parser.AsInt(4);
+      a.chr = parser.AsString(0);
+      StringParser pp;
+      pp.SetLine(parser.AsString(8), ";");
+      a.gene = pp.AsString(1);
+      annot.push_back(a);
+    }
+    
     int n = 0;
     if (t == "exon")
       n = EXON;
@@ -97,8 +124,10 @@ int main( int argc, char** argv )
   vecDNAVector dna;
   dna.Read(fastaName);
 
+  svec<Annot> annot;
+  
   if (gffName != "")
-    MarkDNA(dna, gffName);
+    MarkDNA(annot, dna, gffName);
   //cout << "Done" << endl;
   //comment. ???
   FlatFileParser parser;
@@ -157,8 +186,10 @@ int main( int argc, char** argv )
   double totalAnything = 0.;
 
 
-
-
+  string lastChr;
+  int lastPos = -1;
+  bool bDelim = true;
+  
   string lastR, lastS, lastOri;
   int inversions = 0;
   while (parser.ParseLine()) {
@@ -272,8 +303,27 @@ int main( int argc, char** argv )
 	if (ref[k] != seq[k]) {
 	  //cout << "Different: " << ref[k] << " " << seq[k] << endl;
 	  diffcounts[t]++;
-	  cout << "SNP in " << chr << " " << i << " " << refChr << " " << j << " ";
-	  cout << ref[k] << " " << seq[k] << endl;
+
+	  if (i - lastPos < 80 && i > lastPos && chr == lastChr) {
+	    if (bDelim)
+	      cout << "---------------------------------------------> GENE" << endl;
+	    bDelim = false;
+	    cout << "SNP in " << chr << " " << i << " " << refChr << " " << j << " ";
+	    cout << ref[k] << " " << seq[k];
+
+	    for (int m=0; m<annot.isize(); m++) {
+	      //cout << annot[m].gene << endl;
+	      if (annot[m].start < i && i < annot[m].stop && annot[m].chr == chr)
+		cout << " " << annot[m].gene;
+	    }
+	    
+	    cout << endl;
+	  } else {
+	    bDelim = true;
+	  }
+
+	  lastPos = i;
+	  lastChr = chr;
 	  
 	  if (t & EXON)
 	    diffExon += 1.;

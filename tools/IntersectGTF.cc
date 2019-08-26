@@ -29,8 +29,8 @@ public:
     }
     if (chr != a.chr)
       return chr < a.chr;
-    if (ori != a.ori)
-      return ori < a.ori;
+    //if (ori != a.ori)
+    //return ori < a.ori;
     return start < a.start;
 
   }
@@ -45,8 +45,8 @@ void Load(svec<Annot> & annot, const string fileName, const string & filter)
   while (parser.ParseLine()) {
     if (parser.GetItemCount() == 0)
       continue;
-    if (parser.AsString(2) != "gene")
-      continue;
+    //if (parser.AsString(2) != "gene")
+    //continue;
     if (filter != "" && parser.AsString(1) != filter)
       continue;
     Annot a;
@@ -109,7 +109,7 @@ bool OK(int a, int b)
   int n = a - b;
   if (n < 0)
     n = -n;
-  if (n < 10)
+  if (n < 20)
     return true;
   return false;
 }
@@ -148,12 +148,17 @@ int main( int argc, char** argv )
 
   
   Sort(both);
+
+  //for (i=0; i<both.isize(); i++)
+  // cout << both[i].chr <<  " " << both[i].start << " " << both[i].name << endl;
+  //return 0;
   
  
   Annot last;
   svec<Annot> tmp;
 
   int lap = 50;
+  lap = 0;
   for (i=0; i<both.isize(); i++) {
     bool bPrint = false;
     //cout << i << " " << both[i].name << " " << both[i].chr << " " << both[i].start << " " << both[i].stop << " " << last.start << " " << last.stop << endl;
