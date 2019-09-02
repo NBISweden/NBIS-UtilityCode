@@ -79,21 +79,18 @@ string Scrub(const string & in)
 int main( int argc, char** argv )
 {
 
-  /*commandArg<string> tCmmd("-t","target GTF file");
-  commandArg<string> qCmmd("-q","query GTF file");
-  commandArg<string> fCmmd("-f","gene call filter", "");
+  commandArg<string> iCmmd("-i","comma-separated list of input files");
+  commandArg<string> pCmmd("-p","gene prefix", "CANPMUL");
   commandLineParser P(argc,argv);
   P.SetDescription("Intersects two GTF files.");
-  P.registerArg(tCmmd);
-  P.registerArg(qCmmd);
-  P.registerArg(fCmmd);
+  P.registerArg(iCmmd);
+  P.registerArg(pCmmd);
  
   P.parse();
   
-  string fileNameT = P.GetStringValueFor(tCmmd);
-  string fileNameQ = P.GetStringValueFor(qCmmd);
-  string filter = P.GetStringValueFor(fCmmd);
-  */
+  string in = P.GetStringValueFor(iCmmd);
+  string gene_prefix = P.GetStringValueFor(pCmmd);
+  
 
   
   int i, j;
@@ -115,7 +112,7 @@ int main( int argc, char** argv )
   Load(conn, all, gene, "correspond_596_828a");
   Load(conn, all, gene, "correspond_798_828a");
   */
-  
+  /*
   Load(conn, all, gene, "correspond_416_588b");
   Load(conn, all, gene, "correspond_416_596b");
   Load(conn, all, gene, "correspond_416_798b");
@@ -126,7 +123,14 @@ int main( int argc, char** argv )
   Load(conn, all, gene, "correspond_596_798b");
   Load(conn, all, gene, "correspond_596_828b");
   Load(conn, all, gene, "correspond_798_828b");
+  */
 
+  StringParser s;
+  s.SetLine(in, ",");
+
+  for (i=0; i<s.GetItemCount(); i++) {
+    Load(conn, all, gene, s.AsString(i));
+  }
 
   
   svec<Index> idx;
@@ -203,7 +207,7 @@ int main( int argc, char** argv )
     UniqueSort(line);
     //cout << "Printing" << endl;
 
-    string u = "CANPMUL";
+    string u = gene_prefix;
     string num = Stringify(k);
     k++;
     for (j=0; j<10-(int)num.length(); j++)
