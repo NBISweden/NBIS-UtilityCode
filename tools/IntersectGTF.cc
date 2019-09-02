@@ -128,18 +128,21 @@ int main( int argc, char** argv )
   commandArg<string> tCmmd("-t","target GTF file");
   commandArg<string> qCmmd("-q","query GTF file");
   commandArg<string> fCmmd("-f","gene call filter", "");
+  commandArg<int> lapCmmd("-l","minimum overlap", 50);
   commandLineParser P(argc,argv);
   P.SetDescription("Intersects two GTF files.");
   P.registerArg(tCmmd);
   P.registerArg(qCmmd);
   P.registerArg(fCmmd);
+  P.registerArg(lapCmmd);
  
   P.parse();
   
   string fileNameT = P.GetStringValueFor(tCmmd);
   string fileNameQ = P.GetStringValueFor(qCmmd);
   string filter = P.GetStringValueFor(fCmmd);
-  
+  int lap = P.GetIntValueFor(lapCmmd);
+ 
   int i, j;
 
   svec<Annot> both;
@@ -157,15 +160,15 @@ int main( int argc, char** argv )
   Annot last;
   svec<Annot> tmp;
 
-  int lap = 50;
-  lap = 0;
+  
   for (i=0; i<both.isize(); i++) {
     bool bPrint = false;
     //cout << i << " " << both[i].name << " " << both[i].chr << " " << both[i].start << " " << both[i].stop << " " << last.start << " " << last.stop << endl;
     
     if (both[i].chr == last.chr) {
       if (((last.start <= both[i].start && last.stop > both[i].start + lap)
-	   ||(last.start < both[i].stop - lap && last.stop >= both[i].stop))
+	   ||(last.start < both[i].stop - lap && last.stop >= both[i].stop)
+	   ||(last.start >= both[i].start && last.stop <= both[i].stop && last.stop - last.start > lap))
 	  && Check(last.start, last.stop, both[i].start, both[i].stop)) {
 	Annot tt = both[i];
 	tt.byName = true;
