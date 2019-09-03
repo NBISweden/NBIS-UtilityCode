@@ -72,7 +72,7 @@ void Load(svec<Annot> & annot, const string fileName, const string & filter)
 
 }
 
-void Print(const svec<Annot> & tmp)
+void Print(const svec<Annot> & tmp, bool bNoSingle)
 {
   int i;
 
@@ -83,7 +83,7 @@ void Print(const svec<Annot> & tmp)
     strain.push_back(p.AsString(0));
   }
   UniqueSort(strain);
-  if (strain.isize() == 1) {
+  if (strain.isize() == 1 && bNoSingle) {
     //cerr << "Skipping." << endl;
     return;
   }
@@ -129,12 +129,14 @@ int main( int argc, char** argv )
   commandArg<string> qCmmd("-q","query GTF file");
   commandArg<string> fCmmd("-f","gene call filter", "");
   commandArg<int> lapCmmd("-l","minimum overlap", 50);
+  commandArg<bool> nsCmmd("-no-single","do not skip singletons", false);
   commandLineParser P(argc,argv);
   P.SetDescription("Intersects two GTF files.");
   P.registerArg(tCmmd);
   P.registerArg(qCmmd);
   P.registerArg(fCmmd);
   P.registerArg(lapCmmd);
+  P.registerArg(nsCmmd);
  
   P.parse();
   
@@ -142,6 +144,7 @@ int main( int argc, char** argv )
   string fileNameQ = P.GetStringValueFor(qCmmd);
   string filter = P.GetStringValueFor(fCmmd);
   int lap = P.GetIntValueFor(lapCmmd);
+  bool bNoSingle = P.GetBoolValueFor(nsCmmd);
  
   int i, j;
 
@@ -176,7 +179,7 @@ int main( int argc, char** argv )
 	//cout << "ADD" << endl;
       } else {
 	Sort(tmp);
-	Print(tmp);
+	Print(tmp, bNoSingle);
 	tmp.clear();
 	Annot tt = both[i];
 	tt.byName = true;
@@ -185,7 +188,7 @@ int main( int argc, char** argv )
       }
     } else {
       Sort(tmp);
-      Print(tmp);
+      Print(tmp, bNoSingle);
       tmp.clear();
       Annot tt = both[i];
       tt.byName = true;
@@ -195,7 +198,7 @@ int main( int argc, char** argv )
     last = both[i];
   }
   Sort(tmp);
-  Print(tmp);
+  Print(tmp, bNoSingle);
 
   
   return 0;
