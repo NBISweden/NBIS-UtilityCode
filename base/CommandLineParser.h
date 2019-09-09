@@ -204,9 +204,9 @@ bool parse()
 	continue;
       } else {
 
-	cout << "\nInvalid command-line arg: " << n << endl;
+	cerr << "\nInvalid command-line arg: " << n << endl;
 	showHelp();
-	exit(0);
+	exit(-1);
       }
       }
       else
@@ -269,7 +269,7 @@ string GetStringValueFor(commandArg<T> &keyArg)
     {
       if ( !keyArg.HasDefault() )
       {
-	cout << "need to specify " << key << endl;
+	cerr << "need to specify " << key << endl;
 	exit(-1);
       }
       return (o.str());
@@ -297,7 +297,7 @@ template<typename T>
     {
       if ( !keyArg.HasDefault() )
       {
-	cout << "need to specify " << key << endl;
+	cerr << "need to specify " << key << endl;
 	exit(-1);
       }
       
@@ -324,7 +324,7 @@ double GetDoubleValueFor(commandArg<double> &keyArg)
   {
     if (!keyArg.HasDefault() )
     {
-      cout << "need to specify " << key << endl;
+      cerr << "need to specify " << key << endl;
       exit(-1);
     }
     else
@@ -351,7 +351,7 @@ int GetIntValueFor(commandArg<int> &keyArg)
   {
     if (!keyArg.HasDefault() )
     {
-      cout << "need to specify " << key << endl;
+      cerr << "need to specify " << key << endl;
       exit(-1);
     }
     else
@@ -382,7 +382,7 @@ bool GetBoolValueFor(commandArg<bool> &keyArg)
     }
     else
     {
-      cout << "need to specify " << key << endl;
+      cerr << "need to specify " << key << endl;
       exit(-1);
     }
   }
@@ -409,13 +409,13 @@ bool requestHelp()
 
 void showHelp()
 {
-  cout << endl << mArgv[0] << ": ";
+  cerr << endl << mArgv[0] << ": ";
   if (mDesc != "")
-    cout << mDesc << endl << endl;
+    cerr << mDesc << endl << endl;
   else
-    cout << "a module in the code base 'Spines'." << endl << endl;
-  cout << "\nAvailable arguments:" << endl;
-  cout << mHelp.str() << endl;
+    cerr << "a module in the code base 'Spines'." << endl << endl;
+  cerr << "\nAvailable arguments:" << endl;
+  cerr << mHelp.str() << endl;
 }
 
 
