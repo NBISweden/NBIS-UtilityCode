@@ -302,7 +302,7 @@ endif
 SYS_LINK	=
 
 # Required libraries:
-SYS_LIBS	= -lm -lpthread -pthread -lrt
+SYS_LIBS	= -lm -lpthread -pthread -lrt -lbamtools
 
 # OpenMP macros:
 ifeq ($(OPEN_MP),yes)
