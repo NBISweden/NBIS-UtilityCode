@@ -11,7 +11,9 @@ git clone https://github.com/NBISweden/NBIS-UtilityCode.git
 
 On Uppmax, do:  
 module load cmake  
-module load gcc/5.4.0  
+module load gcc/5.4.0
+module load bioinfo-tools
+module load bamtools/2.5.1	      
 
 cd NBIS-UtilityCode  
 make -j 4
