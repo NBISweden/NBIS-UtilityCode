@@ -13,6 +13,9 @@ void ReadOne(svec<string> & genes, const string & fileName)
     if (parser.GetItemCount() == 0)
       continue;
     StringParser s;
+    if (parser.GetItemCount() < 6)
+      continue;
+    
     s.SetLine(parser.AsString(5), ";");
     StringParser s2;
     s2.SetLine(s.AsString(0), "_");
@@ -60,11 +63,24 @@ int main( int argc, char** argv )
   }
 
   Sort(genes);
-  
+  string last;
+  int n = 0;
   for (i=0; i<genes.isize(); i++) {
-    cout << genes[i] << endl;
+    //cout << genes[i] << endl;
+    if (genes[i] != last) {
+      if (i > 0) {
+	cout << last << " " << n << endl;
+      }
+      
+      last = genes[i];
+      n = 1;
+    } else {
+      n++;
+    }
   }
-  
+
+  cout << last << " " << n << endl;
+ 
 
   return 0;
 }
