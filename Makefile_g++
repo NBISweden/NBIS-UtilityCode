@@ -9,9 +9,9 @@ ifeq ($(QUIET),yes)
   SYS_WARN	+= -w
 else
   ifeq ($(GPP_VERSION),3.4.3)
-    SYS_WARN	+= -I. -Wextra -Wall -Wno-unused -Wno-deprecated
+    SYS_WARN	+= -I. -I/usr/include/bamtools/ -Wextra -Wall -Wno-unused -Wno-deprecated
   else
-    SYS_WARN	+= -I. -W -Wall -Wno-unused -Wno-deprecated
+    SYS_WARN	+= -I. -I/usr/include/bamtools/ -W -Wall -Wno-unused -Wno-deprecated
   endif
 endif
 
