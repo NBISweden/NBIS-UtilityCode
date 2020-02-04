@@ -1,4 +1,5 @@
 #include <string>
+#include <sstream>
 #include "base/CommandLineParser.h"
 #include "base/FileParser.h"
 
@@ -90,40 +91,12 @@ int main( int argc, char** argv )
   
   string in = P.GetStringValueFor(iCmmd);
   string gene_prefix = P.GetStringValueFor(pCmmd);
-  
 
-  
   int i, j;
 
   svec<Connect> conn;
   svec<string> all;
   svec<string> gene;
-
-
-  //cout << "Loading..." << endl;
-  /*  Load(conn, all, gene, "correspond_416_588a");
-  Load(conn, all, gene, "correspond_416_596a");
-  Load(conn, all, gene, "correspond_416_798a");
-  Load(conn, all, gene, "correspond_416_828a");
-  Load(conn, all, gene, "correspond_588_596a");
-  Load(conn, all, gene, "correspond_588_798a");
-  Load(conn, all, gene, "correspond_588_828a");
-  Load(conn, all, gene, "correspond_596_798a");
-  Load(conn, all, gene, "correspond_596_828a");
-  Load(conn, all, gene, "correspond_798_828a");
-  */
-  /*
-  Load(conn, all, gene, "correspond_416_588b");
-  Load(conn, all, gene, "correspond_416_596b");
-  Load(conn, all, gene, "correspond_416_798b");
-  Load(conn, all, gene, "correspond_416_828b");
-  Load(conn, all, gene, "correspond_588_596b");
-  Load(conn, all, gene, "correspond_588_798b");
-  Load(conn, all, gene, "correspond_588_828b");
-  Load(conn, all, gene, "correspond_596_798b");
-  Load(conn, all, gene, "correspond_596_828b");
-  Load(conn, all, gene, "correspond_798_828b");
-  */
 
   StringParser s;
   s.SetLine(in, ",");
@@ -147,7 +120,11 @@ int main( int argc, char** argv )
       int index = BinSearch(all, conn[i].c[j]);
       //cout << last << " " << index << " -> " << conn[i].c[j] << endl;
       if (last == index)
-	cout << "ERROR!!! " << last << " " << index << endl;
+	{
+	  cerr << "ERROR!!! repeated entry: " << last << " " << index << conn[i].c[j] << endl;
+	  // exit(-1);
+	}
+      
       idx[last].link.push_back(index);
       last = index;
     }

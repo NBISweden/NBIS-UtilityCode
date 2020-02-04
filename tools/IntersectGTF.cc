@@ -36,7 +36,8 @@ public:
   }
 };
 
-void Load(svec<Annot> & annot, const string fileName, const string & filter)
+void Load(svec<Annot> & annot, const string fileName,
+	  const string & filter, const set<string>* features)
 {
   FlatFileParser parser;
   
@@ -47,6 +48,10 @@ void Load(svec<Annot> & annot, const string fileName, const string & filter)
       continue;
     //if (parser.AsString(2) != "gene")
     //continue;
+    if(features != NULL && features->find(parser.AsString(2)) == features->end())
+      {
+	continue;
+      }
     if (filter != "" && parser.AsString(1) != filter)
       continue;
     Annot a;
@@ -130,6 +135,7 @@ int main( int argc, char** argv )
   commandArg<string> fCmmd("-f","gene call filter", "");
   commandArg<int> lapCmmd("-l","minimum overlap", 50);
   commandArg<bool> nsCmmd("-no-single","do not skip singletons", false);
+  commandArg<string> feStringCmmd("-F", "Only include these features in out ut gtf (comma-separated list)","");
   commandLineParser P(argc,argv);
   P.SetDescription("Intersects two GTF files.");
   P.registerArg(tCmmd);
@@ -137,6 +143,7 @@ int main( int argc, char** argv )
   P.registerArg(fCmmd);
   P.registerArg(lapCmmd);
   P.registerArg(nsCmmd);
+  P.registerArg(feStringCmmd);
  
   P.parse();
   
@@ -145,12 +152,21 @@ int main( int argc, char** argv )
   string filter = P.GetStringValueFor(fCmmd);
   int lap = P.GetIntValueFor(lapCmmd);
   bool bNoSingle = P.GetBoolValueFor(nsCmmd);
- 
+
+  set<string> features;
+  string featurestring  = P.GetStringValueFor(feStringCmmd);
+  StringParser s;
+  s.SetLine(featurestring, ",");
+  for (unsigned i=0; i<s.GetItemCount(); i++) {
+    features.insert(s.AsString(i));
+  }
+
+  
   int i, j;
 
   svec<Annot> both;
-  Load(both, fileNameT, filter);
-  Load(both, fileNameQ, filter);
+  Load(both, fileNameT, filter, &features);
+  Load(both, fileNameQ, filter, &features);
 
   
   Sort(both);

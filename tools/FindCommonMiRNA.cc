@@ -1,5 +1,6 @@
 #include <string>
 #include <sstream>
+#include <iomanip>
 #include <algorithm>
 #include "base/CommandLineParser.h"
 #include "base/FileParser.h"
@@ -53,6 +54,18 @@ public:
     return(*this);
   };
   
+  // bool operator<(const MiRNA& m) const
+  // {
+  //   return(
+  // 	   ctg < m.ctg ||
+  // 	   strd < m.strd ||
+  // 	   (strd == m.strd  &&
+  // 	    (start < m.start ||
+  // 	     stop < m.stop)
+  // 	    )
+  // 	   );
+  // };
+  
   void addCount(const string& file, const double& n)
   {
     cnts[file] += n;
@@ -73,8 +86,9 @@ public:
   
   bool merge(MiRNA& m, const double& coverageCutoff, int limit)
   {
-    limit = min(limit, min(stop-start, m.stop-m.start));
-    if(ctg == m.ctg && strd == m.strd &&
+    // limit = min(limit, min(stop-start, m.stop-m.start));
+    if(ctg == m.ctg && strd == m.strd &&     // same contig and strand
+       start <= m.stop && stop > m.start &&  // require overlap
        std::abs(start - m.start) < limit && std::abs(stop - m.stop) < limit)
       {
 	if(m.passCoverage(coverageCutoff))
@@ -104,7 +118,7 @@ public:
     for(map<string, double>::const_iterator i = cnts.begin();
 	i != cnts.end(); i++)
       {
-	oss << "conts_" << i->first << " \"" << i->second << "\"; ";
+	oss << "counts_" << i->first << " \"" << i->second << "\"; ";
       }
       
     return oss.str();
@@ -117,6 +131,12 @@ public:
   int stop;
   map<string, double > cnts;
 };
+
+
+// bool sortMiRNAMap(const pair<string, MiRNA>& a, const pair<string, MiRNA>& b)
+// {
+//   return(a.second < b.second);
+// }
   
 int main( int argc, char** argv )
 {
@@ -213,7 +233,9 @@ int main( int argc, char** argv )
 	      if(lastCtg != "")
 		{
 		  oss.str("");
-		  oss << lastCtg << "_" << lastStrd << "_" << lastStart << "_" << lastSeq;
+		  oss << lastCtg << "_" << lastStrd << "_"
+		      << std::setfill('0') << std::setw(10) << lastStart << "-"
+		      << std::setfill('0') << std::setw(10) << lastStop;
 		  if(miRNAs.find(oss.str()) == miRNAs.end())
 		    {
 		      miRNAs[oss.str()] = MiRNA(lastCtg, lastStrd, lastStart, lastStop, fileNames);
@@ -237,9 +259,10 @@ int main( int argc, char** argv )
 	    }
 	}
     }
-
+  
+  cerr << "Number of potential miRNAs before filtering: " << miRNAs.size() << endl;
   unsigned index = 0;
-  for(map<string, MiRNA>::iterator i = miRNAs.begin(); i != miRNAs.end(); i++)
+  for(map<string, MiRNA>::iterator i = miRNAs.begin(); i != miRNAs.end();)
     {
       if(i->second.passCoverage(coverageCutoff))
 	{
@@ -252,6 +275,11 @@ int main( int argc, char** argv )
 	  cout << i->second.print(prefix, index++) <<endl;
 	  i = j;
 	}
+      else
+	{
+	  i++;
+	}
     }
+  cerr << "Number of potential miRNAs after filtering: " << index << endl;  
   return 0;
 }
