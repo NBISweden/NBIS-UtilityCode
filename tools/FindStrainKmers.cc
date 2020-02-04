@@ -56,6 +56,7 @@ int main(int argc,char** argv)
   commandArg<string> aStringCmmd("-a","outgroup (sequence no present in these)");
   commandArg<string> oStringCmmd("-o","fasta output");
   commandArg<int> kCmmd("-k","kmer size", 12);
+  commandArg<int> mCmmd("-min","minimum length", 250);
  
   commandLineParser P(argc,argv);
   P.SetDescription("Eliminates redundant sequences.");
@@ -63,6 +64,7 @@ int main(int argc,char** argv)
   P.registerArg(aStringCmmd);
   P.registerArg(oStringCmmd);
   P.registerArg(kCmmd);
+  P.registerArg(mCmmd);
 
 
   P.parse();
@@ -71,6 +73,7 @@ int main(int argc,char** argv)
   string aString = P.GetStringValueFor(aStringCmmd);
   string oString = P.GetStringValueFor(oStringCmmd);
   int k = P.GetIntValueFor(kCmmd);
+  int min = P.GetIntValueFor(mCmmd);
 
   
  
@@ -124,10 +127,26 @@ int main(int argc,char** argv)
   high.AddData(hi3, false, 1);
   */
 
-  for (i=0; i<ref.isize(); i++)
-    core.AddData(ref[i], false, 1);
-  for (i=0; i<in.isize(); i++)
-    self.AddData(in[i], false, 1);
+  vecDNAVector tmpA, tmpB;
+  for (i=0; i<in.isize(); i++) {
+    for (j=0; j<in[i].isize(); j++) {
+      tmpA.push_back((in[i])[j]);
+    }
+  }
+  self.AddData(tmpA, false, 1);
+
+  for (i=0; i<ref.isize(); i++) {
+    for (j=0; j<ref[i].isize(); j++) {
+      tmpB.push_back((ref[i])[j]);
+    }
+  }
+  core.AddData(tmpB, false, 1);
+
+  
+  //for (i=0; i<ref.isize(); i++)
+  //core.AddData(ref[i], false, 1);
+  //for (i=0; i<in.isize(); i++)
+  //self.AddData(in[i], false, 1);
 
   core.SortAll();
   cout << "done" << endl;
@@ -141,7 +160,7 @@ int main(int argc,char** argv)
     int nR = 0;
 
     cout << "Test seq " << in[0].Name(i) << endl;
-    int last = -1;
+    int last = -10000;
     for (j=0; j<=d.lsize()-k*num12; j++) {
       DNAVector subF, subR;
       subF.SetToSubOf(d, j, k*num12);
@@ -159,7 +178,9 @@ int main(int argc,char** argv)
       core.GetMatches(matchesF_hi, subF);
       core.GetMatches(matchesR_hi, subR);
 
-      if (matchesF_lo.isize() + matchesR_lo.isize() == in.isize() &&
+      //cout << matchesF_lo.isize() << " " << matchesR_lo.isize() << " - " << matchesF_hi.isize() << " " << matchesR_hi.isize() << endl;
+      
+      if (matchesF_lo.isize() + matchesR_lo.isize() >= in.isize() &&
 	  matchesF_hi.isize() + matchesR_hi.isize() == 0) {
 
 	if (j == last+1) {
@@ -168,7 +189,7 @@ int main(int argc,char** argv)
 	  dd[dd.isize()-1] = subF[subF.isize()-1];
 	} else {
 	  nn++;
-	  string name = ">kmer_" + Stringify(nn) + "_" + Stringify(out.isize());
+	  string name = ">kmer_" + Stringify(nn) + "_" + Stringify(out.isize()) + "_" + in[0].NameClean(i) + ":" + Stringify(j);
 	  out.push_back(subF, name);
 	}
   	last = j;
@@ -180,8 +201,14 @@ int main(int argc,char** argv)
     
      
   }
+
+  for (i=0; i<out.isize(); i++) {
+    if (out[i].isize() < min)
+      out[i].resize(0);
+  }
+
   cout << "Found: " << out.isize() << endl;
-  out.Write(oString);
+  out.Write(oString, true);
 
    return 0;
 
