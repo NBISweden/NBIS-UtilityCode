@@ -60,8 +60,10 @@ int main(int argc,char** argv)
 
     StringParser p;
     p.SetLine(parser.AsString(11), ";");
+    StringParser p2;
+    p2.SetLine(parser.AsString(9), "\"");
 
-    cout << ">" << p.AsString(1) << endl;
+    cout << ">" << p2.AsString(0) << "_" << p.AsString(1) << endl;
 
     for (j=0; j<snip.isize(); j++)
       cout << snip[j];

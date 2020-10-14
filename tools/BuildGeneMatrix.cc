@@ -83,7 +83,7 @@ int main( int argc, char** argv )
   commandArg<string> iCmmd("-i","comma-separated list of input files");
   commandArg<string> pCmmd("-p","gene prefix", "CANPMUL");
   commandLineParser P(argc,argv);
-  P.SetDescription("Intersects two GTF files.");
+  P.SetDescription("Builds a gene matrix from correspondence files.");
   P.registerArg(iCmmd);
   P.registerArg(pCmmd);
  
